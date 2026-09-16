@@ -1,35 +1,31 @@
 /* ==========================================================================
-   Bespoke Romantic Proposal Experience
-   Palette: Celestial Twilight, Dreamy Rose, Warm Candlelight Gold, Moonlight Cream
+   Clean, Super Cute & 100% Responsive Proposal Theme
    ========================================================================== */
 
 :root {
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-heading: 'Fredoka', cursive, sans-serif;
   --font-body: 'Quicksand', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* Luxurious Romantic Palette */
-  --bg-dark-twilight: #FFF8F9;
-  --color-card-bg: rgba(255, 255, 255, 0.88);
-  --color-card-border: rgba(255, 205, 220, 0.85);
+  --color-bg-base: #FFF6F8;
+  --color-card-bg: rgba(255, 255, 255, 0.9);
+  --color-card-border: rgba(255, 210, 225, 0.85);
 
-  --color-rose-primary: #FF5E85;
-  --color-rose-deep: #E8436B;
-  --color-rose-glow: rgba(255, 94, 133, 0.45);
+  --color-primary: #FF5E85;
+  --color-primary-hover: #FF4773;
+  --color-primary-glow: rgba(255, 94, 133, 0.4);
 
-  --color-gold: #FFE082;
-  --color-gold-glow: rgba(255, 224, 130, 0.5);
+  --color-text-main: #3F3040;
+  --color-text-sub: #7A697B;
+  --color-text-light: #A493A6;
 
-  --color-text-main: #3C2E3C;
-  --color-text-muted: #7A697B;
-  --color-text-soft: #A291A4;
+  --shadow-soft: 0 16px 40px rgba(235, 170, 195, 0.28);
+  --shadow-glow: 0 0 30px rgba(255, 170, 195, 0.35);
 
-  --shadow-luxe: 0 24px 65px rgba(235, 160, 185, 0.28), 0 4px 20px rgba(255, 200, 220, 0.35);
-  --radius-xl: 38px;
+  --radius-card: 32px;
   --radius-pill: 9999px;
 }
 
-/* Reset & Global Canvas Setup */
+/* Reset & Box Sizing */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -41,14 +37,14 @@ html, body {
   width: 100%;
   min-height: 100%;
   font-family: var(--font-body);
-  background: radial-gradient(circle at 15% 15%, #FFF0F5 0%, #F9EBF8 40%, #F1EAFF 100%);
+  background: radial-gradient(circle at 20% 20%, #FFF3F6 0%, #F9EBF8 50%, #F1EAFF 100%);
   color: var(--color-text-main);
   overflow-x: hidden;
   position: relative;
-  cursor: default;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Fullscreen Dynamic Canvas */
+/* Dynamic Flower & Star Canvas */
 #magicCanvas {
   position: fixed;
   top: 0;
@@ -59,410 +55,171 @@ html, body {
   pointer-events: none;
 }
 
-/* Atmospheric Ethereal Sky Auroras */
-.sky-aurora {
+/* Soft Background Glow Orbs */
+.bg-orb {
   position: fixed;
   border-radius: 50%;
-  filter: blur(90px);
+  filter: blur(80px);
   z-index: 0;
   pointer-events: none;
-  opacity: 0.65;
-  animation: auroraDrift 20s ease-in-out infinite alternate;
+  opacity: 0.6;
 }
 
-.aurora-1 {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, #FFE1EB 0%, rgba(255, 225, 235, 0) 70%);
-  top: -15%;
+.orb-1 {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, #FFE1EB 0%, transparent 70%);
+  top: -10%;
   left: -10%;
 }
 
-.aurora-2 {
-  width: 550px;
-  height: 550px;
-  background: radial-gradient(circle, #EAE0FE 0%, rgba(234, 224, 254, 0) 70%);
-  bottom: -20%;
-  right: -8%;
-  animation-delay: -7s;
+.orb-2 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, #EAE0FE 0%, transparent 70%);
+  bottom: -10%;
+  right: -10%;
 }
 
-.aurora-3 {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, #FFF4D9 0%, rgba(255, 244, 217, 0) 70%);
-  top: 35%;
-  left: 55%;
-  animation-delay: -14s;
-}
-
-@keyframes auroraDrift {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(50px, 35px) scale(1.12); }
-  100% { transform: translate(-40px, -30px) scale(0.95); }
-}
-
-/* Subtle Discrete Music Playing Indicator */
-.music-indicator {
-  position: fixed;
-  top: 18px;
-  right: 24px;
-  z-index: 50;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 215, 225, 0.8);
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  box-shadow: 0 4px 15px rgba(230, 180, 200, 0.2);
-  opacity: 0;
-  transform: translateY(-8px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  pointer-events: none;
-}
-
-.music-indicator.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.note-pulse {
-  font-size: 0.95rem;
-  animation: noteFloat 2s ease-in-out infinite alternate;
-}
-
-@keyframes noteFloat {
-  0% { transform: rotate(-8deg) translateY(0); }
-  100% { transform: rotate(8deg) translateY(-3px); }
-}
-
-.music-note-text {
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: #8C6F8E;
-}
-
-.sound-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 2.5px;
-  height: 12px;
-}
-
-.sound-bars span {
-  width: 2.5px;
-  background: #FF5E85;
-  border-radius: 2px;
-  animation: barBounce 1.2s ease-in-out infinite alternate;
-}
-
-.sound-bars span:nth-child(1) { height: 40%; animation-delay: 0.1s; }
-.sound-bars span:nth-child(2) { height: 80%; animation-delay: 0.3s; }
-.sound-bars span:nth-child(3) { height: 60%; animation-delay: 0.2s; }
-.sound-bars span:nth-child(4) { height: 100%; animation-delay: 0.4s; }
-
-@keyframes barBounce {
-  0% { height: 20%; }
-  100% { height: 100%; }
-}
-
-/* Experience Wrapper */
-.experience-wrapper {
+/* Main Container: Perfectly Centered on Mobile & Desktop */
+.main-container {
   position: relative;
   z-index: 10;
   min-height: 100vh;
+  min-height: 100dvh; /* For mobile dynamic viewports */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px 40px;
+  padding: 24px 16px;
 }
 
-/* Stage Sections */
-.stage-section {
+/* Proposal & Celebration Card */
+.card {
   display: none;
   width: 100%;
-  max-width: 580px;
-  margin: 0 auto;
+  max-width: 450px;
+  background: var(--color-card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid var(--color-card-border);
+  box-shadow: var(--shadow-soft), var(--shadow-glow);
+  border-radius: var(--radius-card);
+  padding: 34px 24px 28px;
+  text-align: center;
+  position: relative;
+  margin: auto;
 }
 
-.stage-section.active {
+.card.active {
   display: block;
-  animation: stageUnveil 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-@keyframes stageUnveil {
-  0% {
-    opacity: 0;
-    transform: translateY(30px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+@keyframes popIn {
+  0% { opacity: 0; transform: translateY(24px) scale(0.94); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* ==========================================================================
-   CHAPTER 1: The Sealed Romantic Envelope
-   ========================================================================== */
-.envelope-card {
-  background: var(--color-card-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1.5px solid var(--color-card-border);
-  box-shadow: var(--shadow-luxe);
-  border-radius: var(--radius-xl);
-  padding: 50px 36px 44px;
-  text-align: center;
-  position: relative;
+/* Mascot Animation */
+.mascot-box {
+  width: 125px;
+  height: 125px;
+  margin: 0 auto 10px;
 }
 
-.envelope-illustration {
-  width: 220px;
-  height: 165px;
-  margin: 0 auto 18px;
-  position: relative;
-}
-
-.wax-envelope-svg {
+.cute-bunny, .dancing-bunny {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 12px 24px rgba(255, 170, 195, 0.35));
-  animation: gentleLetterHover 3.5s ease-in-out infinite alternate;
+  animation: bunnyBreathe 3s ease-in-out infinite alternate;
+  filter: drop-shadow(0 6px 14px rgba(255, 175, 195, 0.3));
 }
 
-@keyframes gentleLetterHover {
-  0% { transform: translateY(0) rotate(-1deg); }
-  100% { transform: translateY(-8px) rotate(1.5deg); }
-}
-
-.wax-seal {
-  transform-origin: center center;
-  cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.wax-seal:hover {
-  transform: translate(120px, 115px) scale(1.12);
-}
-
-.envelope-badge {
-  display: inline-block;
-  font-family: var(--font-heading);
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #B55D82;
-  background: rgba(255, 225, 235, 0.7);
-  padding: 5px 20px;
-  border-radius: var(--radius-pill);
-  margin-bottom: 14px;
-}
-
-.envelope-title {
-  font-family: var(--font-serif);
-  font-size: 2.35rem;
-  font-weight: 700;
-  color: #3C2E3C;
-  line-height: 1.25;
-  margin-bottom: 12px;
-}
-
-.envelope-subtitle {
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: var(--color-text-muted);
-  max-width: 440px;
-  margin: 0 auto 28px;
-}
-
-.btn-open-letter {
-  background: linear-gradient(135deg, #FF6B8B 0%, #FF4773 100%);
-  color: #FFFFFF;
-  border: none;
-  font-family: var(--font-heading);
-  font-size: 1.22rem;
-  font-weight: 600;
-  padding: 16px 38px;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  box-shadow: 0 8px 30px rgba(255, 85, 125, 0.45);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-}
-
-.btn-open-letter:hover {
-  transform: translateY(-3px) scale(1.06);
-  box-shadow: 0 14px 40px rgba(255, 85, 125, 0.6);
-}
-
-.btn-open-letter:active {
-  transform: scale(0.97);
-}
-
-.btn-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-/* ==========================================================================
-   CHAPTER 2: The Heartfelt Proposal Letter
-   ========================================================================== */
-.letter-card {
-  background: var(--color-card-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1.5px solid var(--color-card-border);
-  box-shadow: var(--shadow-luxe);
-  border-radius: var(--radius-xl);
-  padding: 44px 38px 38px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Corner Flourishes */
-.corner-flourish {
-  position: absolute;
-  font-size: 1.3rem;
-  opacity: 0.65;
-  pointer-events: none;
-}
-
-.flourish-tl { top: 18px; left: 20px; }
-.flourish-tr { top: 18px; right: 20px; }
-.flourish-bl { bottom: 18px; left: 20px; }
-.flourish-br { bottom: 18px; right: 20px; }
-
-/* Celestial Crescent Moon Scene */
-.celestial-scene {
-  width: 250px;
-  height: 180px;
-  margin: 0 auto 12px;
-  position: relative;
-}
-
-.moon-bunnies-svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 10px 22px rgba(255, 185, 205, 0.3));
-  animation: moonGentleBreathe 4s ease-in-out infinite alternate;
-}
-
-@keyframes moonGentleBreathe {
+@keyframes bunnyBreathe {
   0% { transform: translateY(0); }
-  100% { transform: translateY(-7px); }
+  100% { transform: translateY(-6px); }
 }
 
-.bunny-couple {
-  animation: bunnySnuggle 3s ease-in-out infinite alternate;
+.bunny-ear {
   transform-origin: bottom center;
+  animation: earWobble 3.5s ease-in-out infinite;
 }
 
-.bunny-2 {
+.ear-right {
   animation-delay: 0.5s;
 }
 
-@keyframes bunnySnuggle {
-  0% { transform: translate(122px, 108px) rotate(0deg); }
-  100% { transform: translate(120px, 108px) rotate(-3deg); }
+@keyframes earWobble {
+  0%, 88%, 100% { transform: rotate(0deg); }
+  92% { transform: rotate(6deg); }
+  96% { transform: rotate(-5deg); }
 }
 
-.moon-lantern {
-  animation: lanternGlow 2s ease-in-out infinite alternate;
-}
-
-@keyframes lanternGlow {
-  0% { filter: drop-shadow(0 0 4px #FFE066); opacity: 0.85; }
-  100% { filter: drop-shadow(0 0 14px #FFD54F); opacity: 1; }
-}
-
-/* Letter Typography */
-.letter-header {
-  margin-bottom: 14px;
-}
-
-.letter-tag {
+/* Typography */
+.tag-pill {
   display: inline-block;
+  font-family: var(--font-heading);
   font-size: 0.82rem;
   font-weight: 600;
   color: #B55D82;
-  background: rgba(255, 225, 235, 0.65);
-  padding: 4px 18px;
+  background: rgba(255, 225, 235, 0.7);
+  padding: 4px 16px;
   border-radius: var(--radius-pill);
   margin-bottom: 10px;
 }
 
-.letter-heading {
-  font-family: var(--font-serif);
-  font-size: 2.7rem;
+.proposal-heading {
+  font-family: var(--font-heading);
+  font-size: 2.1rem;
   font-weight: 700;
-  color: #3A2A38;
-  line-height: 1.15;
+  color: #382A39;
+  line-height: 1.2;
+  margin-bottom: 8px;
 }
 
-.gentle-bloom {
-  display: inline-block;
-  animation: gentlePulse 2.5s infinite;
-}
-
-@keyframes gentlePulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.12); }
-}
-
-.letter-paragraph {
-  font-family: var(--font-body);
-  font-size: 1.06rem;
-  line-height: 1.68;
-  color: #554452;
-  font-weight: 500;
-  margin-bottom: 22px;
-  padding: 0 8px;
-}
-
-/* Proposal Emboss Box */
-.proposal-emboss-box {
-  background: linear-gradient(135deg, rgba(255, 240, 246, 0.95) 0%, rgba(246, 238, 255, 0.95) 100%);
-  border: 1.5px solid rgba(255, 185, 205, 0.75);
-  border-radius: 24px;
-  padding: 24px 22px 20px;
-  margin-bottom: 22px;
-  position: relative;
-  box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.85), 0 8px 24px rgba(245, 195, 215, 0.22);
-}
-
-.sacred-question {
-  font-family: var(--font-serif);
-  font-size: 1.65rem;
-  font-weight: 700;
-  color: #352332;
-  line-height: 1.35;
-  margin-bottom: 10px;
-}
-
-.sacred-subtext {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #9C5877;
+.proposal-desc {
+  font-size: 0.98rem;
   line-height: 1.55;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  color: var(--color-text-sub);
+  margin-bottom: 18px;
+  padding: 0 6px;
+}
+
+/* Question Box */
+.question-container {
+  background: linear-gradient(135deg, rgba(255, 240, 246, 0.95) 0%, rgba(246, 238, 255, 0.95) 100%);
+  border: 1.5px dashed rgba(255, 175, 195, 0.8);
+  border-radius: 20px;
+  padding: 18px 16px 16px;
+  margin-bottom: 16px;
+  box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.9), 0 4px 16px rgba(245, 195, 215, 0.18);
+}
+
+.question-title {
+  font-family: var(--font-heading);
+  font-size: 1.22rem;
+  font-weight: 600;
+  color: #352535;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.sub-symbolic {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #B55D82;
+  line-height: 1.45;
 }
 
 /* Teasing Toast */
 .dodge-toast {
-  min-height: 26px;
-  font-size: 0.96rem;
+  min-height: 24px;
+  font-size: 0.92rem;
   font-weight: 600;
   color: #E24A72;
   margin-bottom: 12px;
-  transition: all 0.25s ease;
   opacity: 0;
   transform: translateY(4px);
+  transition: all 0.2s ease;
 }
 
 .dodge-toast.show {
@@ -470,430 +227,211 @@ html, body {
   transform: translateY(0);
 }
 
-/* Choice Arena */
-.choice-arena {
+/* Button Row & Physics */
+.button-row {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 22px;
-  min-height: 85px;
-  padding: 4px 0;
+  gap: 16px;
+  min-height: 75px;
+  padding: 6px 0;
 }
 
-/* Yes Button: Glowing, Pulsing, Inviting */
-.btn-radiant-yes {
+/* Yes Button: Glowing, Prominent */
+.btn-yes {
   position: relative;
   background: linear-gradient(135deg, #FF6B8B 0%, #FF4773 100%);
   color: #FFFFFF;
   border: none;
   font-family: var(--font-heading);
-  font-size: 1.25rem;
-  font-weight: 600;
-  padding: 16px 36px;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  box-shadow: 0 10px 30px rgba(255, 85, 125, 0.45);
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-  overflow: hidden;
-  z-index: 5;
-  user-select: none;
-}
-
-.btn-radiant-yes:hover {
-  transform: scale(1.08) translateY(-3px);
-  box-shadow: 0 16px 45px rgba(255, 75, 115, 0.65), 0 0 35px rgba(255, 180, 200, 0.7);
-}
-
-.btn-radiant-yes:active {
-  transform: scale(0.97);
-}
-
-.btn-inner {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-/* No Button: Floating, Weightless Bubble (never lost!) */
-.btn-weightless-no {
-  position: relative;
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--color-text-muted);
-  border: 2px solid rgba(225, 210, 222, 0.9);
-  font-family: var(--font-heading);
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   font-weight: 600;
   padding: 14px 28px;
   border-radius: var(--radius-pill);
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(200, 180, 195, 0.2);
+  box-shadow: 0 8px 25px rgba(255, 85, 125, 0.4);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  user-select: none;
+  z-index: 5;
+  white-space: nowrap;
+}
+
+.btn-yes:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 12px 35px rgba(255, 85, 125, 0.6);
+}
+
+.btn-yes:active {
+  transform: scale(0.96);
+}
+
+/* No Button: Clean, Evasive & Impossible to Click */
+.btn-no {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-text-sub);
+  border: 2px solid rgba(220, 205, 218, 0.9);
+  font-family: var(--font-heading);
+  font-size: 1.08rem;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(200, 180, 195, 0.2);
   user-select: none;
   z-index: 10;
   white-space: nowrap;
-  animation: weightlessBob 2.6s ease-in-out infinite alternate;
-  transition: transform 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.2), background 0.3s ease;
+  transition: transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.2), background 0.2s ease;
+  will-change: transform;
 }
 
-@keyframes weightlessBob {
-  0% {
-    transform: translate(var(--dx, 0px), var(--dy, 0px)) translateY(0px) rotate(-1.5deg);
-  }
-  50% {
-    transform: translate(var(--dx, 0px), var(--dy, 0px)) translateY(-8px) rotate(2deg);
-  }
-  100% {
-    transform: translate(var(--dx, 0px), var(--dy, 0px)) translateY(3px) rotate(-1.5deg);
-  }
-}
-
-.btn-weightless-no:hover {
+.btn-no:hover {
   background: #FFF5F8;
   border-color: #FFAEC0;
 }
 
 /* ==========================================================================
-   CHAPTER 3: Grand Acceptance & Celebration Masterpiece
+   Celebration Screen
    ========================================================================== */
-.celebration-masterpiece {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 245, 249, 0.94) 100%);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1.5px solid var(--color-card-border);
-  box-shadow: var(--shadow-luxe);
-  border-radius: var(--radius-xl);
-  padding: 44px 36px 36px;
-  text-align: center;
-  position: relative;
-  max-width: 620px;
-  margin: 0 auto;
+.celebration-card {
+  padding: 36px 24px 30px;
 }
 
-.victory-ribbon {
+.badge-celebrate {
   display: inline-block;
   background: #FFE2EC;
   color: #D34672;
   font-family: var(--font-heading);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  padding: 6px 22px;
+  padding: 5px 18px;
   border-radius: var(--radius-pill);
   margin-bottom: 12px;
 }
 
-.victory-title {
-  font-family: var(--font-serif);
-  font-size: 3rem;
+.celebration-title {
+  font-family: var(--font-heading);
+  font-size: 2.3rem;
   font-weight: 700;
   color: #FF4773;
-  line-height: 1.15;
   margin-bottom: 8px;
-  text-shadow: 0 4px 18px rgba(255, 110, 145, 0.25);
 }
 
-.sparkle-dance {
-  display: inline-block;
-  animation: bounceDance 0.8s ease-in-out infinite alternate;
+.celebration-text {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--color-text-sub);
+  margin-bottom: 18px;
 }
 
-@keyframes bounceDance {
-  0% { transform: translateY(0) rotate(-6deg); }
-  100% { transform: translateY(-10px) rotate(8deg); }
+.happy-wrap {
+  margin-bottom: 18px;
 }
 
-.victory-subtitle {
-  font-size: 1.08rem;
-  line-height: 1.6;
-  color: var(--color-text-muted);
-  max-width: 480px;
-  margin: 0 auto 22px;
+.dancing-bunny {
+  animation: happyDance 0.85s ease-in-out infinite alternate;
 }
 
-/* Aesthetic Keepsake Polaroid */
-.keepsake-polaroid {
-  position: relative;
+@keyframes happyDance {
+  0% { transform: translateY(0) rotate(-4deg); }
+  100% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* Sweet Polaroid */
+.polaroid-box {
   background: #FFFFFF;
-  padding: 16px 16px 20px;
-  border-radius: 14px;
-  box-shadow: 0 12px 35px rgba(220, 165, 185, 0.38);
+  border: 1px solid #FFE4ED;
+  border-radius: 12px;
+  padding: 18px 16px;
+  box-shadow: 0 8px 24px rgba(220, 170, 190, 0.3);
   transform: rotate(-1.5deg);
-  max-width: 440px;
-  margin: 0 auto 26px;
-  transition: transform 0.3s ease;
+  margin: 0 auto 20px;
+  position: relative;
 }
 
-.keepsake-polaroid:hover {
-  transform: rotate(0deg) scale(1.02);
-}
-
-.polaroid-pin-icon {
+.polaroid-pin {
   position: absolute;
-  top: -14px;
+  top: -12px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 1.4rem;
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.15));
+  font-size: 1.2rem;
 }
 
-.polaroid-inner-photo {
-  background: linear-gradient(135deg, #FFF9FA 0%, #FFF3F6 100%);
-  border: 1px solid #FFE4ED;
-  border-radius: 8px;
-  padding: 22px 18px;
-  position: relative;
-}
-
-.photo-constellation {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.constellation-star {
-  font-size: 1.4rem;
-  color: #FFC107;
-  animation: starPulse 1.8s ease-in-out infinite alternate;
-}
-
-.c-star2 {
-  animation-delay: 0.9s;
-}
-
-@keyframes starPulse {
-  0% { transform: scale(1); filter: drop-shadow(0 0 2px #FFD54F); }
-  100% { transform: scale(1.25); filter: drop-shadow(0 0 10px #FFD54F); }
-}
-
-.constellation-line {
-  width: 50px;
-  height: 2px;
-  background: linear-gradient(90deg, #FFC107, #FF8DA1, #FFC107);
-}
-
-.polaroid-handwritten-note {
-  font-family: var(--font-serif);
-  font-size: 1.12rem;
+.polaroid-quote {
+  font-size: 0.94rem;
   font-style: italic;
-  line-height: 1.6;
-  color: #4A3A48;
-  margin-bottom: 14px;
+  color: #4C3C4A;
+  line-height: 1.55;
+  margin-bottom: 10px;
 }
 
-.polaroid-seal {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 235, 240, 0.8);
-  padding: 4px 14px;
-  border-radius: var(--radius-pill);
+.polaroid-stamp {
   font-family: var(--font-heading);
   font-size: 0.82rem;
-  color: #E24A72;
-  font-weight: 600;
-}
-
-/* ==========================================================================
-   FEATURE: Our Little Promise Capsule
-   ========================================================================== */
-.promise-capsule-section {
-  margin-bottom: 26px;
-  text-align: left;
-}
-
-.capsule-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding-left: 4px;
-}
-
-.capsule-icon {
-  font-size: 1.25rem;
-}
-
-.capsule-title {
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #4A3E4D;
-}
-
-.promise-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.promise-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1.5px solid rgba(255, 215, 228, 0.8);
-  padding: 14px 16px;
-  border-radius: 18px;
-  box-shadow: 0 4px 14px rgba(240, 190, 210, 0.15);
-  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-}
-
-.promise-card:hover {
-  transform: translateY(-3px);
-  background: #FFFFFF;
-  box-shadow: 0 8px 22px rgba(245, 180, 205, 0.25);
-}
-
-.promise-badge {
-  display: inline-block;
-  font-family: var(--font-heading);
-  font-size: 0.74rem;
   font-weight: 600;
   color: #FF5E85;
-  background: #FFF0F4;
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-  margin-bottom: 6px;
 }
 
-.promise-name {
-  font-family: var(--font-heading);
-  font-size: 0.96rem;
-  font-weight: 600;
-  color: #423243;
-  margin-bottom: 4px;
-}
-
-.promise-detail {
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-  line-height: 1.45;
-}
-
-/* Celebration Interactive Tools */
-.celebration-tools {
+/* Action Wrap */
+.action-wrap {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 14px;
-  margin-bottom: 22px;
 }
 
-.btn-special-action {
-  background: linear-gradient(135deg, #FF7B9C 0%, #FF5A82 100%);
-  color: #FFFFFF;
-  border: none;
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
-  font-weight: 600;
-  padding: 14px 28px;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  box-shadow: 0 8px 25px rgba(255, 95, 135, 0.38);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btn-special-action:hover {
-  transform: translateY(-2px) scale(1.04);
-  box-shadow: 0 12px 32px rgba(255, 95, 135, 0.5);
-}
-
-.btn-subtle-replay {
+.btn-replay {
   background: transparent;
-  color: var(--color-text-muted);
-  border: 1.5px solid rgba(215, 195, 210, 0.8);
+  color: var(--color-text-sub);
+  border: 1.5px solid rgba(215, 195, 210, 0.85);
   font-family: var(--font-heading);
-  font-size: 0.95rem;
+  font-size: 0.94rem;
   font-weight: 600;
-  padding: 12px 24px;
+  padding: 10px 22px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.btn-subtle-replay:hover {
+.btn-replay:hover {
   background: rgba(255, 255, 255, 0.9);
-  border-color: #FFAEC0;
   color: #FF4773;
+  border-color: #FFAEC0;
 }
 
-.dedication-signature {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--color-text-soft);
-}
-
-/* Interactive Cursor Sparkle */
-.stardust-cursor {
-  position: fixed;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 185, 210, 0.8) 0%, transparent 70%);
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-/* Responsive Adaptations */
-@media (max-width: 640px) {
-  .experience-wrapper {
-    padding: 40px 14px 30px;
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .card {
+    padding: 28px 18px 24px;
+    border-radius: 26px;
   }
 
-  .envelope-card, .letter-card, .celebration-masterpiece {
-    padding: 34px 18px 28px;
-    border-radius: 28px;
+  .proposal-heading {
+    font-size: 1.85rem;
   }
 
-  .envelope-title {
-    font-size: 2rem;
+  .proposal-desc {
+    font-size: 0.92rem;
   }
 
-  .letter-heading {
-    font-size: 2.2rem;
+  .question-title {
+    font-size: 1.12rem;
   }
 
-  .sacred-question {
-    font-size: 1.35rem;
+  .button-row {
+    gap: 12px;
   }
 
-  .choice-arena {
-    gap: 14px;
-  }
-
-  .btn-radiant-yes {
-    padding: 14px 24px;
-    font-size: 1.1rem;
-  }
-
-  .btn-weightless-no {
+  .btn-yes {
     padding: 12px 20px;
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
-  .victory-title {
-    font-size: 2.4rem;
+  .btn-no {
+    padding: 10px 18px;
+    font-size: 0.98rem;
   }
 
-  .promise-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .music-indicator {
-    top: 10px;
-    right: 12px;
-    padding: 4px 10px;
-  }
-
-  .music-note-text {
-    display: none;
+  .celebration-title {
+    font-size: 2rem;
   }
 }

@@ -2,334 +2,174 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A Special Thought For You ✨🌸</title>
-  <!-- Google Fonts: Cormorant Garamond (romantic editorial), Fredoka (cute playful), Quicksand (clean readable) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>A Tiny Question For You ✨🌸</title>
+  <!-- Google Fonts: Fredoka & Quicksand for clean, modern, ultra-cute aesthetic -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Fullscreen Dynamic Starry Sky & 3D Petal Canvas -->
+  <!-- Fullscreen Dynamic Blossoming Flowers & Stars Canvas -->
   <canvas id="magicCanvas"></canvas>
 
-  <!-- Ambient Ethereal Glow Halos -->
-  <div class="sky-aurora aurora-1"></div>
-  <div class="sky-aurora aurora-2"></div>
-  <div class="sky-aurora aurora-3"></div>
+  <!-- Ambient Dreamy Pastel Orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
 
-  <!-- Hidden YouTube Background Music Player (vBTcsTd2kF0) -->
-  <div id="ytMusicWrapper" style="position:fixed; width:1px; height:1px; opacity:0; pointer-events:none; left:-9999px;">
+  <!-- Hidden YouTube Background Music Player (Song: BqupBJ2NNNU, Volume: 45%) -->
+  <div id="ytContainer" style="position:fixed; width:1px; height:1px; opacity:0; pointer-events:none; left:-9999px;">
     <div id="ytPlayer"></div>
   </div>
 
-  <!-- Soft audio status pill (discrete, purely visual indicator that music is playing) -->
-  <div id="musicIndicator" class="music-indicator">
-    <span class="note-pulse">🎵</span>
-    <span class="music-note-text">Playing our song softly in the background...</span>
-    <div class="sound-bars">
-      <span></span><span></span><span></span><span></span>
-    </div>
-  </div>
+  <main class="main-container">
 
-  <!-- Main Experience Wrapper -->
-  <main class="experience-wrapper">
+    <!-- PROPOSAL CARD: Simple, Direct, Super Cute & 100% Responsive -->
+    <div id="proposalCard" class="card active">
+      
+      <!-- Adorable Cute Mascot SVG -->
+      <div class="mascot-box">
+        <svg class="cute-bunny" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Shadow -->
+          <ellipse cx="80" cy="150" rx="50" ry="7" fill="rgba(240, 180, 205, 0.25)" />
+          
+          <!-- Ears -->
+          <g class="bunny-ear ear-left">
+            <path d="M58 75 C48 35 38 12 50 8 C62 4 68 35 66 75 Z" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
+            <path d="M56 68 C50 42 44 24 50 18 C56 12 60 38 59 68 Z" fill="#FFCCD7" opacity="0.8" />
+          </g>
+          <g class="bunny-ear ear-right">
+            <path d="M102 75 C112 35 122 12 110 8 C98 4 92 35 94 75 Z" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
+            <path d="M104 68 C110 42 116 24 110 18 C104 12 100 38 101 68 Z" fill="#FFCCD7" opacity="0.8" />
+          </g>
 
-    <!-- =========================================================================
-         CHAPTER 1: The Sealed Romantic Envelope
-         (Provides a bespoke dedication feel & guarantees seamless music playback on tap)
-         ========================================================================= -->
-    <section id="envelopeStage" class="stage-section active">
-      <div class="envelope-card">
-        <div class="envelope-sparkle-trail">✨</div>
-        
-        <div class="envelope-illustration">
-          <!-- Handcrafted Wax-Sealed Letter SVG -->
-          <svg class="wax-envelope-svg" viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="envGrad" x1="0" y1="0" x2="240" y2="180">
-                <stop offset="0%" stop-color="#FFF5F7" />
-                <stop offset="100%" stop-color="#FFE4EC" />
-              </linearGradient>
-              <linearGradient id="flapGrad" x1="0" y1="0" x2="240" y2="100">
-                <stop offset="0%" stop-color="#FFE8F0" />
-                <stop offset="100%" stop-color="#FFD1DF" />
-              </linearGradient>
-              <filter id="shadowFlap" x="-10%" y="-10%" width="120%" height="130%">
-                <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#F2A7BE" flood-opacity="0.3" />
-              </filter>
-            </defs>
-            
-            <!-- Envelope Body -->
-            <rect x="15" y="35" width="210" height="130" rx="16" fill="url(#envGrad)" stroke="#F8C0D2" stroke-width="2.5" />
-            
-            <!-- Fold Lines -->
-            <path d="M15 165 L105 100 M225 165 L135 100" stroke="#F4BACD" stroke-width="2" stroke-linecap="round" />
-            <path d="M15 35 L120 115 L225 35" stroke="#F4BACD" stroke-width="2" fill="url(#flapGrad)" filter="url(#shadowFlap)" />
-            
-            <!-- Wax Seal with Golden Heart -->
-            <g class="wax-seal" transform="translate(120, 115)">
-              <circle cx="0" cy="0" r="22" fill="#FF5E85" filter="drop-shadow(0 4px 10px rgba(255, 94, 133, 0.45))" />
-              <circle cx="0" cy="0" r="18" fill="#FF4773" stroke="#FFA3BA" stroke-width="1.5" />
-              <!-- Cute Embossed Heart -->
-              <path d="M0 8 C-10 1 -11 -7 -4 -8 C-1 -8 0 -5 0 -4 C0 -5 1 -8 4 -8 C11 -7 10 1 0 8 Z" fill="#FFE599" />
-            </g>
-          </svg>
-        </div>
+          <!-- Body -->
+          <ellipse cx="80" cy="116" rx="46" ry="38" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
+          <!-- Head -->
+          <ellipse cx="80" cy="84" rx="44" ry="36" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
 
-        <div class="envelope-badge">🌸 A Quiet Thought Written For You 🌸</div>
-        <h1 class="envelope-title">Hey, someone made this for you...</h1>
-        <p class="envelope-subtitle">
-          Take a deep breath, put your earphones on if you like, and open it when you're ready.
+          <!-- Blush Cheeks -->
+          <ellipse class="blush" cx="56" cy="92" rx="9" ry="6" fill="#FFAEC0" opacity="0.75" />
+          <ellipse class="blush" cx="104" cy="92" rx="9" ry="6" fill="#FFAEC0" opacity="0.75" />
+
+          <!-- Happy Sparkly Eyes -->
+          <circle cx="64" cy="82" r="5" fill="#4B3B47" />
+          <circle cx="62.5" cy="80" r="1.8" fill="#FFFFFF" />
+          <circle cx="96" cy="82" r="5" fill="#4B3B47" />
+          <circle cx="94.5" cy="80" r="1.8" fill="#FFFFFF" />
+
+          <!-- Nose & Smile -->
+          <ellipse cx="80" cy="87" rx="3" ry="2" fill="#FFAEC0" />
+          <path d="M76 91 Q80 94 80 91 Q80 94 84 91" stroke="#4B3B47" stroke-width="2" stroke-linecap="round" fill="none" />
+
+          <!-- Tiny Paw holding a blooming flower -->
+          <g class="held-flower" transform="translate(86, 96)">
+            <path d="M0 16 Q3 6 0 0" stroke="#88C496" stroke-width="2.5" stroke-linecap="round" fill="none" />
+            <circle cx="0" cy="0" r="7" fill="#FFDEE9" />
+            <circle cx="0" cy="0" r="3.5" fill="#FFE599" />
+          </g>
+
+          <!-- Cute Paws -->
+          <ellipse cx="64" cy="116" rx="6.5" ry="5" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2" />
+          <ellipse cx="88" cy="113" rx="6.5" ry="5" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2" />
+        </svg>
+      </div>
+
+      <div class="tag-pill">A sweet little thought for you 🌸</div>
+      <h1 class="proposal-heading">Hey you... ✨</h1>
+      <p class="proposal-desc">
+        Every ordinary day feels softer, brighter, and a hundred times sweeter whenever you are around.
+      </p>
+
+      <div class="question-container">
+        <h2 class="question-title">
+          Will you be my favorite person to make cozy memories with?
+        </h2>
+        <p class="sub-symbolic">
+          🌸 Two stars, one sky. Side by side till the very end. ✨
         </p>
+      </div>
 
-        <button id="openEnvelopeBtn" class="btn-open-letter">
-          <span class="btn-content">
-            <span class="letter-icon">💌</span>
-            <span class="open-text">Unfold The Letter</span>
-            <span class="sparkle-spark">✨</span>
-          </span>
+      <!-- Teasing Dialogue when she tries to tap/hover No -->
+      <div id="dodgeToast" class="dodge-toast"></div>
+
+      <!-- Simple, Clean Button Arena -->
+      <div class="button-row" id="btnArena">
+        <!-- Yes Button: Glowing, radiant, grows bigger on every No attempt -->
+        <button id="yesBtn" class="btn-yes">
+          <span>🌸 Yes, of course! ✨</span>
+        </button>
+
+        <!-- No Button: Playfully dodges away, impossible to click! -->
+        <button id="noBtn" class="btn-no">
+          <span>🙈 No</span>
         </button>
       </div>
-    </section>
 
-    <!-- =========================================================================
-         CHAPTER 2: The Heartfelt Proposal Letter
-         ========================================================================= -->
-    <section id="proposalStage" class="stage-section">
-      <div class="letter-card">
-        
-        <!-- Delicate Golden Floral Corner Accents -->
-        <div class="corner-flourish flourish-tl">🌸</div>
-        <div class="corner-flourish flourish-tr">✨</div>
-        <div class="corner-flourish flourish-bl">✨</div>
-        <div class="corner-flourish flourish-br">🌸</div>
+    </div>
 
-        <!-- Bespoke Romantic Illustration: Two Cozy Bunnies on a Crescent Moon -->
-        <div class="celestial-scene">
-          <svg class="moon-bunnies-svg" viewBox="0 0 280 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="moonGrad" x1="0" y1="0" x2="200" y2="200">
-                <stop offset="0%" stop-color="#FFF9E6" />
-                <stop offset="100%" stop-color="#FFE082" />
-              </linearGradient>
-              <filter id="glowMoon" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="8" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-            </defs>
+    <!-- CELEBRATION CARD: Clean, Heart-Melting & Instant -->
+    <div id="celebrationCard" class="card celebration-card">
+      
+      <div class="badge-celebrate">🌸 Best Decision Ever! 🌸</div>
+      <h1 class="celebration-title">Yaaayyy! 🎉✨</h1>
+      <p class="celebration-text">
+        You just made the entire universe sparkle! Can't wait for all our sweet memories, smiles, and adventures together.
+      </p>
 
-            <!-- Dreamy Crescent Moon -->
-            <path d="M140 25 C85 25 40 70 40 125 C40 165 65 185 75 190 C62 175 55 150 55 125 C55 80 90 45 135 45 C150 45 168 50 178 58 C168 38 155 25 140 25 Z" 
-                  fill="url(#moonGrad)" filter="url(#glowMoon)" opacity="0.95" />
-
-            <!-- Soft Clouds Beneath Moon -->
-            <path d="M50 175 C40 175 30 168 32 158 C35 148 48 148 55 152 C60 142 75 140 85 148 C95 144 110 152 110 162 C115 162 120 168 118 174 Z" 
-                  fill="#FFF0F5" opacity="0.8" />
-            <path d="M140 180 C130 180 122 174 125 165 C128 156 140 155 146 158 C152 148 168 148 178 155 C188 152 200 160 198 170 C204 170 208 175 206 180 Z" 
-                  fill="#FFF0F5" opacity="0.8" />
-
-            <!-- Bunny 1 (Left, cozy tilt) -->
-            <g class="bunny-couple bunny-1" transform="translate(100, 105)">
-              <!-- Ears -->
-              <ellipse cx="6" cy="-22" rx="4.5" ry="14" fill="#FFF9F7" stroke="#F6C5D4" stroke-width="2" transform="rotate(-15 6 -22)" />
-              <ellipse cx="6" cy="-22" rx="2.5" ry="9" fill="#FFCCD7" transform="rotate(-15 6 -22)" />
-              <ellipse cx="18" cy="-22" rx="4.5" ry="14" fill="#FFF9F7" stroke="#F6C5D4" stroke-width="2" transform="rotate(5 18 -22)" />
-              <ellipse cx="18" cy="-22" rx="2.5" ry="9" fill="#FFCCD7" transform="rotate(5 18 -22)" />
-              <!-- Body -->
-              <ellipse cx="12" cy="18" rx="16" ry="14" fill="#FFF9F7" stroke="#F6C5D4" stroke-width="2" />
-              <!-- Head -->
-              <ellipse cx="12" cy="-2" rx="15" ry="13" fill="#FFF9F7" stroke="#F6C5D4" stroke-width="2" />
-              <!-- Blush Cheeks -->
-              <ellipse cx="4" cy="2" rx="3.5" ry="2.2" fill="#FFAEC0" opacity="0.8" />
-              <ellipse cx="20" cy="2" rx="3.5" ry="2.2" fill="#FFAEC0" opacity="0.8" />
-              <!-- Eyes (happy closed arc) -->
-              <path d="M6 -2 Q9 -5 12 -2" stroke="#4B3B47" stroke-width="2" stroke-linecap="round" fill="none" />
-              <path d="M14 -2 Q17 -5 20 -2" stroke="#4B3B47" stroke-width="2" stroke-linecap="round" fill="none" />
-            </g>
-
-            <!-- Bunny 2 (Right, leaning warmly against Bunny 1) -->
-            <g class="bunny-couple bunny-2" transform="translate(122, 108)">
-              <!-- Ears -->
-              <ellipse cx="6" cy="-22" rx="4.5" ry="14" fill="#FFF9F7" stroke="#F6C5D4" stroke-width="2" transform="rotate(-5 6 -22)" />
-              <ellipse cx="6" cy="-22" rx="2.5" ry="9" fill="#FFCCD7" transform="rotate(-5 6 -22)" />
-              <ellipse cx="18" cy="-22" rx="4.5" ry="14" fill="#FFF9F7" stroke="#F6C5D4" stroke-width="2" transform="rotate(15 18 -22)" />
-              <ellipse cx="18" cy="-22" rx="2.5" ry="9" fill="#FFCCD7" transform="rotate(15 18 -22)" />
-              <!-- Body -->
-              <ellipse cx="12" cy="18" rx="16" ry="14" fill="#FFF9F7" stroke="#F6C5D4" stroke-width="2" />
-              <!-- Head -->
-              <ellipse cx="12" cy="-2" rx="15" ry="13" fill="#FFF9F7" stroke="#F6C5D4" stroke-width="2" />
-              <!-- Blush Cheeks -->
-              <ellipse cx="4" cy="2" rx="3.5" ry="2.2" fill="#FFAEC0" opacity="0.8" />
-              <ellipse cx="20" cy="2" rx="3.5" ry="2.2" fill="#FFAEC0" opacity="0.8" />
-              <!-- Eyes -->
-              <path d="M5 -2 Q8 -5 11 -2" stroke="#4B3B47" stroke-width="2" stroke-linecap="round" fill="none" />
-              <path d="M13 -2 Q16 -5 19 -2" stroke="#4B3B47" stroke-width="2" stroke-linecap="round" fill="none" />
-            </g>
-
-            <!-- Glowing Lantern held between them -->
-            <g class="moon-lantern" transform="translate(132, 132)">
-              <line x1="0" y1="-8" x2="0" y2="0" stroke="#C29B38" stroke-width="1.5" />
-              <rect x="-6" y="0" width="12" height="15" rx="3" fill="#FFE599" stroke="#E5A93C" stroke-width="1.5" />
-              <circle cx="0" cy="7" r="5" fill="#FFF9E6" filter="drop-shadow(0 0 6px #FFE066)" />
-            </g>
-
-            <!-- Twinkling Stars in Sky -->
-            <g class="celestial-stars">
-              <circle cx="65" cy="55" r="2.5" fill="#FFF5CC" />
-              <circle cx="215" cy="65" r="3" fill="#FFF5CC" />
-              <circle cx="235" cy="115" r="2" fill="#FFF5CC" />
-              <circle cx="35" cy="95" r="1.5" fill="#FFF5CC" />
-            </g>
-          </svg>
-        </div>
-
-        <div class="letter-header">
-          <span class="letter-tag">A quiet confession from the heart</span>
-          <h1 class="letter-heading">
-            Hey you... <span class="gentle-bloom">🌸</span>
-          </h1>
-        </div>
-
-        <div class="letter-body">
-          <p class="letter-paragraph">
-            In a world that is always rushing, you make everything feel so soft, peaceful, and warm.
-            Every little conversation with you makes my entire day brighter, and every ordinary moment turns into a memory I cherish.
-          </p>
-        </div>
-
-        <div class="proposal-emboss-box">
-          <div class="box-glow-border"></div>
-          <h2 class="sacred-question">
-            Will you be my favorite person to walk through life and make cozy memories with?
-          </h2>
-          <div class="sacred-subtext">
-            <span>🌸</span>
-            <em>Two stars in the same endless sky, blooming side by side through every season, till the very end.</em>
-            <span>✨</span>
-          </div>
-        </div>
-
-        <!-- Dynamic Teasing Dialogue Toast -->
-        <div id="dodgeToast" class="dodge-toast"></div>
-
-        <!-- Interactive Choice Arena -->
-        <div class="choice-arena" id="choiceArena">
-          <!-- Yes Button (Warm, Glowing, Radiant) -->
-          <button id="yesBtn" class="btn-radiant-yes">
-            <span class="btn-glow-aura"></span>
-            <span class="btn-sparkle-layer"></span>
-            <span class="btn-inner">
-              <span class="btn-flower-symbol">🌸</span>
-              <span class="btn-yes-label">Yes, with all my heart!</span>
-              <span class="btn-star-symbol">✨</span>
-            </span>
-          </button>
-
-          <!-- No Button (Playfully floats like a weightless bubble, never gets lost!) -->
-          <button id="noBtn" class="btn-weightless-no">
-            <span class="btn-inner">
-              <span class="no-emoji-icon">🙈</span>
-              <span class="no-label-text">No</span>
-            </span>
-          </button>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- =========================================================================
-         CHAPTER 3: Grand Acceptance & Celebration Screen
-         (Replaced basic shower button with "Our Promise Capsule" & "Save Keepsake")
-         ========================================================================= -->
-    <section id="celebrationStage" class="stage-section">
-      <div class="celebration-masterpiece">
-        
-        <div class="victory-ribbon">🌸 The Start of Something Beautiful 🌸</div>
-        <h1 class="victory-title">
-          Yaaayyy! <span class="sparkle-dance">🎉✨</span>
-        </h1>
-        <p class="victory-subtitle">
-          The stars in our sky just aligned. You just made this the happiest day in the universe!
-        </p>
-
-        <!-- Aesthetic Memory Keepsake Card (Tilted Polaroid) -->
-        <div class="keepsake-polaroid" id="keepsakeCard">
-          <div class="polaroid-pin-icon">📌</div>
-          <div class="polaroid-inner-photo">
-            <div class="photo-constellation">
-              <span class="constellation-star c-star1">⭐</span>
-              <span class="constellation-line"></span>
-              <span class="constellation-star c-star2">⭐</span>
-            </div>
-            <div class="polaroid-handwritten-note">
-              "Two souls, one shared sky. Hand in hand through every gentle breeze, every quiet night, and every golden sunrise ahead."
-            </div>
-            <div class="polaroid-seal">
-              <span class="seal-icon">🌸</span>
-              <span class="seal-text">Official Best Decision Ever</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- BESPOKE FEATURE 1: Our Little Promise Capsule -->
-        <div class="promise-capsule-section">
-          <div class="capsule-header">
-            <span class="capsule-icon">🎁</span>
-            <h3 class="capsule-title">Four Promises Just For You</h3>
-          </div>
+      <!-- Celebratory Dancing Mascot SVG -->
+      <div class="mascot-box happy-wrap">
+        <svg class="dancing-bunny" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="80" cy="148" rx="45" ry="6" fill="rgba(255, 182, 193, 0.3)" />
+          <!-- Wiggling Ears -->
+          <path d="M55 70 C42 30 25 12 40 6 C54 0 62 32 62 70 Z" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
+          <path d="M105 70 C118 30 135 12 120 6 C106 0 98 32 98 70 Z" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
           
-          <div class="promise-grid">
-            <div class="promise-card">
-              <div class="promise-badge">🍦 Treat Pass</div>
-              <h4 class="promise-name">Midnight Sweet Runs</h4>
-              <p class="promise-detail">Ice creams, warm treats, and sweet snacks whenever you have a craving.</p>
-            </div>
+          <ellipse cx="80" cy="114" rx="44" ry="36" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
+          <ellipse cx="80" cy="80" rx="42" ry="34" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
 
-            <div class="promise-card">
-              <div class="promise-badge">🎧 Curated</div>
-              <h4 class="promise-name">Cozy Chill Playlists</h4>
-              <p class="promise-detail">Handpicked songs to listen to together during rainy days and quiet drives.</p>
-            </div>
+          <!-- Super Blush -->
+          <ellipse cx="56" cy="88" rx="9" ry="6" fill="#FFAEC0" opacity="0.8" />
+          <ellipse cx="104" cy="88" rx="9" ry="6" fill="#FFAEC0" opacity="0.8" />
 
-            <div class="promise-card">
-              <div class="promise-badge">🧸 Comfort</div>
-              <h4 class="promise-name">A Safe, Warm Haven</h4>
-              <p class="promise-detail">A space where you can let down your guard and always be 100% yourself.</p>
-            </div>
+          <!-- Happy Curved Eyes (^ . ^) -->
+          <path d="M58 80 Q64 74 70 80" stroke="#4B3B47" stroke-width="2.8" stroke-linecap="round" fill="none" />
+          <path d="M90 80 Q96 74 102 80" stroke="#4B3B47" stroke-width="2.8" stroke-linecap="round" fill="none" />
+          
+          <!-- Smile -->
+          <path d="M75 87 Q80 97 85 87 Z" fill="#FF8DA1" stroke="#4B3B47" stroke-width="1.8" />
 
-            <div class="promise-card">
-              <div class="promise-badge">⭐ Forever</div>
-              <h4 class="promise-name">Infinite Smiles</h4>
-              <p class="promise-detail">Guaranteed daily chuckles, gentle reassurance, and warmth through all seasons.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- BESPOKE FEATURE 2: Interactive Celestial Magic -->
-        <div class="celebration-tools">
-          <button id="shootingStarBtn" class="btn-special-action">
-            <span class="action-icon">💫</span>
-            <span>Make a Wish Under the Stars</span>
-          </button>
-          <button id="replayBtn" class="btn-subtle-replay">
-            <span>Play again 🙈</span>
-          </button>
-        </div>
-
-        <div class="dedication-signature">
-          Crafted with care, starry dreams, and gentle thoughts ✨🌸
-        </div>
-
+          <!-- Bouquet of cute flowers -->
+          <circle cx="70" cy="98" r="8" fill="#FFC6FF" />
+          <circle cx="70" cy="98" r="3.5" fill="#FFFFFC" />
+          <circle cx="90" cy="98" r="8" fill="#FFDEE9" />
+          <circle cx="90" cy="98" r="3.5" fill="#FFE599" />
+          <circle cx="80" cy="92" r="8" fill="#BEE1E6" />
+          <circle cx="80" cy="92" r="3.5" fill="#FFFFFC" />
+        </svg>
       </div>
-    </section>
+
+      <!-- Sweet Memory Polaroid -->
+      <div class="polaroid-box">
+        <div class="polaroid-pin">📌</div>
+        <p class="polaroid-quote">
+          "Two stars, one shared sky. Hand in hand through every sunrise, every quiet night, and every season ahead — till the very end."
+        </p>
+        <div class="polaroid-stamp">#HandInHandForever 🌸💫</div>
+      </div>
+
+      <!-- Simple Action -->
+      <div class="action-wrap">
+        <button id="replayBtn" class="btn-replay">
+          <span>Play again 🙈</span>
+        </button>
+      </div>
+
+    </div>
 
   </main>
-
-  <!-- Interactive Cursor Stardust Sparkle -->
-  <div id="stardustCursor" class="stardust-cursor"></div>
 
   <script src="script.js"></script>
 </body>
