@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Tiny Question For You ✨🌸</title>
+  <!-- Google Fonts: Quicksand & Fredoka for cozy, rounded, ultra-cute aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&family=Sacramento&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Fullscreen dynamic canvas for aesthetic flowers, stars & fairy sparkles -->
+  <canvas id="magicCanvas"></canvas>
+
+  <!-- Living Eternal Garden Layer (Vines & Blooming Flowers at bottom) -->
+  <div class="living-garden" id="livingGarden">
+    <svg class="garden-svg" viewBox="0 0 1440 220" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Soft misty garden hill -->
+      <path d="M0 160 Q360 110 720 140 T1440 120 L1440 220 L0 220 Z" fill="url(#gardenMist)" opacity="0.7" />
+      <path d="M0 180 Q420 140 860 170 T1440 150 L1440 220 L0 220 Z" fill="url(#gardenBase)" opacity="0.9" />
+
+      <!-- Intertwined Everlasting Vines (Left Side) -->
+      <g class="garden-vines vine-left">
+        <path class="stem stem-1" d="M100 220 C110 180 90 140 120 100 C140 75 180 80 195 55" stroke="#92C5A0" stroke-width="3.5" stroke-linecap="round" fill="none" />
+        <path class="stem stem-2" d="M125 220 C120 175 145 135 130 95 C115 65 145 50 160 30" stroke="#7EBA8C" stroke-width="3" stroke-linecap="round" fill="none" />
+        
+        <!-- Leaves -->
+        <ellipse cx="106" cy="155" rx="10" ry="5" fill="#A7DAB4" transform="rotate(-35 106 155)" />
+        <ellipse cx="134" cy="120" rx="9" ry="4.5" fill="#A7DAB4" transform="rotate(30 134 120)" />
+        <ellipse cx="152" cy="72" rx="11" ry="5" fill="#A7DAB4" transform="rotate(-20 152 72)" />
+        
+        <!-- Blooming Blossoms on Left Vine -->
+        <g class="blooming-flower blossom-1" transform="translate(195, 55)">
+          <circle cx="0" cy="0" r="14" fill="#FFCCD7" />
+          <circle cx="-7" cy="-7" r="9" fill="#FFAEC0" />
+          <circle cx="7" cy="-7" r="9" fill="#FFAEC0" />
+          <circle cx="7" cy="7" r="9" fill="#FFAEC0" />
+          <circle cx="-7" cy="7" r="9" fill="#FFAEC0" />
+          <circle cx="0" cy="0" r="6" fill="#FFF275" />
+        </g>
+        <g class="blooming-flower blossom-2" transform="translate(160, 30)">
+          <circle cx="0" cy="0" r="11" fill="#FFDEE9" />
+          <circle cx="0" cy="-6" r="6" fill="#FFC6FF" />
+          <circle cx="6" cy="0" r="6" fill="#FFC6FF" />
+          <circle cx="0" cy="6" r="6" fill="#FFC6FF" />
+          <circle cx="-6" cy="0" r="6" fill="#FFC6FF" />
+          <circle cx="0" cy="0" r="4" fill="#FFE599" />
+        </g>
+      </g>
+
+      <!-- Intertwined Everlasting Vines (Right Side) -->
+      <g class="garden-vines vine-right">
+        <path class="stem stem-3" d="M1340 220 C1330 180 1350 140 1320 100 C1300 75 1260 80 1245 55" stroke="#92C5A0" stroke-width="3.5" stroke-linecap="round" fill="none" />
+        <path class="stem stem-4" d="M1315 220 C1320 175 1295 135 1310 95 C1325 65 1295 50 1280 30" stroke="#7EBA8C" stroke-width="3" stroke-linecap="round" fill="none" />
+        
+        <!-- Leaves -->
+        <ellipse cx="1334" cy="155" rx="10" ry="5" fill="#A7DAB4" transform="rotate(35 1334 155)" />
+        <ellipse cx="1306" cy="120" rx="9" ry="4.5" fill="#A7DAB4" transform="rotate(-30 1306 120)" />
+        <ellipse cx="1288" cy="72" rx="11" ry="5" fill="#A7DAB4" transform="rotate(20 1288 72)" />
+        
+        <!-- Blooming Blossoms on Right Vine -->
+        <g class="blooming-flower blossom-3" transform="translate(1245, 55)">
+          <circle cx="0" cy="0" r="14" fill="#FFCCD7" />
+          <circle cx="-7" cy="-7" r="9" fill="#FFAEC0" />
+          <circle cx="7" cy="-7" r="9" fill="#FFAEC0" />
+          <circle cx="7" cy="7" r="9" fill="#FFAEC0" />
+          <circle cx="-7" cy="7" r="9" fill="#FFAEC0" />
+          <circle cx="0" cy="0" r="6" fill="#FFF275" />
+        </g>
+        <g class="blooming-flower blossom-4" transform="translate(1280, 30)">
+          <circle cx="0" cy="0" r="11" fill="#FFDEE9" />
+          <circle cx="0" cy="-6" r="6" fill="#FFC6FF" />
+          <circle cx="6" cy="0" r="6" fill="#FFC6FF" />
+          <circle cx="0" cy="6" r="6" fill="#FFC6FF" />
+          <circle cx="-6" cy="0" r="6" fill="#FFC6FF" />
+          <circle cx="0" cy="0" r="4" fill="#FFE599" />
+        </g>
+      </g>
+
+      <!-- Center Blooming Bed -->
+      <g class="center-flowers">
+        <circle cx="500" cy="180" r="8" fill="#FFC6FF" opacity="0.85" />
+        <circle cx="500" cy="180" r="3" fill="#FFE599" />
+        <circle cx="620" cy="170" r="10" fill="#FFB4D6" opacity="0.85" />
+        <circle cx="620" cy="170" r="4" fill="#FFFFF0" />
+        <circle cx="720" cy="165" r="12" fill="#FFCCD7" opacity="0.9" />
+        <circle cx="720" cy="165" r="5" fill="#FFE599" />
+        <circle cx="820" cy="172" r="10" fill="#BEE1E6" opacity="0.85" />
+        <circle cx="820" cy="172" r="4" fill="#FFE599" />
+        <circle cx="940" cy="180" r="8" fill="#FFC6FF" opacity="0.85" />
+        <circle cx="940" cy="180" r="3" fill="#FFE599" />
+      </g>
+
+      <defs>
+        <linearGradient id="gardenMist" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFE4ED" stop-opacity="0.6" />
+          <stop offset="100%" stop-color="#EBF8EE" stop-opacity="0.9" />
+        </linearGradient>
+        <linearGradient id="gardenBase" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#D7F3DF" stop-opacity="0.8" />
+          <stop offset="100%" stop-color="#C5E8D0" stop-opacity="0.95" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Ambient dreamy light halos -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
+  <!-- Top bar controls & Aesthetic Music Bar -->
+  <header class="top-nav">
+    <div class="pill-badge">
+      <span class="sparkle-icon">✨</span>
+      <span class="badge-text">a sweet little thought for today</span>
+      <span class="sparkle-icon">🌸</span>
+    </div>
+
+    <!-- Aesthetic YouTube Music Player Widget -->
+    <div class="music-player-widget" id="musicPlayerWidget">
+      <div class="vinyl-disc" id="vinylDisc" title="Click to play our song">
+        <div class="vinyl-groove"></div>
+        <div class="vinyl-center">🌸</div>
+      </div>
+      <div class="music-meta">
+        <span class="music-song-name">Our Melody ✨</span>
+        <span class="music-prompt" id="musicStatus">Tap to play music 🎶</span>
+      </div>
+      <button id="musicToggleBtn" class="play-pill-btn" aria-label="Play or pause music">
+        <span id="playIcon">▶</span>
+      </button>
+
+      <!-- Hidden YouTube iframe container -->
+      <div id="ytPlayerContainer" style="position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;">
+        <div id="ytPlayer"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Proposal Container -->
+  <main class="main-wrapper">
+
+    <!-- STAGE 1: The Cute Proposal Card -->
+    <section id="proposalStage" class="stage-card active">
+      
+      <!-- Cute mascot illustration -->
+      <div class="mascot-container">
+        <div class="floating-bubble bubble-left">🌸</div>
+        <div class="floating-bubble bubble-right">⭐</div>
+        
+        <!-- Adorable Cozy Bunny Mascot SVG -->
+        <svg class="cozy-mascot" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="100" cy="188" rx="65" ry="9" fill="rgba(195, 160, 195, 0.2)" />
+          
+          <!-- Left Ear -->
+          <g class="mascot-ear ear-left">
+            <path d="M72 90 C62 45 48 20 62 14 C76 8 82 45 80 90 Z" fill="#FFF8F5" stroke="#F4C7D3" stroke-width="3" />
+            <path d="M70 82 C64 52 56 32 63 26 C70 20 74 48 73 82 Z" fill="#FFCCD7" opacity="0.8" />
+          </g>
+          
+          <!-- Right Ear -->
+          <g class="mascot-ear ear-right">
+            <path d="M128 90 C138 45 152 20 138 14 C124 8 118 45 120 90 Z" fill="#FFF8F5" stroke="#F4C7D3" stroke-width="3" />
+            <path d="M130 82 C136 52 144 32 137 26 C130 20 126 48 127 82 Z" fill="#FFCCD7" opacity="0.8" />
+          </g>
+
+          <!-- Bunny Body -->
+          <ellipse cx="100" cy="140" rx="55" ry="48" fill="#FFF8F5" stroke="#F4C7D3" stroke-width="3" />
+          <ellipse cx="100" cy="144" rx="36" ry="30" fill="#FFFFFF" opacity="0.9" />
+
+          <!-- Bunny Head -->
+          <ellipse cx="100" cy="100" rx="52" ry="44" fill="#FFF8F5" stroke="#F4C7D3" stroke-width="3" />
+
+          <!-- Cheeks blush -->
+          <ellipse class="blush" cx="72" cy="110" rx="11" ry="7" fill="#FFAEC0" opacity="0.65" />
+          <ellipse class="blush" cx="128" cy="110" rx="11" ry="7" fill="#FFAEC0" opacity="0.65" />
+
+          <!-- Sparkly Happy Eyes -->
+          <g class="mascot-eyes">
+            <circle cx="80" cy="98" r="6.5" fill="#4B3B47" />
+            <circle cx="78" cy="95.5" r="2.2" fill="#FFFFFF" />
+            <circle cx="82" cy="100" r="1.2" fill="#FFFFFF" />
+
+            <circle cx="120" cy="98" r="6.5" fill="#4B3B47" />
+            <circle cx="118" cy="95.5" r="2.2" fill="#FFFFFF" />
+            <circle cx="122" cy="100" r="1.2" fill="#FFFFFF" />
+          </g>
+
+          <!-- Little Nose & Mouth -->
+          <ellipse cx="100" cy="105" rx="3.5" ry="2.5" fill="#FFAEC0" />
+          <path d="M96 109 Q100 113 100 109 Q100 113 104 109" stroke="#4B3B47" stroke-width="2.2" stroke-linecap="round" fill="none" />
+
+          <!-- Tiny Paw holding a blooming flower -->
+          <g class="mascot-flower">
+            <path d="M110 142 Q115 130 110 118" stroke="#88C496" stroke-width="3" stroke-linecap="round" fill="none" />
+            <ellipse cx="116" cy="132" rx="4.5" ry="2.5" fill="#A8DCB3" transform="rotate(-30 116 132)" />
+            <g transform="translate(108, 115) scale(0.9)">
+              <circle cx="0" cy="-6" r="5" fill="#FFDEE9" />
+              <circle cx="6" cy="-2" r="5" fill="#FFDEE9" />
+              <circle cx="4" cy="5" r="5" fill="#FFDEE9" />
+              <circle cx="-4" cy="5" r="5" fill="#FFDEE9" />
+              <circle cx="-6" cy="-2" r="5" fill="#FFDEE9" />
+              <circle cx="0" cy="0" r="4.5" fill="#FFE599" />
+            </g>
+          </g>
+
+          <!-- Cute Paws -->
+          <ellipse cx="80" cy="138" rx="8" ry="6" fill="#FFF8F5" stroke="#F4C7D3" stroke-width="2.5" />
+          <ellipse cx="108" cy="134" rx="8" ry="6" fill="#FFF8F5" stroke="#F4C7D3" stroke-width="2.5" />
+          
+          <!-- Little Feet -->
+          <ellipse cx="78" cy="178" rx="14" ry="9" fill="#FFF8F5" stroke="#F4C7D3" stroke-width="2.5" />
+          <ellipse cx="122" cy="178" rx="14" ry="9" fill="#FFF8F5" stroke="#F4C7D3" stroke-width="2.5" />
+        </svg>
+      </div>
+
+      <!-- Wholesome Heartwarming Headline -->
+      <div class="tagline-chip">A gentle note from someone who smiles thinking of you</div>
+      <h1 class="proposal-title">
+        Hey you... <span class="wave-hand">🌸</span>
+      </h1>
+      
+      <p class="proposal-text">
+        Every ordinary day feels softer, brighter, and a hundred times sweeter whenever you are around.
+      </p>
+
+      <div class="question-box">
+        <span class="star-accent accent-left">✨</span>
+        <h2 class="question-heading">
+          Will you be my favorite person to make cozy memories with?
+        </h2>
+        <span class="star-accent accent-right">✨</span>
+
+        <p class="symbolic-note">
+          🌸 Two stars in the same sky, blooming side by side through every season, till the very end. ✨
+        </p>
+      </div>
+
+      <!-- Dynamic Escape Toast (appears when No button dodges!) -->
+      <div id="dodgeToast" class="dodge-toast"></div>
+
+      <!-- Action Buttons Container (Keeps No in full view hovering gently!) -->
+      <div class="button-arena" id="buttonArena">
+        <!-- Yes Button: Radiant, glows, blooms flowers & stars -->
+        <button id="yesBtn" class="btn-primary">
+          <span class="btn-glow"></span>
+          <span class="btn-particles"></span>
+          <span class="btn-content">
+            <span class="btn-emoji">🌸</span>
+            <span class="btn-text">Yes, of course!</span>
+            <span class="btn-sparkle">✨</span>
+          </span>
+        </button>
+
+        <!-- No Button: Gently hovers and glides away playfully, never getting lost! -->
+        <button id="noBtn" class="btn-secondary hovering-pill">
+          <span class="btn-content">
+            <span class="no-emoji">🙈</span>
+            <span class="no-text">No</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="hint-caption">
+        <span class="pulsing-heart">🌱</span> Hover on <strong style="color:#FF6087;">Yes</strong> to watch the garden bloom...
+      </div>
+
+    </section>
+
+    <!-- STAGE 2: Grand Acceptance Celebration Screen -->
+    <section id="celebrationStage" class="stage-card celebration-card">
+      
+      <div class="celebration-header">
+        <div class="celebration-badge">🌸 Together Through Every Season 🌸</div>
+        <h1 class="celebration-title">
+          Yaaayyy! <span class="dance-emoji">🎉✨</span>
+        </h1>
+        <p class="celebration-subtitle">
+          You just made the whole universe bloom with endless flowers and stars!
+        </p>
+      </div>
+
+      <!-- Celebratory Dancing Mascot SVG -->
+      <div class="celebration-mascot-wrapper">
+        <div class="halo-ring"></div>
+        <svg class="happy-bunny" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="100" cy="185" rx="60" ry="8" fill="rgba(255, 182, 193, 0.3)" />
+          
+          <!-- Happy wiggling ears -->
+          <g class="wiggle-ear-l">
+            <path d="M70 85 C55 35 35 15 52 8 C68 1 78 40 78 85 Z" fill="#FFF9F6" stroke="#F4C7D3" stroke-width="3" />
+            <path d="M68 76 C56 42 45 22 55 17 C64 12 70 42 71 76 Z" fill="#FFCCD7" opacity="0.8" />
+          </g>
+          <g class="wiggle-ear-r">
+            <path d="M130 85 C145 35 165 15 148 8 C132 1 122 40 122 85 Z" fill="#FFF9F6" stroke="#F4C7D3" stroke-width="3" />
+            <path d="M132 76 C144 42 155 22 145 17 C136 12 130 42 129 76 Z" fill="#FFCCD7" opacity="0.8" />
+          </g>
+
+          <!-- Body -->
+          <ellipse cx="100" cy="138" rx="54" ry="46" fill="#FFF9F6" stroke="#F4C7D3" stroke-width="3" />
+          <ellipse cx="100" cy="96" rx="52" ry="42" fill="#FFF9F6" stroke="#F4C7D3" stroke-width="3" />
+
+          <!-- Super blush cheeks -->
+          <ellipse cx="70" cy="106" rx="12" ry="8" fill="#FFAEC0" opacity="0.8" />
+          <ellipse cx="130" cy="106" rx="12" ry="8" fill="#FFAEC0" opacity="0.8" />
+
+          <!-- Happy Curved Eyes (^ . ^) -->
+          <path d="M72 96 Q80 88 88 96" stroke="#4B3B47" stroke-width="3.5" stroke-linecap="round" fill="none" />
+          <path d="M112 96 Q120 88 128 96" stroke="#4B3B47" stroke-width="3.5" stroke-linecap="round" fill="none" />
+
+          <!-- Nose and wide open happy smile -->
+          <ellipse cx="100" cy="102" rx="3.5" ry="2.5" fill="#FFAEC0" />
+          <path d="M93 105 Q100 118 107 105 Z" fill="#FF8DA1" stroke="#4B3B47" stroke-width="2" />
+
+          <!-- Bouquet of cute flowers held high -->
+          <g class="bouquet">
+            <path d="M90 140 L100 120 L110 140" stroke="#88C496" stroke-width="4" stroke-linecap="round" />
+            <circle cx="88" cy="115" r="9" fill="#FFC6FF" />
+            <circle cx="88" cy="115" r="4" fill="#FFFFFC" />
+            <circle cx="112" cy="115" r="9" fill="#FFDEE9" />
+            <circle cx="112" cy="115" r="4" fill="#FFE599" />
+            <circle cx="100" cy="108" r="10" fill="#BEE1E6" />
+            <circle cx="100" cy="108" r="4.5" fill="#FFFFFC" />
+            <circle cx="100" cy="125" r="8" fill="#FFE599" />
+            <circle cx="100" cy="125" r="3.5" fill="#FFAEC0" />
+            <path d="M96 132 Q90 128 92 136 Q96 136 100 134 Q104 136 108 136 Q110 128 104 132 Z" fill="#FF8DA1" />
+          </g>
+
+          <ellipse cx="65" cy="125" rx="9" ry="7" fill="#FFF9F6" stroke="#F4C7D3" stroke-width="2.5" transform="rotate(-25 65 125)" />
+          <ellipse cx="135" cy="125" rx="9" ry="7" fill="#FFF9F6" stroke="#F4C7D3" stroke-width="2.5" transform="rotate(25 135 125)" />
+        </svg>
+      </div>
+
+      <!-- Aesthetic Polaroid / Eternal Bloom Memory Card -->
+      <div class="polaroid-card">
+        <div class="polaroid-pin">📌</div>
+        <div class="polaroid-inner">
+          <div class="polaroid-art">
+            <span class="doodle doodle-star">⭐</span>
+            <span class="doodle doodle-flower">🌸</span>
+            <span class="doodle doodle-sparkle">✨</span>
+            <div class="polaroid-quote">
+              "Like two stars in the same sky and two flowers rooted in the same soil... blooming together through every sunrise, every gentle breeze, and every season ahead — side by side, till the very end."
+            </div>
+            <div class="polaroid-tag">#LivingTogetherTillTheEnd 🌸✨</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Perks / Promises Pills -->
+      <div class="perks-grid">
+        <div class="perk-item">
+          <span class="perk-icon">🌸</span>
+          <span class="perk-title">Endless Blooms</span>
+          <span class="perk-desc">A garden of smiles that never fades</span>
+        </div>
+        <div class="perk-item">
+          <span class="perk-icon">⭐</span>
+          <span class="perk-title">Twin Stars</span>
+          <span class="perk-desc">Always shining together in the night sky</span>
+        </div>
+        <div class="perk-item">
+          <span class="perk-icon">🍰</span>
+          <span class="perk-title">Sweet Moments</span>
+          <span class="perk-desc">Desserts, warm treats & cozy chats</span>
+        </div>
+        <div class="perk-item">
+          <span class="perk-icon">🧸</span>
+          <span class="perk-title">Forever Comfort</span>
+          <span class="perk-desc">A safe hand to hold, always and forever</span>
+        </div>
+      </div>
+
+      <!-- Celebration Actions -->
+      <div class="celebration-actions">
+        <button id="sendFlowerBtn" class="btn-primary celebratory-btn">
+          <span class="btn-content">
+            <span>🌸 Shower More Flowers & Stars! ✨</span>
+          </span>
+        </button>
+        <button id="replayBtn" class="btn-outline">
+          <span>Play again 🙈</span>
+        </button>
+      </div>
+
+      <div class="credit-stamp">
+        Two stars, one sky. Hand in hand till the very end ✨🌸
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Interactive cursor sparkle follower -->
+  <div id="cursorSparkle" class="cursor-glow"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
