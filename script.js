@@ -4,19 +4,19 @@
  * - Official Love Pass & Interactive Flip Love Notes
  * - Playful Unclickable "No" Button (Grows Yes button!)
  * - Dynamic Blossoming Flowers & Stars Canvas
- * - Floating Hearts on Every Tap
+ * - Special Gift: Milky Way Galaxy & Blooming Botanical Garden (Rose, Poppy, Lotus!)
  */
 
 (function () {
   'use strict';
 
-  // --- 1. Bulletproof HTML5 Audio Playback (song.m4a) at 45% Volume ---
+  // --- 1. Bulletproof Local Audio Playback (song.m4a) at 45% Volume ---
   const bgAudio = document.getElementById('bgAudio');
   let hasMusicStarted = false;
 
   function startAudio() {
     if (!bgAudio || hasMusicStarted) return;
-    bgAudio.volume = 0.45; // Medium, pleasant volume
+    bgAudio.volume = 0.45; // Medium, comfortable volume
     const playPromise = bgAudio.play();
     if (playPromise !== undefined) {
       playPromise
@@ -85,7 +85,7 @@
     } catch (e) {}
   }
 
-  // --- 2. Dynamic Blossoming Flowers & Stars Canvas ---
+  // --- 2. Dynamic Blossoming Flowers & Stars Canvas (With Galaxy Mode) ---
   const canvas = document.getElementById('magicCanvas');
   const ctx = canvas.getContext('2d');
 
@@ -98,11 +98,16 @@
   });
 
   const particles = [];
+  const shootingStars = [];
   let isYesHovered = false;
   let isCelebration = false;
+  let isGalaxyMode = false;
 
   const pastelColors = [
     '#FFAEC0', '#FFCCD7', '#FFDEE9', '#FFE599', '#D8F3DC', '#FFC6FF', '#BEE1E6'
+  ];
+  const cosmicColors = [
+    '#FFFFFF', '#FFE082', '#FF80AB', '#B388FF', '#80D8FF', '#EA80FC'
   ];
 
   class FlowerStarParticle {
@@ -113,7 +118,8 @@
     reset(isBurst = false, x = null, y = null) {
       this.isBurst = isBurst;
       this.type = Math.random() < 0.6 ? 'flower' : 'star';
-      this.color = pastelColors[Math.floor(Math.random() * pastelColors.length)];
+      const colors = isGalaxyMode ? cosmicColors : pastelColors;
+      this.color = colors[Math.floor(Math.random() * colors.length)];
       this.radius = Math.random() * 8 + (this.type === 'star' ? 4 : 7);
       this.rotation = Math.random() * Math.PI * 2;
       this.rotSpeed = (Math.random() - 0.5) * 0.035;
@@ -139,7 +145,7 @@
     }
 
     update() {
-      const speedMult = isYesHovered ? 2.5 : isCelebration ? 1.6 : 1.0;
+      const speedMult = isYesHovered ? 2.5 : isCelebration ? 1.6 : isGalaxyMode ? 1.2 : 1.0;
       this.rotation += this.rotSpeed * speedMult;
 
       if (this.isBurst) {
@@ -182,13 +188,13 @@
         }
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.38, 0, Math.PI * 2);
-        ctx.fillStyle = '#FFE599';
+        ctx.fillStyle = isGalaxyMode ? '#FFF9C4' : '#FFE599';
         ctx.fill();
       } else {
         const r = this.radius;
-        ctx.fillStyle = '#FFE082';
-        ctx.shadowColor = '#FFAEC0';
-        ctx.shadowBlur = 8;
+        ctx.fillStyle = this.color;
+        ctx.shadowColor = isGalaxyMode ? '#80D8FF' : '#FFAEC0';
+        ctx.shadowBlur = isGalaxyMode ? 12 : 8;
         ctx.beginPath();
         for (let i = 0; i < 4; i++) {
           const outer = (i * Math.PI) / 2;
@@ -201,6 +207,44 @@
         ctx.shadowBlur = 0;
       }
 
+      ctx.restore();
+    }
+  }
+
+  // Shooting star in galaxy mode
+  class ShootingStar {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * width * 0.8;
+      this.y = Math.random() * (height * 0.4);
+      this.length = Math.random() * 80 + 50;
+      this.speed = Math.random() * 9 + 10;
+      this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.2;
+      this.alpha = 1;
+      this.decay = Math.random() * 0.02 + 0.015;
+    }
+    update() {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      this.alpha -= this.decay;
+      return this.alpha > 0;
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, this.alpha);
+      const tailX = this.x - Math.cos(this.angle) * this.length;
+      const tailY = this.y - Math.sin(this.angle) * this.length;
+      const grad = ctx.createLinearGradient(tailX, tailY, this.x, this.y);
+      grad.addColorStop(0, 'rgba(255, 224, 130, 0)');
+      grad.addColorStop(1, '#FFFFFF');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(this.x, this.y);
+      ctx.stroke();
       ctx.restore();
     }
   }
@@ -240,6 +284,19 @@
     if (isYesHovered && t - lastHover > 50) {
       spawnHoverFlowers();
       lastHover = t;
+    }
+
+    // Shooting stars in galaxy mode
+    if (isGalaxyMode) {
+      if (Math.random() < 0.008) shootingStars.push(new ShootingStar());
+      for (let i = shootingStars.length - 1; i >= 0; i--) {
+        const star = shootingStars[i];
+        if (!star.update()) {
+          shootingStars.splice(i, 1);
+        } else {
+          star.draw();
+        }
+      }
     }
 
     for (let i = particles.length - 1; i >= 0; i--) {
@@ -339,6 +396,7 @@
   // --- 4. "Yes" Button Acceptance & Celebration ---
   const proposalCard = document.getElementById('proposalCard');
   const celebrationCard = document.getElementById('celebrationCard');
+  const galaxyStage = document.getElementById('galaxyStage');
 
   if (yesBtn) {
     yesBtn.addEventListener('mouseenter', function () {
@@ -368,9 +426,76 @@
     });
   }
 
-  // --- 5. Floating Hearts on Every Tap ---
+  // --- 5. THE SURPRISE GIFT: MILKY WAY GALAXY & BLOOMING SEEDS ---
+  const openGiftBtn = document.getElementById('openGiftBtn');
+  const closeGalaxyBtn = document.getElementById('closeGalaxyBtn');
+
+  if (openGiftBtn) {
+    openGiftBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      playSparkleChime();
+
+      // Fade out celebration card
+      if (celebrationCard) celebrationCard.classList.remove('active');
+
+      // Enable galaxy mode & cosmic background
+      isGalaxyMode = true;
+      document.body.classList.add('galaxy-mode');
+
+      // Burst of cosmic stars
+      triggerBurst(100, width / 2, height / 2);
+
+      // Show galaxy stage & trigger blooming flowers
+      setTimeout(function () {
+        if (galaxyStage) {
+          galaxyStage.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          // Reset and replay SVG flower growth animations
+          const stems = galaxyStage.querySelectorAll('.growing-stem');
+          stems.forEach(stem => {
+            stem.style.animation = 'none';
+            stem.offsetHeight; /* trigger reflow */
+            stem.style.animation = '';
+          });
+
+          const blooms = galaxyStage.querySelectorAll('.flower-bloom, .blooming-leaf');
+          blooms.forEach(bloom => {
+            bloom.style.animation = 'none';
+            bloom.offsetHeight; /* trigger reflow */
+            bloom.style.animation = '';
+          });
+        }
+      }, 400);
+    });
+  }
+
+  if (closeGalaxyBtn) {
+    closeGalaxyBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      playPopChime();
+
+      isGalaxyMode = false;
+      document.body.classList.remove('galaxy-mode');
+
+      if (galaxyStage) galaxyStage.classList.remove('active');
+
+      setTimeout(function () {
+        if (celebrationCard) {
+          celebrationCard.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 300);
+    });
+  }
+
+  // --- 6. Floating Hearts on Every Tap (Non-blocking) ---
   const heartEmojis = ['💖', '💕', '🌸', '✨', '🧁', '⭐'];
-  window.addEventListener('pointerdown', function (e) {
+  window.addEventListener('click', function (e) {
+    // Only spawn heart if not clicking on interactive buttons or cards directly
+    const target = e.target;
+    if (target.closest('button') || target.closest('.love-note')) return;
+
     playSparkleChime();
     const heart = document.createElement('div');
     heart.className = 'floating-heart';
@@ -381,7 +506,7 @@
     setTimeout(() => heart.remove(), 1200);
   });
 
-  // --- 6. Replay Button ---
+  // --- 7. Replay Button ---
   const replayBtn = document.getElementById('replayBtn');
   if (replayBtn) {
     replayBtn.addEventListener('click', function (e) {
