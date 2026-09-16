@@ -7,8 +7,8 @@
   --font-body: 'Quicksand', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   --color-bg-base: #FFF6F8;
-  --color-card-bg: rgba(255, 255, 255, 0.9);
-  --color-card-border: rgba(255, 210, 225, 0.85);
+  --color-card-bg: rgba(255, 255, 255, 0.92);
+  --color-card-border: rgba(255, 210, 225, 0.88);
 
   --color-primary: #FF5E85;
   --color-primary-hover: #FF4773;
@@ -18,7 +18,7 @@
   --color-text-sub: #7A697B;
   --color-text-light: #A493A6;
 
-  --shadow-soft: 0 16px 40px rgba(235, 170, 195, 0.28);
+  --shadow-soft: 0 16px 45px rgba(235, 170, 195, 0.28);
   --shadow-glow: 0 0 30px rgba(255, 170, 195, 0.35);
 
   --radius-card: 32px;
@@ -86,7 +86,7 @@ html, body {
   position: relative;
   z-index: 10;
   min-height: 100vh;
-  min-height: 100dvh; /* For mobile dynamic viewports */
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,7 +97,7 @@ html, body {
 .card {
   display: none;
   width: 100%;
-  max-width: 450px;
+  max-width: 460px;
   background: var(--color-card-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -120,14 +120,14 @@ html, body {
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Mascot Animation */
+/* Mascot Box */
 .mascot-box {
   width: 125px;
   height: 125px;
   margin: 0 auto 10px;
 }
 
-.cute-bunny, .dancing-bunny {
+.cute-bunny {
   width: 100%;
   height: 100%;
   animation: bunnyBreathe 3s ease-in-out infinite alternate;
@@ -292,10 +292,10 @@ html, body {
 }
 
 /* ==========================================================================
-   Celebration Screen
+   CELEBRATION SCREEN: Preety, Cute & Beautiful
    ========================================================================== */
 .celebration-card {
-  padding: 36px 24px 30px;
+  padding: 34px 20px 28px;
 }
 
 .badge-celebrate {
@@ -307,7 +307,7 @@ html, body {
   font-weight: 600;
   padding: 5px 18px;
   border-radius: var(--radius-pill);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .celebration-title {
@@ -315,62 +315,192 @@ html, body {
   font-size: 2.3rem;
   font-weight: 700;
   color: #FF4773;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .celebration-text {
-  font-size: 0.98rem;
-  line-height: 1.55;
+  font-size: 0.96rem;
+  line-height: 1.5;
   color: var(--color-text-sub);
   margin-bottom: 18px;
 }
 
-.happy-wrap {
-  margin-bottom: 18px;
-}
-
-.dancing-bunny {
-  animation: happyDance 0.85s ease-in-out infinite alternate;
-}
-
-@keyframes happyDance {
-  0% { transform: translateY(0) rotate(-4deg); }
-  100% { transform: translateY(-10px) rotate(5deg); }
-}
-
-/* Sweet Polaroid */
-.polaroid-box {
-  background: #FFFFFF;
-  border: 1px solid #FFE4ED;
-  border-radius: 12px;
-  padding: 18px 16px;
-  box-shadow: 0 8px 24px rgba(220, 170, 190, 0.3);
-  transform: rotate(-1.5deg);
-  margin: 0 auto 20px;
+/* FEATURE 1: Official Love Pass Card */
+.love-pass-card {
+  background: linear-gradient(135deg, #FFF9FA 0%, #FFF3F6 100%);
+  border: 2px solid #FFD6E3;
+  border-radius: 20px;
+  padding: 16px 14px 18px;
+  box-shadow: 0 10px 25px rgba(255, 175, 200, 0.3);
+  margin-bottom: 22px;
   position: relative;
+  overflow: hidden;
 }
 
-.polaroid-pin {
+.pass-sparkle-tr {
   position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 8px;
+  right: 10px;
   font-size: 1.2rem;
 }
 
-.polaroid-quote {
+.pass-sparkle-bl {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  font-size: 1.2rem;
+}
+
+.pass-ribbon {
+  display: inline-block;
+  background: linear-gradient(90deg, #FF6B8B 0%, #FF4773 100%);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  box-shadow: 0 3px 10px rgba(255, 85, 125, 0.3);
+}
+
+.pass-art-scene {
+  width: 100%;
+  height: 80px;
+  margin: 0 auto 8px;
+}
+
+.couple-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.pass-details {
+  text-align: center;
+}
+
+.pass-quote {
   font-size: 0.94rem;
   font-style: italic;
-  color: #4C3C4A;
-  line-height: 1.55;
+  color: #4C3A48;
+  line-height: 1.5;
+  font-weight: 600;
   margin-bottom: 10px;
 }
 
-.polaroid-stamp {
+.pass-validity {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   font-family: var(--font-heading);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
+  color: #FF5E85;
+  font-weight: 600;
+}
+
+/* FEATURE 2: Interactive Flip Secret Notes */
+.secret-notes-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.heart-pulse {
+  font-size: 1.1rem;
+  animation: heartPulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes heartPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.25); }
+}
+
+.notes-title {
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #554452;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+/* 3D Flip Card Effect */
+.love-note {
+  height: 95px;
+  perspective: 600px;
+  cursor: pointer;
+}
+
+.note-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-style: preserve-3d;
+}
+
+.love-note.flipped .note-inner {
+  transform: rotateY(180deg);
+}
+
+.note-front, .note-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(240, 185, 205, 0.22);
+}
+
+.note-front {
+  background: #FFFFFF;
+  border: 1.5px solid #FFD6E3;
+}
+
+.note-front:hover {
+  border-color: #FFAEC0;
+  transform: translateY(-2px);
+}
+
+.envelope-stamp {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.note-tap-label {
+  font-family: var(--font-heading);
+  font-size: 0.74rem;
   font-weight: 600;
   color: #FF5E85;
+}
+
+.note-back {
+  background: linear-gradient(135deg, #FFEBF2 0%, #FFDCE7 100%);
+  border: 1.5px solid #FFAEC0;
+  transform: rotateY(180deg);
+  font-size: 0.74rem;
+  line-height: 1.35;
+  color: #4A3445;
+  font-weight: 600;
 }
 
 /* Action Wrap */
@@ -398,10 +528,25 @@ html, body {
   border-color: #FFAEC0;
 }
 
+/* Floating Hearts Tap Effect */
+.floating-heart {
+  position: fixed;
+  font-size: 1.4rem;
+  pointer-events: none;
+  z-index: 99999;
+  animation: floatHeartUp 1.2s ease-out forwards;
+}
+
+@keyframes floatHeartUp {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.6) rotate(0deg); }
+  50% { opacity: 0.9; transform: translate(-50%, -80px) scale(1.2) rotate(12deg); }
+  100% { opacity: 0; transform: translate(-50%, -150px) scale(1) rotate(-15deg); }
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 480px) {
   .card {
-    padding: 28px 18px 24px;
+    padding: 26px 16px 22px;
     border-radius: 26px;
   }
 
@@ -433,5 +578,18 @@ html, body {
 
   .celebration-title {
     font-size: 2rem;
+  }
+
+  .notes-grid {
+    gap: 6px;
+  }
+
+  .love-note {
+    height: 90px;
+  }
+
+  .note-back {
+    font-size: 0.68rem;
+    padding: 6px 4px;
   }
 }

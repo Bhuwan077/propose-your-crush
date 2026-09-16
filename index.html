@@ -15,14 +15,14 @@
   <!-- Fullscreen Dynamic Blossoming Flowers & Stars Canvas -->
   <canvas id="magicCanvas"></canvas>
 
-  <!-- Ambient Dreamy Pastel Orbs -->
+  <!-- Ambient Dreamy Pastel Glow Orbs -->
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
 
-  <!-- Hidden YouTube Background Music Player (Song: BqupBJ2NNNU, Volume: 45%) -->
-  <div id="ytContainer" style="position:fixed; width:1px; height:1px; opacity:0; pointer-events:none; left:-9999px;">
-    <div id="ytPlayer"></div>
-  </div>
+  <!-- Direct HTML5 Background Audio (Local song.m4a, 100% reliable, medium volume 45%) -->
+  <audio id="bgAudio" loop preload="auto">
+    <source src="song.m4a" type="audio/mp4" />
+  </audio>
 
   <main class="main-container">
 
@@ -32,7 +32,6 @@
       <!-- Adorable Cute Mascot SVG -->
       <div class="mascot-box">
         <svg class="cute-bunny" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Shadow -->
           <ellipse cx="80" cy="150" rx="50" ry="7" fill="rgba(240, 180, 205, 0.25)" />
           
           <!-- Ears -->
@@ -47,7 +46,6 @@
 
           <!-- Body -->
           <ellipse cx="80" cy="116" rx="46" ry="38" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
-          <!-- Head -->
           <ellipse cx="80" cy="84" rx="44" ry="36" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
 
           <!-- Blush Cheeks -->
@@ -110,57 +108,116 @@
 
     </div>
 
-    <!-- CELEBRATION CARD: Clean, Heart-Melting & Instant -->
+    <!-- CELEBRATION CARD: Incredibly Pretty, Cute & Beautiful -->
     <div id="celebrationCard" class="card celebration-card">
       
       <div class="badge-celebrate">🌸 Best Decision Ever! 🌸</div>
       <h1 class="celebration-title">Yaaayyy! 🎉✨</h1>
       <p class="celebration-text">
-        You just made the entire universe sparkle! Can't wait for all our sweet memories, smiles, and adventures together.
+        You just made everything in the universe 1000% more magical!
       </p>
 
-      <!-- Celebratory Dancing Mascot SVG -->
-      <div class="mascot-box happy-wrap">
-        <svg class="dancing-bunny" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="80" cy="148" rx="45" ry="6" fill="rgba(255, 182, 193, 0.3)" />
-          <!-- Wiggling Ears -->
-          <path d="M55 70 C42 30 25 12 40 6 C54 0 62 32 62 70 Z" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
-          <path d="M105 70 C118 30 135 12 120 6 C106 0 98 32 98 70 Z" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
-          
-          <ellipse cx="80" cy="114" rx="44" ry="36" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
-          <ellipse cx="80" cy="80" rx="42" ry="34" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2.5" />
+      <!-- PRETTY FEATURE 1: Official Love Pass Keepsake -->
+      <div class="love-pass-card">
+        <div class="pass-sparkle-tr">✨</div>
+        <div class="pass-sparkle-bl">🌸</div>
+        <div class="pass-ribbon">
+          <span>💖 OFFICIAL CUTEST COUPLE PASS 💖</span>
+        </div>
+        
+        <!-- Two Cute Bunnies Sharing a Sweet Strawberry Drink -->
+        <div class="pass-art-scene">
+          <svg viewBox="0 0 200 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="couple-svg">
+            <!-- Bunny 1 (Left) -->
+            <ellipse cx="65" cy="55" rx="22" ry="19" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2" />
+            <ellipse cx="65" cy="35" rx="20" ry="17" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2" />
+            <ellipse cx="56" cy="18" rx="4" ry="12" fill="#FFCCD7" stroke="#F4C7D3" stroke-width="1.5" transform="rotate(-15 56 18)" />
+            <ellipse cx="74" cy="18" rx="4" ry="12" fill="#FFCCD7" stroke="#F4C7D3" stroke-width="1.5" transform="rotate(5 74 18)" />
+            <ellipse cx="55" cy="40" rx="4" ry="2.5" fill="#FFAEC0" />
+            <ellipse cx="75" cy="40" rx="4" ry="2.5" fill="#FFAEC0" />
+            <path d="M60 33 Q64 30 68 33" stroke="#4B3B47" stroke-width="2" stroke-linecap="round" fill="none" />
+            
+            <!-- Bunny 2 (Right) -->
+            <ellipse cx="135" cy="55" rx="22" ry="19" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2" />
+            <ellipse cx="135" cy="35" rx="20" ry="17" fill="#FFF9F7" stroke="#F4C7D3" stroke-width="2" />
+            <ellipse cx="126" cy="18" rx="4" ry="12" fill="#FFCCD7" stroke="#F4C7D3" stroke-width="1.5" transform="rotate(-5 126 18)" />
+            <ellipse cx="144" cy="18" rx="4" ry="12" fill="#FFCCD7" stroke="#F4C7D3" stroke-width="1.5" transform="rotate(15 144 18)" />
+            <ellipse cx="125" cy="40" rx="4" ry="2.5" fill="#FFAEC0" />
+            <ellipse cx="145" cy="40" rx="4" ry="2.5" fill="#FFAEC0" />
+            <path d="M132 33 Q136 30 140 33" stroke="#4B3B47" stroke-width="2" stroke-linecap="round" fill="none" />
 
-          <!-- Super Blush -->
-          <ellipse cx="56" cy="88" rx="9" ry="6" fill="#FFAEC0" opacity="0.8" />
-          <ellipse cx="104" cy="88" rx="9" ry="6" fill="#FFAEC0" opacity="0.8" />
+            <!-- Strawberry Milkshake with 2 Straws in Center -->
+            <path d="M93 50 L95 72 Q100 75 105 72 L107 50 Z" fill="#FFAEC0" stroke="#FF8DA1" stroke-width="1.5" />
+            <ellipse cx="100" cy="50" rx="7" ry="2.5" fill="#FFFFFF" />
+            <!-- Two Straws -->
+            <line x1="97" y1="50" x2="80" y2="36" stroke="#FF5E85" stroke-width="2" stroke-linecap="round" />
+            <line x1="103" y1="50" x2="120" y2="36" stroke="#FF5E85" stroke-width="2" stroke-linecap="round" />
+            <!-- Floating Heart between them -->
+            <path d="M100 24 C97 20 92 21 92 25 C92 29 100 34 100 34 C100 34 108 29 108 25 C108 21 103 20 100 24 Z" fill="#FF4773" />
+          </svg>
+        </div>
 
-          <!-- Happy Curved Eyes (^ . ^) -->
-          <path d="M58 80 Q64 74 70 80" stroke="#4B3B47" stroke-width="2.8" stroke-linecap="round" fill="none" />
-          <path d="M90 80 Q96 74 102 80" stroke="#4B3B47" stroke-width="2.8" stroke-linecap="round" fill="none" />
-          
-          <!-- Smile -->
-          <path d="M75 87 Q80 97 85 87 Z" fill="#FF8DA1" stroke="#4B3B47" stroke-width="1.8" />
-
-          <!-- Bouquet of cute flowers -->
-          <circle cx="70" cy="98" r="8" fill="#FFC6FF" />
-          <circle cx="70" cy="98" r="3.5" fill="#FFFFFC" />
-          <circle cx="90" cy="98" r="8" fill="#FFDEE9" />
-          <circle cx="90" cy="98" r="3.5" fill="#FFE599" />
-          <circle cx="80" cy="92" r="8" fill="#BEE1E6" />
-          <circle cx="80" cy="92" r="3.5" fill="#FFFFFC" />
-        </svg>
+        <div class="pass-details">
+          <div class="pass-quote">
+            "Valid for: Unlimited warm hugs, midnight desserts, gentle reassurance, and holding hands through every season ahead."
+          </div>
+          <div class="pass-validity">
+            <span>📅 Valid: From Today, Forever & Always</span>
+            <span>⭐ Status: 100% Non-Refundable</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Sweet Memory Polaroid -->
-      <div class="polaroid-box">
-        <div class="polaroid-pin">📌</div>
-        <p class="polaroid-quote">
-          "Two stars, one shared sky. Hand in hand through every sunrise, every quiet night, and every season ahead — till the very end."
-        </p>
-        <div class="polaroid-stamp">#HandInHandForever 🌸💫</div>
+      <!-- PRETTY FEATURE 2: Interactive Secret Love Notes -->
+      <div class="secret-notes-container">
+        <div class="notes-header">
+          <span class="heart-pulse">💌</span>
+          <span class="notes-title">Tap to reveal our little secrets:</span>
+        </div>
+
+        <div class="notes-grid">
+          <!-- Note 1 -->
+          <div class="love-note" onclick="this.classList.toggle('flipped')">
+            <div class="note-inner">
+              <div class="note-front">
+                <span class="envelope-stamp">🍦</span>
+                <span class="note-tap-label">Sweet Craving</span>
+              </div>
+              <div class="note-back">
+                Whenever you want dessert or ice cream, consider it done immediately! 🍨✨
+              </div>
+            </div>
+          </div>
+
+          <!-- Note 2 -->
+          <div class="love-note" onclick="this.classList.toggle('flipped')">
+            <div class="note-inner">
+              <div class="note-front">
+                <span class="envelope-stamp">🧸</span>
+                <span class="note-tap-label">Comfort Pass</span>
+              </div>
+              <div class="note-back">
+                A cozy, safe space where you can always be 100% yourself. 🌸💫
+              </div>
+            </div>
+          </div>
+
+          <!-- Note 3 -->
+          <div class="love-note" onclick="this.classList.toggle('flipped')">
+            <div class="note-inner">
+              <div class="note-front">
+                <span class="envelope-stamp">🎧</span>
+                <span class="note-tap-label">Our Songs</span>
+              </div>
+              <div class="note-back">
+                Curated playlists for quiet drives and cozy rainy afternoons together. 🎶💖
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Simple Action -->
+      <!-- Simple & Sweet Action -->
       <div class="action-wrap">
         <button id="replayBtn" class="btn-replay">
           <span>Play again 🙈</span>

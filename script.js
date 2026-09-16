@@ -1,76 +1,46 @@
 /**
  * Cute, Simple & Responsive Proposal Engine
- * - Automatic YouTube Music Stream (https://www.youtube.com/watch?v=BqupBJ2NNNU) at Medium Volume (45%)
- * - Playful, Unclickable "No" Button that Dodges on Hover/Touch and Grows the "Yes" Button
- * - Blossoming Flowers & Stars Canvas Simulation
+ * - Bulletproof HTML5 Local Audio (song.m4a) at Medium Volume (45%)
+ * - Official Love Pass & Interactive Flip Love Notes
+ * - Playful Unclickable "No" Button (Grows Yes button!)
+ * - Dynamic Blossoming Flowers & Stars Canvas
+ * - Floating Hearts on Every Tap
  */
 
 (function () {
   'use strict';
 
-  // --- 1. Background Music (BqupBJ2NNNU) at Medium Volume (45%) ---
-  const YOUTUBE_VIDEO_ID = 'BqupBJ2NNNU';
-  const MEDIUM_VOLUME = 45;
-
-  let ytPlayer = null;
-  let isYtReady = false;
+  // --- 1. Bulletproof HTML5 Audio Playback (song.m4a) at 45% Volume ---
+  const bgAudio = document.getElementById('bgAudio');
   let hasMusicStarted = false;
 
-  window.onYouTubeIframeAPIReady = function () {
-    ytPlayer = new YT.Player('ytPlayer', {
-      height: '180',
-      width: '180',
-      videoId: YOUTUBE_VIDEO_ID,
-      playerVars: {
-        autoplay: 1,
-        controls: 0,
-        disablekb: 1,
-        fs: 0,
-        loop: 1,
-        playlist: YOUTUBE_VIDEO_ID,
-        playsinline: 1,
-        rel: 0
-      },
-      events: {
-        onReady: function () {
-          isYtReady = true;
-          if (ytPlayer && ytPlayer.setVolume) {
-            ytPlayer.setVolume(MEDIUM_VOLUME);
-          }
-          tryStartMusic();
-        },
-        onStateChange: function (e) {
-          if (e.data === YT.PlayerState.PLAYING) {
-            hasMusicStarted = true;
-          }
-        }
-      }
-    });
-  };
-
-  const tag = document.createElement('script');
-  tag.src = 'https://www.youtube.com/iframe_api';
-  const firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-  function tryStartMusic() {
-    if (hasMusicStarted) return;
-    if (isYtReady && ytPlayer && ytPlayer.playVideo) {
-      try {
-        ytPlayer.setVolume(MEDIUM_VOLUME);
-        ytPlayer.playVideo();
-      } catch (e) {}
+  function startAudio() {
+    if (!bgAudio || hasMusicStarted) return;
+    bgAudio.volume = 0.45; // Medium, pleasant volume
+    const playPromise = bgAudio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          hasMusicStarted = true;
+        })
+        .catch(() => {
+          // Autoplay restricted by browser, will trigger on first user touch
+        });
     }
   }
 
-  // Ensure playback on first touch/click anywhere if browser blocked silent autoplay
-  function onFirstUserTouch() {
-    tryStartMusic();
-  }
-  window.addEventListener('click', onFirstUserTouch, { passive: true });
-  window.addEventListener('touchstart', onFirstUserTouch, { passive: true });
+  // Attempt autoplay immediately
+  startAudio();
 
-  // Web Audio chime for interactions
+  // Instant fallback: play audio on first user touch or click anywhere
+  function onFirstTouch() {
+    startAudio();
+  }
+  window.addEventListener('click', onFirstTouch, { passive: true });
+  window.addEventListener('touchstart', onFirstTouch, { passive: true });
+  window.addEventListener('pointerdown', onFirstTouch, { passive: true });
+
+  // Web Audio chime synthesizer for sound effects
   let audioCtx = null;
   function playPopChime() {
     try {
@@ -83,7 +53,7 @@
       const gain = audioCtx.createGain();
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(420, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.1);
+      osc.frequency.exponentialRampToValueAtTime(720, audioCtx.currentTime + 0.1);
       gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
       osc.connect(gain);
@@ -115,7 +85,7 @@
     } catch (e) {}
   }
 
-  // --- 2. Blossoming Flowers & Stars Canvas ---
+  // --- 2. Dynamic Blossoming Flowers & Stars Canvas ---
   const canvas = document.getElementById('magicCanvas');
   const ctx = canvas.getContext('2d');
 
@@ -200,7 +170,6 @@
       ctx.globalAlpha = Math.max(0.1, Math.min(1, this.alpha));
 
       if (this.type === 'flower') {
-        // 5-petal Sakura flower
         const r = this.radius;
         ctx.fillStyle = this.color;
         for (let i = 0; i < 5; i++) {
@@ -211,13 +180,11 @@
           ctx.arc(px, py, r * 0.5, 0, Math.PI * 2);
           ctx.fill();
         }
-        // Center
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.38, 0, Math.PI * 2);
         ctx.fillStyle = '#FFE599';
         ctx.fill();
       } else {
-        // 4-point golden star
         const r = this.radius;
         ctx.fillStyle = '#FFE082';
         ctx.shadowColor = '#FFAEC0';
@@ -308,14 +275,12 @@
 
   let dodgeCount = 0;
 
-  function dodgeNoButton(e) {
+  function dodgeNoButton() {
     if (isCelebration) return;
     playPopChime();
     dodgeCount++;
 
-    // Calculate a playful dodge that stays comfortably within screen/card
     const dir = (dodgeCount % 2 === 1) ? 1 : -1;
-    // On mobile screens, keep offsets tighter so it never gets clipped
     const isMobile = window.innerWidth <= 480;
     const maxOffset = isMobile ? 55 : 85;
     const dx = dir * (Math.floor(Math.random() * 25) + (maxOffset - 25));
@@ -323,7 +288,6 @@
 
     noBtn.style.transform = `translate(${dx}px, ${dy}px)`;
 
-    // Cute toast excuse
     if (toast) {
       toast.textContent = excuses[(dodgeCount - 1) % excuses.length];
       toast.classList.add('show');
@@ -335,30 +299,26 @@
       yesBtn.style.transform = `scale(${yesScale})`;
     }
 
-    // Spawn 5 mini sparkles
     const rect = noBtn.getBoundingClientRect();
     triggerBurst(5, rect.left + rect.width / 2, rect.top + rect.height / 2);
   }
 
   if (noBtn) {
-    // Desktop hover
     noBtn.addEventListener('mouseenter', dodgeNoButton);
     noBtn.addEventListener('mouseover', dodgeNoButton);
-    
-    // Mobile touch (dodges immediately before click can register!)
+
     noBtn.addEventListener('touchstart', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      dodgeNoButton(e);
+      dodgeNoButton();
     }, { passive: false });
 
     noBtn.addEventListener('click', function (e) {
       e.preventDefault();
-      dodgeNoButton(e);
+      dodgeNoButton();
     });
   }
 
-  // Desktop proximity dodge
   let lastProximity = 0;
   window.addEventListener('mousemove', function (e) {
     if (!noBtn || isCelebration) return;
@@ -372,7 +332,7 @@
 
     if (dist < 60) {
       lastProximity = now;
-      dodgeNoButton(e);
+      dodgeNoButton();
     }
   });
 
@@ -393,13 +353,11 @@
     yesBtn.addEventListener('click', function () {
       isCelebration = true;
       isYesHovered = false;
-      tryStartMusic();
+      startAudio();
 
-      // Grand celebration burst
       const rect = yesBtn.getBoundingClientRect();
       triggerBurst(160, rect.left + rect.width / 2, rect.top + rect.height / 2);
 
-      // Transition smoothly
       if (proposalCard && celebrationCard) {
         proposalCard.classList.remove('active');
         setTimeout(function () {
@@ -410,24 +368,37 @@
     });
   }
 
-  // Replay button
+  // --- 5. Floating Hearts on Every Tap ---
+  const heartEmojis = ['💖', '💕', '🌸', '✨', '🧁', '⭐'];
+  window.addEventListener('pointerdown', function (e) {
+    playSparkleChime();
+    const heart = document.createElement('div');
+    heart.className = 'floating-heart';
+    heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+    heart.style.left = e.clientX + 'px';
+    heart.style.top = e.clientY + 'px';
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 1200);
+  });
+
+  // --- 6. Replay Button ---
   const replayBtn = document.getElementById('replayBtn');
   if (replayBtn) {
-    replayBtn.addEventListener('click', function () {
+    replayBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
       isCelebration = false;
       isYesHovered = false;
       dodgeCount = 0;
 
-      if (noBtn) {
-        noBtn.style.transform = '';
-      }
-      if (yesBtn) {
-        yesBtn.style.transform = '';
-      }
+      if (noBtn) noBtn.style.transform = '';
+      if (yesBtn) yesBtn.style.transform = '';
       if (toast) {
         toast.textContent = '';
         toast.classList.remove('show');
       }
+
+      // Close flipped notes
+      document.querySelectorAll('.love-note.flipped').forEach(n => n.classList.remove('flipped'));
 
       if (celebrationCard && proposalCard) {
         celebrationCard.classList.remove('active');
