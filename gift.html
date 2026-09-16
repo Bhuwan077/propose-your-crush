@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>A Secret Universe For You ✨🌌</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="gift.css" />
+</head>
+<body>
+
+  <!-- Background Music (Continues from proposal page, volume 45%) -->
+  <audio id="bgAudio" loop preload="auto">
+    <source src="song.m4a" type="audio/mp4" />
+  </audio>
+
+  <!-- Fullscreen Milky Way Galaxy Canvas -->
+  <canvas id="galaxyCanvas"></canvas>
+
+  <!-- Cosmic Milky Way Nebulae Glow Layers -->
+  <div class="milkyway-overlay">
+    <div class="nebula nebula-purple"></div>
+    <div class="nebula nebula-pink"></div>
+    <div class="nebula nebula-blue"></div>
+    <div class="stardust-band"></div>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <main class="galaxy-wrapper">
+
+    <!-- Cosmic Header (Fades in slowly as lights turn on) -->
+    <div class="galaxy-header">
+      <div class="constellation-pill">✨ Across Millions of Stars ✨</div>
+      <h1 class="galaxy-headline">My Whole Universe Blooms For You</h1>
+    </div>
+
+    <!-- The Magical Botanical Garden: Seeds sprouting into Rose, Poppy & Lotus -->
+    <div class="botanical-stage">
+      <svg class="botanical-svg" viewBox="0 0 500 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="roseGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FF527B" />
+            <stop offset="65%" stop-color="#E81B56" />
+            <stop offset="100%" stop-color="#880E34" />
+          </radialGradient>
+          <radialGradient id="poppyGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFA87D" />
+            <stop offset="60%" stop-color="#FF4343" />
+            <stop offset="100%" stop-color="#B71C1C" />
+          </radialGradient>
+          <radialGradient id="lotusGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="45%" stop-color="#FFD6E8" />
+            <stop offset="80%" stop-color="#FF7FA8" />
+            <stop offset="100%" stop-color="#C2185B" />
+          </radialGradient>
+          <filter id="flowerGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
+        <!-- Starlight Ground Plane -->
+        <ellipse cx="250" cy="370" rx="160" ry="10" fill="rgba(255, 230, 240, 0.12)" filter="blur(8px)" />
+
+        <!-- Center Stem: Celestial Lotus -->
+        <path id="stemCenter" class="growing-stem" d="M250 365 Q250 280 250 185" stroke="#79D896" stroke-width="4.5" stroke-linecap="round" />
+        
+        <!-- Left Stem: Velvet Romantic Rose -->
+        <path id="stemLeft" class="growing-stem" d="M250 365 Q220 270 150 175" stroke="#68C585" stroke-width="4" stroke-linecap="round" />
+        
+        <!-- Right Stem: Vibrant Papery Poppy (Puppy) -->
+        <path id="stemRight" class="growing-stem" d="M250 365 Q280 270 350 175" stroke="#68C585" stroke-width="4" stroke-linecap="round" />
+
+        <!-- Bioluminescent Unfurling Leaves -->
+        <g class="sprouting-leaf leaf-l" transform="translate(190, 250) rotate(-40)">
+          <ellipse cx="0" cy="0" rx="18" ry="8" fill="#58B876" opacity="0.85" />
+          <path d="M-18 0 L18 0" stroke="#A7F3C4" stroke-width="1.2" />
+        </g>
+        <g class="sprouting-leaf leaf-r" transform="translate(310, 250) rotate(40)">
+          <ellipse cx="0" cy="0" rx="18" ry="8" fill="#58B876" opacity="0.85" />
+          <path d="M-18 0 L18 0" stroke="#A7F3C4" stroke-width="1.2" />
+        </g>
+        <g class="sprouting-leaf leaf-c" transform="translate(250, 265) rotate(-15)">
+          <ellipse cx="0" cy="0" rx="16" ry="7" fill="#69C887" opacity="0.85" />
+        </g>
+
+        <!-- =============================================================
+             FLOWER 1: VELVET ROSE (Sprouts from seed and blooms on left)
+             ============================================================= -->
+        <g id="flowerRose" class="blooming-flower flower-rose" transform="translate(150, 170)">
+          <!-- Calyx Leaves -->
+          <path d="M-12 10 Q0 22 12 10 Q0 15 -12 10 Z" fill="#58B876" />
+          <!-- Layered Spiraling Petals -->
+          <path class="rose-petal p-r1" d="M-30 -10 C-35 15 0 35 25 15 C35 -5 10 -30 -10 -30 C-25 -30 -30 -10 -30 -10 Z" fill="url(#roseGrad)" filter="url(#flowerGlow)" />
+          <path class="rose-petal p-r2" d="M20 -20 C35 0 15 30 -15 25 C-30 10 -20 -15 0 -25 C15 -25 20 -20 20 -20 Z" fill="url(#roseGrad)" />
+          <path class="rose-petal p-r3" d="M-15 -10 C-20 8 5 20 18 8 C22 -5 5 -18 -8 -15 Z" fill="#FF7597" />
+          <circle cx="0" cy="0" r="9" fill="#FF4071" />
+          <circle cx="0" cy="0" r="4" fill="#FFE082" filter="drop-shadow(0 0 8px #FFE082)" />
+        </g>
+
+        <!-- =============================================================
+             FLOWER 2: VIBRANT POPPY (PUPPY) (Blooms on right)
+             ============================================================= -->
+        <g id="flowerPoppy" class="blooming-flower flower-poppy" transform="translate(350, 170)">
+          <!-- Calyx Leaves -->
+          <path d="M-10 12 Q0 22 10 12 Q0 15 -10 12 Z" fill="#58B876" />
+          <!-- 4 Papery Petals Opening Wide -->
+          <ellipse class="poppy-petal p-p1" cx="-16" cy="0" rx="24" ry="19" fill="url(#poppyGrad)" transform="rotate(-20 -16 0)" filter="url(#flowerGlow)" />
+          <ellipse class="poppy-petal p-p2" cx="16" cy="0" rx="24" ry="19" fill="url(#poppyGrad)" transform="rotate(20 16 0)" filter="url(#flowerGlow)" />
+          <ellipse class="poppy-petal p-p3" cx="0" cy="-16" rx="21" ry="24" fill="url(#poppyGrad)" />
+          <ellipse class="poppy-petal p-p4" cx="0" cy="14" rx="21" ry="24" fill="url(#poppyGrad)" />
+          <!-- Dark Starry Poppy Core with Golden Stamens -->
+          <circle cx="0" cy="0" r="10" fill="#2E1B26" />
+          <circle cx="0" cy="0" r="7" fill="#6D4C41" />
+          <circle cx="0" cy="0" r="3.5" fill="#FFE082" filter="drop-shadow(0 0 8px #FFD54F)" />
+        </g>
+
+        <!-- =============================================================
+             FLOWER 3: LUMINOUS CELESTIAL LOTUS (Center Blossom)
+             ============================================================= -->
+        <g id="flowerLotus" class="blooming-flower flower-lotus" transform="translate(250, 175)">
+          <!-- Outer Lotus Petals Radiating Light -->
+          <path class="lotus-petal p-l1" d="M-42 0 C-42 -38 0 -52 0 -52 C0 -52 42 -38 42 0 C30 25 -30 25 -42 0 Z" fill="url(#lotusGrad)" filter="url(#flowerGlow)" />
+          <path class="lotus-petal p-l2" d="M-58 -5 C-52 -38 -20 -44 -20 -44 C-20 -44 10 -22 10 15 C-20 20 -48 10 -58 -5 Z" fill="url(#lotusGrad)" />
+          <path class="lotus-petal p-l3" d="M58 -5 C52 -38 20 -44 20 -44 C20 -44 -10 -22 -10 15 C20 20 48 10 58 -5 Z" fill="url(#lotusGrad)" />
+          
+          <!-- Inner Petals Unfolding -->
+          <path class="lotus-petal p-l4" d="M-28 -8 C-20 -40 0 -48 0 -48 C0 -48 20 -40 28 -8 C18 16 -18 16 -28 -8 Z" fill="#FFF0F5" />
+          <path class="lotus-petal p-l5" d="M-15 -14 C-10 -36 0 -42 0 -42 C0 -42 10 -36 15 -14 C8 8 -8 8 -15 -14 Z" fill="#FFEBF2" />
+          
+          <!-- Golden Glowing Core -->
+          <ellipse cx="0" cy="-6" rx="11" ry="8" fill="#FFE082" filter="drop-shadow(0 0 14px #FFD54F)" />
+          <circle cx="0" cy="-6" r="5" fill="#FFFFFF" />
+        </g>
+      </svg>
+    </div>
+
+    <!-- Heartwarming Inscription (Illuminates in Soft Golden Light) -->
+    <div class="galaxy-dedication">
+      <p class="dedication-quote">
+        "Across millions of stars and endless galaxies...<br />
+        my heart will always choose you. 🌸✨"
+      </p>
+      <div class="dedication-sub">
+        Thank you for saying Yes. To infinity and beyond, together. 💫
+      </div>
+    </div>
+
+    <!-- Return Link -->
+    <div class="galaxy-footer">
+      <a href="index.html" class="btn-return">
+        <span>🌸 Back to our cute proposal</span>
+      </a>
+    </div>
+
+  </main>
+
+  <script src="gift.js"></script>
+</body>
+</html>

@@ -1,10 +1,10 @@
 /**
  * Cute, Simple & Responsive Proposal Engine
  * - Bulletproof HTML5 Local Audio (song.m4a) at Medium Volume (45%)
+ * - Stops audio when phone screen is powered off or locked (visibilitychange API)
  * - Official Love Pass & Interactive Flip Love Notes
  * - Playful Unclickable "No" Button (Grows Yes button!)
- * - Dynamic Blossoming Flowers & Stars Canvas
- * - Special Gift: Milky Way Galaxy & Blooming Botanical Garden (Rose, Poppy, Lotus!)
+ * - Dedicated Gift Page Navigation (gift.html)
  */
 
 (function () {
@@ -13,10 +13,18 @@
   // --- 1. Bulletproof Local Audio Playback (song.m4a) at 45% Volume ---
   const bgAudio = document.getElementById('bgAudio');
   let hasMusicStarted = false;
+  let wasPlayingBeforeLock = true;
 
   function startAudio() {
-    if (!bgAudio || hasMusicStarted) return;
+    if (!bgAudio) return;
     bgAudio.volume = 0.45; // Medium, comfortable volume
+
+    // Resume from saved position if returning from gift.html
+    const savedTime = sessionStorage.getItem('songTime');
+    if (savedTime && bgAudio.currentTime === 0) {
+      bgAudio.currentTime = parseFloat(savedTime);
+    }
+
     const playPromise = bgAudio.play();
     if (playPromise !== undefined) {
       playPromise
@@ -24,7 +32,7 @@
           hasMusicStarted = true;
         })
         .catch(() => {
-          // Autoplay restricted by browser, will trigger on first user touch
+          // Handled on first user touch
         });
     }
   }
@@ -32,13 +40,33 @@
   // Attempt autoplay immediately
   startAudio();
 
-  // Instant fallback: play audio on first user touch or click anywhere
+  // Play audio on first user touch/click anywhere if browser restricted silent start
   function onFirstTouch() {
     startAudio();
   }
   window.addEventListener('click', onFirstTouch, { passive: true });
   window.addEventListener('touchstart', onFirstTouch, { passive: true });
   window.addEventListener('pointerdown', onFirstTouch, { passive: true });
+
+  // IMPORTANT: Stop the song when phone screen powers off or locks!
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden || document.visibilityState === 'hidden') {
+      // Phone screen powered off / locked or tab switched
+      if (bgAudio && !bgAudio.paused) {
+        bgAudio.pause();
+        wasPlayingBeforeLock = true;
+      }
+    } else if (document.visibilityState === 'visible') {
+      // Phone unlocked / screen turned on
+      if (bgAudio && wasPlayingBeforeLock) {
+        bgAudio.play().catch(() => {});
+      }
+    }
+  });
+
+  window.addEventListener('pagehide', function () {
+    if (bgAudio) bgAudio.pause();
+  });
 
   // Web Audio chime synthesizer for sound effects
   let audioCtx = null;
@@ -85,7 +113,7 @@
     } catch (e) {}
   }
 
-  // --- 2. Dynamic Blossoming Flowers & Stars Canvas (With Galaxy Mode) ---
+  // --- 2. Dynamic Blossoming Flowers & Stars Canvas ---
   const canvas = document.getElementById('magicCanvas');
   const ctx = canvas.getContext('2d');
 
@@ -98,16 +126,11 @@
   });
 
   const particles = [];
-  const shootingStars = [];
   let isYesHovered = false;
   let isCelebration = false;
-  let isGalaxyMode = false;
 
   const pastelColors = [
     '#FFAEC0', '#FFCCD7', '#FFDEE9', '#FFE599', '#D8F3DC', '#FFC6FF', '#BEE1E6'
-  ];
-  const cosmicColors = [
-    '#FFFFFF', '#FFE082', '#FF80AB', '#B388FF', '#80D8FF', '#EA80FC'
   ];
 
   class FlowerStarParticle {
@@ -118,8 +141,7 @@
     reset(isBurst = false, x = null, y = null) {
       this.isBurst = isBurst;
       this.type = Math.random() < 0.6 ? 'flower' : 'star';
-      const colors = isGalaxyMode ? cosmicColors : pastelColors;
-      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.color = pastelColors[Math.floor(Math.random() * pastelColors.length)];
       this.radius = Math.random() * 8 + (this.type === 'star' ? 4 : 7);
       this.rotation = Math.random() * Math.PI * 2;
       this.rotSpeed = (Math.random() - 0.5) * 0.035;
@@ -145,7 +167,7 @@
     }
 
     update() {
-      const speedMult = isYesHovered ? 2.5 : isCelebration ? 1.6 : isGalaxyMode ? 1.2 : 1.0;
+      const speedMult = isYesHovered ? 2.5 : isCelebration ? 1.6 : 1.0;
       this.rotation += this.rotSpeed * speedMult;
 
       if (this.isBurst) {
@@ -188,13 +210,13 @@
         }
         ctx.beginPath();
         ctx.arc(0, 0, r * 0.38, 0, Math.PI * 2);
-        ctx.fillStyle = isGalaxyMode ? '#FFF9C4' : '#FFE599';
+        ctx.fillStyle = '#FFE599';
         ctx.fill();
       } else {
         const r = this.radius;
-        ctx.fillStyle = this.color;
-        ctx.shadowColor = isGalaxyMode ? '#80D8FF' : '#FFAEC0';
-        ctx.shadowBlur = isGalaxyMode ? 12 : 8;
+        ctx.fillStyle = '#FFE082';
+        ctx.shadowColor = '#FFAEC0';
+        ctx.shadowBlur = 8;
         ctx.beginPath();
         for (let i = 0; i < 4; i++) {
           const outer = (i * Math.PI) / 2;
@@ -207,44 +229,6 @@
         ctx.shadowBlur = 0;
       }
 
-      ctx.restore();
-    }
-  }
-
-  // Shooting star in galaxy mode
-  class ShootingStar {
-    constructor() {
-      this.reset();
-    }
-    reset() {
-      this.x = Math.random() * width * 0.8;
-      this.y = Math.random() * (height * 0.4);
-      this.length = Math.random() * 80 + 50;
-      this.speed = Math.random() * 9 + 10;
-      this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.2;
-      this.alpha = 1;
-      this.decay = Math.random() * 0.02 + 0.015;
-    }
-    update() {
-      this.x += Math.cos(this.angle) * this.speed;
-      this.y += Math.sin(this.angle) * this.speed;
-      this.alpha -= this.decay;
-      return this.alpha > 0;
-    }
-    draw() {
-      ctx.save();
-      ctx.globalAlpha = Math.max(0, this.alpha);
-      const tailX = this.x - Math.cos(this.angle) * this.length;
-      const tailY = this.y - Math.sin(this.angle) * this.length;
-      const grad = ctx.createLinearGradient(tailX, tailY, this.x, this.y);
-      grad.addColorStop(0, 'rgba(255, 224, 130, 0)');
-      grad.addColorStop(1, '#FFFFFF');
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(tailX, tailY);
-      ctx.lineTo(this.x, this.y);
-      ctx.stroke();
       ctx.restore();
     }
   }
@@ -284,19 +268,6 @@
     if (isYesHovered && t - lastHover > 50) {
       spawnHoverFlowers();
       lastHover = t;
-    }
-
-    // Shooting stars in galaxy mode
-    if (isGalaxyMode) {
-      if (Math.random() < 0.008) shootingStars.push(new ShootingStar());
-      for (let i = shootingStars.length - 1; i >= 0; i--) {
-        const star = shootingStars[i];
-        if (!star.update()) {
-          shootingStars.splice(i, 1);
-        } else {
-          star.draw();
-        }
-      }
     }
 
     for (let i = particles.length - 1; i >= 0; i--) {
@@ -396,7 +367,6 @@
   // --- 4. "Yes" Button Acceptance & Celebration ---
   const proposalCard = document.getElementById('proposalCard');
   const celebrationCard = document.getElementById('celebrationCard');
-  const galaxyStage = document.getElementById('galaxyStage');
 
   if (yesBtn) {
     yesBtn.addEventListener('mouseenter', function () {
@@ -426,75 +396,22 @@
     });
   }
 
-  // --- 5. THE SURPRISE GIFT: MILKY WAY GALAXY & BLOOMING SEEDS ---
+  // --- 5. Navigation to Dedicated Gift Page (gift.html) ---
   const openGiftBtn = document.getElementById('openGiftBtn');
-  const closeGalaxyBtn = document.getElementById('closeGalaxyBtn');
-
   if (openGiftBtn) {
-    openGiftBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      playSparkleChime();
-
-      // Fade out celebration card
-      if (celebrationCard) celebrationCard.classList.remove('active');
-
-      // Enable galaxy mode & cosmic background
-      isGalaxyMode = true;
-      document.body.classList.add('galaxy-mode');
-
-      // Burst of cosmic stars
-      triggerBurst(100, width / 2, height / 2);
-
-      // Show galaxy stage & trigger blooming flowers
-      setTimeout(function () {
-        if (galaxyStage) {
-          galaxyStage.classList.add('active');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-
-          // Reset and replay SVG flower growth animations
-          const stems = galaxyStage.querySelectorAll('.growing-stem');
-          stems.forEach(stem => {
-            stem.style.animation = 'none';
-            stem.offsetHeight; /* trigger reflow */
-            stem.style.animation = '';
-          });
-
-          const blooms = galaxyStage.querySelectorAll('.flower-bloom, .blooming-leaf');
-          blooms.forEach(bloom => {
-            bloom.style.animation = 'none';
-            bloom.offsetHeight; /* trigger reflow */
-            bloom.style.animation = '';
-          });
-        }
-      }, 400);
-    });
-  }
-
-  if (closeGalaxyBtn) {
-    closeGalaxyBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      playPopChime();
-
-      isGalaxyMode = false;
-      document.body.classList.remove('galaxy-mode');
-
-      if (galaxyStage) galaxyStage.classList.remove('active');
-
-      setTimeout(function () {
-        if (celebrationCard) {
-          celebrationCard.classList.add('active');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      }, 300);
+    openGiftBtn.addEventListener('click', function () {
+      // Save current song playback position so gift.html continues seamlessly!
+      if (bgAudio) {
+        sessionStorage.setItem('songTime', bgAudio.currentTime);
+      }
     });
   }
 
   // --- 6. Floating Hearts on Every Tap (Non-blocking) ---
   const heartEmojis = ['💖', '💕', '🌸', '✨', '🧁', '⭐'];
   window.addEventListener('click', function (e) {
-    // Only spawn heart if not clicking on interactive buttons or cards directly
     const target = e.target;
-    if (target.closest('button') || target.closest('.love-note')) return;
+    if (target.closest('button') || target.closest('a') || target.closest('.love-note')) return;
 
     playSparkleChime();
     const heart = document.createElement('div');
