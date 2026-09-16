@@ -1,34 +1,31 @@
 /**
- * Cute Aesthetic Proposal Website
- * - YouTube Music Player Integration (https://www.youtube.com/watch?v=6DJxr_GOiHc)
- * - Hovering Evasive "No" Button (glides and bobs gently, stays in clear view!)
- * - Breathtaking Flowers & Stars Canvas with "Twin Celestial Stars" & "Living Eternal Garden"
- * - Stage management for proposal & celebration
+ * Bespoke Romantic Proposal Experience
+ * - Automatic YouTube Music Stream (https://youtu.be/vBTcsTd2kF0) at Medium Volume (45%)
+ * - Chapter 1 (Wax-Sealed Letter) -> Chapter 2 (Proposal) -> Chapter 3 (Celebration & Promise Capsule)
+ * - Elevated 3D Fluttering Petals & Dynamic Shooting Stars Engine
+ * - Smooth Weightless Hovering "No" Button Physics
  */
 
 (function () {
   'use strict';
 
-  // --- 1. YouTube Player & Audio System ---
-  const YOUTUBE_VIDEO_ID = '6DJxr_GOiHc';
+  // --- 1. YouTube Background Music Stream (vBTcsTd2kF0) ---
+  const YOUTUBE_VIDEO_ID = 'vBTcsTd2kF0';
+  const TARGET_VOLUME = 45; // Medium, pleasant, non-intrusive sound
+
   let ytPlayer = null;
   let isYtReady = false;
-  let isPlaying = false;
-  let hasUserInteracted = false;
+  let hasMusicStarted = false;
 
-  const musicWidget = document.getElementById('musicPlayerWidget');
-  const playIcon = document.getElementById('playIcon');
-  const musicStatus = document.getElementById('musicStatus');
-  const vinylDisc = document.getElementById('vinylDisc');
+  const musicIndicator = document.getElementById('musicIndicator');
 
-  // Load YouTube IFrame Player API
   window.onYouTubeIframeAPIReady = function () {
     ytPlayer = new YT.Player('ytPlayer', {
       height: '180',
       width: '180',
       videoId: YOUTUBE_VIDEO_ID,
       playerVars: {
-        autoplay: 0,
+        autoplay: 1,
         controls: 0,
         disablekb: 1,
         fs: 0,
@@ -49,82 +46,41 @@
   const firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-  function onPlayerReady(event) {
+  function onPlayerReady() {
     isYtReady = true;
     if (ytPlayer && ytPlayer.setVolume) {
-      ytPlayer.setVolume(85);
+      ytPlayer.setVolume(TARGET_VOLUME);
     }
+    // Attempt auto-start immediately
+    tryStartMusic();
   }
 
   function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
-      setMusicPlayingUI(true);
-    } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-      setMusicPlayingUI(false);
+      hasMusicStarted = true;
+      if (musicIndicator) musicIndicator.classList.add('visible');
     }
   }
 
-  function setMusicPlayingUI(playing) {
-    isPlaying = playing;
-    if (musicWidget) {
-      if (playing) {
-        musicWidget.classList.add('playing');
-        if (playIcon) playIcon.textContent = '❚❚';
-        if (musicStatus) musicStatus.textContent = 'Now Playing 🎶';
-      } else {
-        musicWidget.classList.remove('playing');
-        if (playIcon) playIcon.textContent = '▶';
-        if (musicStatus) musicStatus.textContent = 'Tap to play music 🎶';
-      }
-    }
-  }
-
-  function startMusic() {
+  function tryStartMusic() {
+    if (hasMusicStarted) return;
     if (isYtReady && ytPlayer && ytPlayer.playVideo) {
       try {
+        ytPlayer.setVolume(TARGET_VOLUME);
         ytPlayer.playVideo();
-        setMusicPlayingUI(true);
-      } catch (e) {
-        playFallbackChime();
-      }
-    } else {
-      playFallbackChime();
+      } catch (e) {}
     }
   }
 
-  function toggleMusic() {
-    if (isYtReady && ytPlayer) {
-      if (isPlaying) {
-        ytPlayer.pauseVideo();
-        setMusicPlayingUI(false);
-      } else {
-        ytPlayer.playVideo();
-        setMusicPlayingUI(true);
-      }
-    } else {
-      playFallbackChime();
-    }
+  // Seamless trigger on any first touch, click, or key press
+  function onUserGesture() {
+    tryStartMusic();
   }
+  window.addEventListener('click', onUserGesture, { passive: true });
+  window.addEventListener('touchstart', onUserGesture, { passive: true });
+  window.addEventListener('pointerdown', onUserGesture, { passive: true });
 
-  // Auto-start music on first touch or click anywhere
-  function handleFirstInteraction() {
-    if (!hasUserInteracted) {
-      hasUserInteracted = true;
-      startMusic();
-    }
-  }
-  window.addEventListener('click', handleFirstInteraction, { once: true });
-  window.addEventListener('touchstart', handleFirstInteraction, { once: true });
-
-  if (musicWidget) {
-    musicWidget.addEventListener('click', (e) => {
-      e.stopPropagation();
-      hasUserInteracted = true;
-      toggleMusic();
-    });
-  }
-
-  // Web Audio chime fallback & sound effects
+  // Web Audio chime synthesizer for interaction sounds
   let audioCtx = null;
   function getAudioContext() {
     if (!audioCtx) {
@@ -139,31 +95,31 @@
     const ctx = getAudioContext();
     if (!ctx) return;
     try {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
       const notes = [659.25, 880, 987.77, 1174.66, 1318.51];
       const freq = notes[Math.floor(Math.random() * notes.length)];
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      gain.gain.setValueAtTime(0.06, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.6);
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start();
-      osc.stop(ctx.currentTime + 0.6);
+      osc.stop(ctx.currentTime + 0.5);
     } catch (e) {}
   }
 
-  function playPopSound() {
+  function playPopChime() {
     const ctx = getAudioContext();
     if (!ctx) return;
     try {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(360, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(580, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      osc.frequency.setValueAtTime(420, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(680, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -172,32 +128,9 @@
     } catch (e) {}
   }
 
-  function playFallbackChime() {
-    const ctx = getAudioContext();
-    if (!ctx) return;
-    try {
-      const notes = [523.25, 659.25, 783.99, 1046.50];
-      notes.forEach((freq, idx) => {
-        setTimeout(() => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime);
-          gain.gain.setValueAtTime(0.05, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.0);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start();
-          osc.stop(ctx.currentTime + 1.0);
-        }, idx * 120);
-      });
-    } catch (e) {}
-  }
-
-  // --- 2. The Living Garden & Canvas Particle Engine ---
+  // --- 2. Dynamic 3D Petal, Star & Shooting Star Canvas Engine ---
   const canvas = document.getElementById('magicCanvas');
   const ctx = canvas.getContext('2d');
-  const livingGarden = document.getElementById('livingGarden');
 
   let width = (canvas.width = window.innerWidth);
   let height = (canvas.height = window.innerHeight);
@@ -207,40 +140,39 @@
     height = canvas.height = window.innerHeight;
   });
 
-  const particles = [];
+  const petals = [];
+  const shootingStars = [];
   let isYesHovered = false;
-  let celebrationMode = false;
+  let isCelebration = false;
 
-  // Twin Celestial Stars ("living together till the end")
-  let twinStarAngle = 0;
-
-  // Soft romantic pastel palette
-  const petalColors = [
-    { fill: '#FFAEC0', border: '#FF8DA1' }, // Sakura blush
-    { fill: '#FFCCD7', border: '#FFAEC0' }, // Rose pink
-    { fill: '#FFDEE9', border: '#FFC6FF' }, // Soft lilac pink
-    { fill: '#FFF1C5', border: '#FFE599' }, // Warm butter
-    { fill: '#BEE1E6', border: '#A9D6E5' }, // Soft celestial blue
-    { fill: '#D8F3DC', border: '#B7E4C7' }  // Fresh spring mint
+  // Romantic Petal Color Palettes
+  const petalStyles = [
+    { fill: '#FFB8C6', stroke: '#FFA0B3' }, // Delicate Sakura
+    { fill: '#FFCCD7', stroke: '#FFB3C2' }, // Rose Blush
+    { fill: '#FFE4E9', stroke: '#FFCCD7' }, // Moonlight Petal
+    { fill: '#FFF1C5', stroke: '#FFE599' }, // Fairy Starlight
+    { fill: '#EADCF8', stroke: '#D8C5EE' }  // Twilight Lilac
   ];
 
-  class FlowerParticle {
+  class PetalParticle {
     constructor(isBurst = false, originX = null, originY = null) {
       this.reset(isBurst, originX, originY);
     }
 
     reset(isBurst = false, originX = null, originY = null) {
       this.isBurst = isBurst;
-      // 50% realistic Sakura/Rose blossoms, 35% Golden Stars, 15% floating Petals
-      const rand = Math.random();
-      this.kind = rand < 0.5 ? 'blossom' : rand < 0.85 ? 'star' : 'petal';
-      this.colorObj = petalColors[Math.floor(Math.random() * petalColors.length)];
-      this.radius = Math.random() * 8 + (this.kind === 'star' ? 5 : 7);
-      this.rotation = Math.random() * Math.PI * 2;
-      this.rotSpeed = (Math.random() - 0.5) * 0.035;
+      this.kind = Math.random() < 0.65 ? 'petal' : 'star';
+      this.style = petalStyles[Math.floor(Math.random() * petalStyles.length)];
+      
+      this.size = Math.random() * 8 + (this.kind === 'star' ? 4 : 8);
+      this.rotationZ = Math.random() * Math.PI * 2;
+      this.rotSpeedZ = (Math.random() - 0.5) * 0.03;
+      
+      // 3D Tumbling Rotation around Y-axis
+      this.rotY = Math.random() * Math.PI * 2;
+      this.rotSpeedY = Math.random() * 0.04 + 0.02;
+
       this.alpha = isBurst ? 1 : Math.random() * 0.55 + 0.45;
-      this.twinklePhase = Math.random() * Math.PI * 2;
-      this.twinkleSpeed = Math.random() * 0.04 + 0.02;
 
       if (isBurst) {
         this.x = originX !== null ? originX : width / 2;
@@ -249,22 +181,22 @@
         const speed = Math.random() * 12 + 4;
         this.vx = Math.cos(angle) * speed;
         this.vy = Math.sin(angle) * speed - 2.5;
-        this.gravity = 0.16;
-        this.decay = Math.random() * 0.012 + 0.008;
+        this.gravity = 0.15;
+        this.decay = Math.random() * 0.012 + 0.007;
       } else {
         this.x = Math.random() * width;
-        this.y = Math.random() * height - 40;
-        this.vx = (Math.random() - 0.5) * 1.4;
-        this.vy = Math.random() * 1.2 + 0.6;
+        this.y = Math.random() * height - 50;
+        this.vx = (Math.random() - 0.5) * 1.2;
+        this.vy = Math.random() * 1.1 + 0.6;
         this.gravity = 0;
         this.decay = 0;
       }
     }
 
     update() {
-      const speedMult = isYesHovered ? 2.6 : celebrationMode ? 1.8 : 1.0;
-      this.rotation += this.rotSpeed * speedMult;
-      this.twinklePhase += this.twinkleSpeed;
+      const speedMult = isYesHovered ? 2.4 : isCelebration ? 1.7 : 1.0;
+      this.rotationZ += this.rotSpeedZ * speedMult;
+      this.rotY += this.rotSpeedY * speedMult;
 
       if (this.isBurst) {
         this.x += this.vx;
@@ -274,11 +206,12 @@
         this.alpha -= this.decay;
         return this.alpha > 0;
       } else {
-        this.x += this.vx * speedMult + Math.sin(this.y * 0.012) * 0.6;
+        // Natural wind drift
+        this.x += this.vx * speedMult + Math.sin(this.y * 0.012) * 0.5;
         this.y += this.vy * speedMult;
 
-        if (this.y > height + 25) {
-          this.y = -25;
+        if (this.y > height + 30) {
+          this.y = -30;
           this.x = Math.random() * width;
         }
         if (this.x < -30) this.x = width + 30;
@@ -290,307 +223,289 @@
     draw() {
       ctx.save();
       ctx.translate(this.x, this.y);
-      ctx.rotate(this.rotation);
+      ctx.rotate(this.rotationZ);
 
-      const twinkleAlpha = Math.max(0.15, Math.min(1, this.alpha * (0.8 + 0.25 * Math.sin(this.twinklePhase))));
-      ctx.globalAlpha = twinkleAlpha;
+      // 3D Perspective tumble: scale X by cosine of rotY
+      const scaleX = Math.cos(this.rotY);
+      ctx.scale(scaleX, 1);
 
-      if (this.kind === 'blossom') {
-        this.drawBlossom();
-      } else if (this.kind === 'star') {
-        this.drawCelestialStar();
+      ctx.globalAlpha = Math.max(0.1, Math.min(1, this.alpha));
+
+      if (this.kind === 'petal') {
+        this.drawRealisticPetal();
       } else {
-        this.drawPetal();
+        this.drawGlowingStar();
       }
 
       ctx.restore();
     }
 
-    drawBlossom() {
-      const r = this.radius;
-      // 5 Heart-shaped Sakura petals
-      ctx.fillStyle = this.colorObj.fill;
-      for (let i = 0; i < 5; i++) {
-        const angle = (i * 2 * Math.PI) / 5;
-        ctx.save();
-        ctx.rotate(angle);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.bezierCurveTo(-r * 0.5, -r * 0.5, -r * 0.5, -r * 1.1, 0, -r * 1.3);
-        ctx.bezierCurveTo(r * 0.5, -r * 1.1, r * 0.5, -r * 0.5, 0, 0);
-        ctx.fill();
-        ctx.restore();
-      }
-      // Warm golden glowing center
+    drawRealisticPetal() {
+      const r = this.size;
+      ctx.fillStyle = this.style.fill;
       ctx.beginPath();
-      ctx.arc(0, 0, r * 0.35, 0, Math.PI * 2);
-      ctx.fillStyle = '#FFE599';
+      // Curved heart-notched sakura petal
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(-r * 0.6, -r * 0.6, -r * 0.7, -r * 1.2, -r * 0.1, -r * 1.4);
+      ctx.bezierCurveTo(0, -r * 1.3, 0, -r * 1.3, r * 0.1, -r * 1.4);
+      ctx.bezierCurveTo(r * 0.7, -r * 1.2, r * 0.6, -r * 0.6, 0, 0);
       ctx.fill();
     }
 
-    drawCelestialStar() {
-      const r = this.radius;
-      ctx.fillStyle = '#FFE599';
-      ctx.shadowColor = '#FFAEC0';
-      ctx.shadowBlur = isYesHovered ? 14 : 8;
-
-      // 4-pointed radiant diamond star
+    drawGlowingStar() {
+      const r = this.size;
+      ctx.fillStyle = '#FFE082';
+      ctx.shadowColor = '#FFD54F';
+      ctx.shadowBlur = 10;
       ctx.beginPath();
       for (let i = 0; i < 4; i++) {
         const outerAngle = (i * Math.PI) / 2;
         const innerAngle = outerAngle + Math.PI / 4;
-        ctx.lineTo(Math.cos(outerAngle) * r * 1.3, Math.sin(outerAngle) * r * 1.3);
-        ctx.lineTo(Math.cos(innerAngle) * r * 0.35, Math.sin(innerAngle) * r * 0.35);
+        ctx.lineTo(Math.cos(outerAngle) * r * 1.2, Math.sin(outerAngle) * r * 1.2);
+        ctx.lineTo(Math.cos(innerAngle) * (r * 0.3), Math.sin(innerAngle) * (r * 0.3));
       }
       ctx.closePath();
       ctx.fill();
       ctx.shadowBlur = 0;
     }
+  }
 
-    drawPetal() {
-      const r = this.radius;
-      ctx.fillStyle = this.colorObj.fill;
+  // Shooting Star Class
+  class ShootingStar {
+    constructor() {
+      this.reset();
+    }
+
+    reset() {
+      this.x = Math.random() * width * 0.8;
+      this.y = Math.random() * (height * 0.35);
+      this.length = Math.random() * 90 + 60;
+      this.speed = Math.random() * 10 + 12;
+      this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.2; // roughly 45 degrees
+      this.alpha = 1;
+      this.decay = Math.random() * 0.02 + 0.015;
+    }
+
+    update() {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      this.alpha -= this.decay;
+      return this.alpha > 0;
+    }
+
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, this.alpha);
+      const tailX = this.x - Math.cos(this.angle) * this.length;
+      const tailY = this.y - Math.sin(this.angle) * this.length;
+
+      const gradient = ctx.createLinearGradient(tailX, tailY, this.x, this.y);
+      gradient.addColorStop(0, 'rgba(255, 224, 130, 0)');
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 1)');
+
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.ellipse(0, 0, r * 0.6, r * 1.15, 0, 0, Math.PI * 2);
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(this.x, this.y);
+      ctx.stroke();
+
+      // Glowing head
+      ctx.fillStyle = '#FFFFFF';
+      ctx.shadowColor = '#FFE082';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
       ctx.fill();
+
+      ctx.restore();
     }
   }
 
-  // Draw Twin Celestial Stars dancing together in the sky
-  function drawTwinCelestialStars() {
-    twinStarAngle += isYesHovered ? 0.04 : 0.018;
-    const centerX = width * 0.5;
-    const centerY = height * 0.18;
-    const orbitRadius = isYesHovered ? 55 : 45;
-
-    const star1X = centerX + Math.cos(twinStarAngle) * orbitRadius;
-    const star1Y = centerY + Math.sin(twinStarAngle) * (orbitRadius * 0.4);
-
-    const star2X = centerX + Math.cos(twinStarAngle + Math.PI) * orbitRadius;
-    const star2Y = centerY + Math.sin(twinStarAngle + Math.PI) * (orbitRadius * 0.4);
-
-    // Glowing connection beam (symbol of living together till the end)
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(star1X, star1Y);
-    ctx.lineTo(star2X, star2Y);
-    ctx.strokeStyle = 'rgba(255, 225, 175, 0.45)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 4]);
-    ctx.stroke();
-
-    // Draw Star 1 (Golden Sun Star)
-    drawIndividualStar(star1X, star1Y, '#FFE066', 10);
-    // Draw Star 2 (Blush Starlight)
-    drawIndividualStar(star2X, star2Y, '#FFAEC0', 10);
-    ctx.restore();
+  // Initialize ambient petals
+  const BASE_PETAL_COUNT = 65;
+  for (let i = 0; i < BASE_PETAL_COUNT; i++) {
+    petals.push(new PetalParticle());
   }
 
-  function drawIndividualStar(x, y, color, size) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.fillStyle = color;
-    ctx.shadowColor = color;
-    ctx.shadowBlur = isYesHovered ? 20 : 12;
-
-    ctx.beginPath();
-    for (let i = 0; i < 4; i++) {
-      const outerAngle = (i * Math.PI) / 2;
-      const innerAngle = outerAngle + Math.PI / 4;
-      ctx.lineTo(Math.cos(outerAngle) * size, Math.sin(outerAngle) * size);
-      ctx.lineTo(Math.cos(innerAngle) * (size * 0.3), Math.sin(innerAngle) * (size * 0.3));
-    }
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // Seed base ambient particles
-  const BASE_PARTICLE_COUNT = 60;
-  for (let i = 0; i < BASE_PARTICLE_COUNT; i++) {
-    particles.push(new FlowerParticle());
-  }
-
-  // Continuous extra blossoming during Yes hover
-  function spawnHoverBlooms() {
-    if (!isYesHovered) return;
-    const yesBtn = document.getElementById('yesBtn');
-    if (!yesBtn) return;
-    const rect = yesBtn.getBoundingClientRect();
-    const spawnX = rect.left + Math.random() * rect.width;
-    const spawnY = rect.top + Math.random() * rect.height;
-
-    for (let i = 0; i < 4; i++) {
-      const p = new FlowerParticle(true, spawnX, spawnY);
-      p.vy = -(Math.random() * 6 + 2);
-      p.vx = (Math.random() - 0.5) * 6;
-      p.decay = Math.random() * 0.01 + 0.007;
-      particles.push(p);
-    }
-  }
-
-  function triggerCelebrationBurst(count = 160, originX = null, originY = null) {
+  function triggerBurst(count = 180, x = null, y = null) {
     for (let i = 0; i < count; i++) {
-      particles.push(new FlowerParticle(true, originX, originY));
+      petals.push(new PetalParticle(true, x, y));
     }
+  }
+
+  function spawnShootingStar() {
+    shootingStars.push(new ShootingStar());
+    playSparkleSound();
   }
 
   // Animation Loop
-  let lastHoverSpawn = 0;
-  function animate(timestamp) {
+  function animate() {
     ctx.clearRect(0, 0, width, height);
 
-    // Render Twin Stars
-    drawTwinCelestialStars();
-
-    if (isYesHovered && timestamp - lastHoverSpawn > 50) {
-      spawnHoverBlooms();
-      lastHoverSpawn = timestamp;
+    // Update & draw shooting stars
+    for (let i = shootingStars.length - 1; i >= 0; i--) {
+      const star = shootingStars[i];
+      if (!star.update()) {
+        shootingStars.splice(i, 1);
+      } else {
+        star.draw();
+      }
     }
 
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      const isAlive = p.update();
-      if (!isAlive) {
-        particles.splice(i, 1);
+    // Occasional natural shooting star in the background
+    if (Math.random() < 0.003) {
+      shootingStars.push(new ShootingStar());
+    }
+
+    // Update & draw petals
+    for (let i = petals.length - 1; i >= 0; i--) {
+      const p = petals[i];
+      if (!p.update()) {
+        petals.splice(i, 1);
       } else {
         p.draw();
       }
     }
 
-    while (particles.filter((p) => !p.isBurst).length < BASE_PARTICLE_COUNT) {
-      particles.push(new FlowerParticle());
+    while (petals.filter((p) => !p.isBurst).length < BASE_PETAL_COUNT) {
+      petals.push(new PetalParticle());
     }
 
     requestAnimationFrame(animate);
   }
   requestAnimationFrame(animate);
 
-  // --- 3. Evasive "No" Button (Gently hovers & stays visible!) ---
+  // --- 3. Chapter Flow Management ---
+  const envelopeStage = document.getElementById('envelopeStage');
+  const proposalStage = document.getElementById('proposalStage');
+  const celebrationStage = document.getElementById('celebrationStage');
+  const openEnvelopeBtn = document.getElementById('openEnvelopeBtn');
+
+  if (openEnvelopeBtn) {
+    openEnvelopeBtn.addEventListener('click', () => {
+      playSparkleSound();
+      tryStartMusic();
+
+      // Burst of golden stardust upon opening
+      const rect = openEnvelopeBtn.getBoundingClientRect();
+      triggerBurst(80, rect.left + rect.width / 2, rect.top + rect.height / 2);
+      spawnShootingStar();
+
+      if (envelopeStage && proposalStage) {
+        envelopeStage.classList.remove('active');
+        setTimeout(() => {
+          proposalStage.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 220);
+      }
+    });
+  }
+
+  // --- 4. The Weightless Hovering "No" Button Physics ---
   const noBtn = document.getElementById('noBtn');
   const yesBtn = document.getElementById('yesBtn');
   const dodgeToast = document.getElementById('dodgeToast');
 
-  const hoverPhrases = [
+  const playfulPhrases = [
     "Hovering away~ 🌸",
     "Still floating! ✨",
     "Almost got me! 🙈",
     "Nuh-uh, can't touch this! 🐰",
-    "I like floating right here! 💫",
     "Psst... the pink button is cuter! 👉💖",
-    "Two stars says click Yes! ⭐",
-    "Destiny has other plans! 🌸✨"
+    "I like floating right here! 💫",
+    "Destiny says click Yes! 🌸",
+    "Two stars says click the pink one! ⭐"
   ];
 
   let dodgeCount = 0;
-  let currentDx = 0;
-  let currentDy = 0;
 
-  function hoverDodgeNoButton(e) {
-    if (celebrationMode) return;
-    playPopSound();
-
+  function glideNoButton() {
+    if (isCelebration) return;
+    playPopChime();
     dodgeCount++;
 
-    // Calculate a gentle offset that keeps the button comfortably inside the card
-    // Alternates sides so it hovers back and forth playfully in front of her!
-    const direction = (dodgeCount % 2 === 1) ? 1 : -1;
-    const offsetMagnitudeX = Math.floor(Math.random() * 35) + 65; // 65px to 100px
-    const offsetMagnitudeY = (Math.random() - 0.5) * 50;          // -25px to +25px
+    // Alternates left and right with small, organic offsets (stays inside the card arena!)
+    const dir = dodgeCount % 2 === 1 ? 1 : -1;
+    const dx = dir * (Math.floor(Math.random() * 30) + 65); // 65px to 95px
+    const dy = (Math.random() - 0.5) * 40;                  // -20px to +20px
 
-    currentDx = direction * offsetMagnitudeX;
-    currentDy = offsetMagnitudeY;
+    noBtn.style.setProperty('--dx', `${dx}px`);
+    noBtn.style.setProperty('--dy', `${dy}px`);
 
-    // Apply via CSS variables for smooth floating translation
-    noBtn.style.setProperty('--dx', `${currentDx}px`);
-    noBtn.style.setProperty('--dy', `${currentDy}px`);
-
-    // Show cute hover message
-    const phrase = hoverPhrases[(dodgeCount - 1) % hoverPhrases.length];
+    // Cute teasing toast
     if (dodgeToast) {
+      const phrase = playfulPhrases[(dodgeCount - 1) % playfulPhrases.length];
       dodgeToast.textContent = phrase;
       dodgeToast.classList.add('show');
     }
 
     // Warmly grow the Yes button
-    const yesScale = Math.min(1.5, 1 + dodgeCount * 0.06);
+    const yesScale = Math.min(1.45, 1 + dodgeCount * 0.06);
     if (yesBtn) {
       yesBtn.style.transform = `scale(${yesScale})`;
     }
 
-    // Spawn 6 cute golden sparkle stars around the button
+    // Spawn 6 tiny stardust particles from button
     const rect = noBtn.getBoundingClientRect();
-    triggerCelebrationBurst(6, rect.left + rect.width / 2, rect.top + rect.height / 2);
+    triggerBurst(6, rect.left + rect.width / 2, rect.top + rect.height / 2);
   }
 
   if (noBtn) {
-    // Hover / Touch avoidance
-    noBtn.addEventListener('mouseenter', hoverDodgeNoButton);
-    noBtn.addEventListener('mouseover', hoverDodgeNoButton);
-    noBtn.addEventListener('pointerenter', hoverDodgeNoButton);
+    noBtn.addEventListener('mouseenter', glideNoButton);
+    noBtn.addEventListener('mouseover', glideNoButton);
     noBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      hoverDodgeNoButton(e);
+      glideNoButton();
     }, { passive: false });
-
-    // Block clicking directly
     noBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      hoverDodgeNoButton(e);
+      glideNoButton();
     });
   }
 
-  // Gentle proximity check: if cursor gets within 60px of the button, glide smoothly
-  let lastProximityCheck = 0;
+  // Smooth proximity glide when pointer comes within 60px
+  let lastProximity = 0;
   window.addEventListener('mousemove', (e) => {
-    if (!noBtn || celebrationMode) return;
+    if (!noBtn || isCelebration) return;
     const now = Date.now();
-    if (now - lastProximityCheck < 120) return;
+    if (now - lastProximity < 100) return;
 
     const rect = noBtn.getBoundingClientRect();
-    const btnCenterX = rect.left + rect.width / 2;
-    const btnCenterY = rect.top + rect.height / 2;
-    const dist = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
 
-    if (dist < 65) {
-      lastProximityCheck = now;
-      hoverDodgeNoButton(e);
+    if (dist < 60) {
+      lastProximity = now;
+      glideNoButton();
     }
   });
 
-  // --- 4. "Yes" Button Hover & Acceptance ---
+  // --- 5. "Yes" Button & Grand Celebration ---
   if (yesBtn) {
     yesBtn.addEventListener('mouseenter', () => {
       isYesHovered = true;
       playSparkleSound();
-      if (livingGarden) livingGarden.classList.add('bloomed');
     });
 
     yesBtn.addEventListener('mouseleave', () => {
-      if (!celebrationMode) {
-        isYesHovered = false;
-        if (livingGarden) livingGarden.classList.remove('bloomed');
-      }
+      if (!isCelebration) isYesHovered = false;
     });
 
     yesBtn.addEventListener('click', () => {
-      celebrationMode = true;
+      isCelebration = true;
       isYesHovered = false;
+      tryStartMusic();
 
-      // Start music if not started yet
-      startMusic();
-
-      // Living garden stays permanently bloomed!
-      if (livingGarden) livingGarden.classList.add('bloomed');
-
-      // Grand celebration explosion
+      // Grand celebration explosion & 3 shooting stars
       const rect = yesBtn.getBoundingClientRect();
-      triggerCelebrationBurst(180, rect.left + rect.width / 2, rect.top + rect.height / 2);
+      triggerBurst(200, rect.left + rect.width / 2, rect.top + rect.height / 2);
+      spawnShootingStar();
+      setTimeout(spawnShootingStar, 250);
+      setTimeout(spawnShootingStar, 500);
 
-      // Transition smoothly to celebration stage
-      const proposalStage = document.getElementById('proposalStage');
-      const celebrationStage = document.getElementById('celebrationStage');
-
+      // Transition to celebration stage
       if (proposalStage && celebrationStage) {
         proposalStage.classList.remove('active');
         setTimeout(() => {
@@ -601,20 +516,22 @@
     });
   }
 
-  // --- 5. Stage 2 Buttons (Celebration Actions) ---
-  const sendFlowerBtn = document.getElementById('sendFlowerBtn');
-  if (sendFlowerBtn) {
-    sendFlowerBtn.addEventListener('click', () => {
-      playSparkleSound();
-      const rect = sendFlowerBtn.getBoundingClientRect();
-      triggerCelebrationBurst(80, rect.left + rect.width / 2, rect.top + rect.height / 2);
+  // --- 6. Celebration Screen Actions (Promise Capsule & Shooting Star Wish) ---
+  const shootingStarBtn = document.getElementById('shootingStarBtn');
+  if (shootingStarBtn) {
+    shootingStarBtn.addEventListener('click', () => {
+      spawnShootingStar();
+      setTimeout(spawnShootingStar, 200);
+      setTimeout(spawnShootingStar, 400);
+      const rect = shootingStarBtn.getBoundingClientRect();
+      triggerBurst(40, rect.left + rect.width / 2, rect.top + rect.height / 2);
     });
   }
 
   const replayBtn = document.getElementById('replayBtn');
   if (replayBtn) {
     replayBtn.addEventListener('click', () => {
-      celebrationMode = false;
+      isCelebration = false;
       isYesHovered = false;
       dodgeCount = 0;
 
@@ -629,12 +546,7 @@
         dodgeToast.textContent = '';
         dodgeToast.classList.remove('show');
       }
-      if (livingGarden) {
-        livingGarden.classList.remove('bloomed');
-      }
 
-      const proposalStage = document.getElementById('proposalStage');
-      const celebrationStage = document.getElementById('celebrationStage');
       if (celebrationStage && proposalStage) {
         celebrationStage.classList.remove('active');
         setTimeout(() => {
@@ -645,18 +557,18 @@
     });
   }
 
-  // Cursor sparkle follower
-  const cursorSparkle = document.getElementById('cursorSparkle');
+  // Interactive cursor stardust trail
+  const stardustCursor = document.getElementById('stardustCursor');
   let cursorTimer = null;
   window.addEventListener('mousemove', (e) => {
-    if (!cursorSparkle) return;
-    cursorSparkle.style.opacity = '0.7';
-    cursorSparkle.style.left = e.clientX + 'px';
-    cursorSparkle.style.top = e.clientY + 'px';
+    if (!stardustCursor) return;
+    stardustCursor.style.opacity = '0.7';
+    stardustCursor.style.left = e.clientX + 'px';
+    stardustCursor.style.top = e.clientY + 'px';
 
     clearTimeout(cursorTimer);
     cursorTimer = setTimeout(() => {
-      cursorSparkle.style.opacity = '0';
+      stardustCursor.style.opacity = '0';
     }, 1200);
   });
 
