@@ -128,6 +128,7 @@
   const particles = [];
   let isYesHovered = false;
   let isCelebration = false;
+  let isGalaxyActive = false;
 
   const pastelColors = [
     '#FFAEC0', '#FFCCD7', '#FFDEE9', '#FFE599', '#D8F3DC', '#FFC6FF', '#BEE1E6'
@@ -233,10 +234,141 @@
     }
   }
 
+  // --- Galaxy Engine: Twinkling Stars, Cosmic Sakura & Shooting Stars ---
+  class GalaxyStar {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.size = Math.random() * 2.2 + 0.6;
+      this.baseAlpha = Math.random() * 0.7 + 0.3;
+      this.twinkleSpeed = Math.random() * 0.035 + 0.012;
+      this.twinklePhase = Math.random() * Math.PI * 2;
+      const colors = ['#FFFFFF', '#FFE082', '#80D8FF', '#FF80AB', '#E1BEE7'];
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+    update() {
+      this.twinklePhase += this.twinkleSpeed;
+    }
+    draw() {
+      const alpha = this.baseAlpha * (0.6 + 0.4 * Math.sin(this.twinklePhase));
+      ctx.save();
+      ctx.globalAlpha = Math.max(0.12, alpha);
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = this.size > 1.8 ? 8 : 0;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  class CosmicPetal {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height - 30;
+      this.size = Math.random() * 7 + 5;
+      this.vx = (Math.random() - 0.5) * 0.9;
+      this.vy = Math.random() * 0.9 + 0.4;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotSpeed = (Math.random() - 0.5) * 0.025;
+      this.alpha = Math.random() * 0.6 + 0.3;
+      const palette = ['#FFCCD7', '#FFDEE9', '#FFE599', '#EA80FC'];
+      this.color = palette[Math.floor(Math.random() * palette.length)];
+    }
+    update() {
+      this.rotation += this.rotSpeed;
+      this.x += this.vx + Math.sin(this.y * 0.012) * 0.4;
+      this.y += this.vy;
+
+      if (this.y > height + 20) {
+        this.y = -20;
+        this.x = Math.random() * width;
+      }
+      if (this.x < -20) this.x = width + 20;
+      if (this.x > width + 20) this.x = -20;
+    }
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.globalAlpha = this.alpha;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.size * 0.55, this.size, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  class ShootingStar {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * width * 0.85;
+      this.y = Math.random() * (height * 0.4);
+      this.length = Math.random() * 90 + 60;
+      this.speed = Math.random() * 9 + 10;
+      this.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.2;
+      this.alpha = 1;
+      this.decay = Math.random() * 0.018 + 0.012;
+    }
+    update() {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      this.alpha -= this.decay;
+      return this.alpha > 0;
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, this.alpha);
+      const tailX = this.x - Math.cos(this.angle) * this.length;
+      const tailY = this.y - Math.sin(this.angle) * this.length;
+      const grad = ctx.createLinearGradient(tailX, tailY, this.x, this.y);
+      grad.addColorStop(0, 'rgba(255, 224, 130, 0)');
+      grad.addColorStop(1, '#FFFFFF');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(this.x, this.y);
+      ctx.stroke();
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.shadowColor = '#FFE082';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
   const BASE_PARTICLES = 50;
   for (let i = 0; i < BASE_PARTICLES; i++) {
     particles.push(new FlowerStarParticle());
   }
+
+  const galaxyStars = [];
+  const STAR_COUNT = 100;
+  for (let i = 0; i < STAR_COUNT; i++) {
+    galaxyStars.push(new GalaxyStar());
+  }
+
+  const cosmicPetals = [];
+  const PETAL_COUNT = 32;
+  for (let i = 0; i < PETAL_COUNT; i++) {
+    cosmicPetals.push(new CosmicPetal());
+  }
+
+  const shootingStars = [];
 
   function triggerBurst(count = 150, x = null, y = null) {
     for (let i = 0; i < count; i++) {
@@ -265,6 +397,33 @@
   function animate(t) {
     ctx.clearRect(0, 0, width, height);
 
+    if (isGalaxyActive) {
+      // 1. Draw Twinkling Milky Way Stars
+      for (let i = 0; i < galaxyStars.length; i++) {
+        galaxyStars[i].update();
+        galaxyStars[i].draw();
+      }
+
+      // 2. Natural Shooting Stars
+      if (Math.random() < 0.008) {
+        shootingStars.push(new ShootingStar());
+      }
+      for (let i = shootingStars.length - 1; i >= 0; i--) {
+        const s = shootingStars[i];
+        if (!s.update()) {
+          shootingStars.splice(i, 1);
+        } else {
+          s.draw();
+        }
+      }
+
+      // 3. Drifting Cosmic Sakura Petals
+      for (let i = 0; i < cosmicPetals.length; i++) {
+        cosmicPetals[i].update();
+        cosmicPetals[i].draw();
+      }
+    }
+
     if (isYesHovered && t - lastHover > 50) {
       spawnHoverFlowers();
       lastHover = t;
@@ -279,8 +438,10 @@
       }
     }
 
-    while (particles.filter((p) => !p.isBurst).length < BASE_PARTICLES) {
-      particles.push(new FlowerStarParticle());
+    if (!isGalaxyActive) {
+      while (particles.filter((p) => !p.isBurst).length < BASE_PARTICLES) {
+        particles.push(new FlowerStarParticle());
+      }
     }
 
     requestAnimationFrame(animate);
@@ -396,24 +557,64 @@
     });
   }
 
-  // --- 5. Navigation to Dedicated Gift Page (gift.html) ---
+  // --- 5. Seamless In-Page Living Galaxy & Botanical Transition (ZERO audio interruption!) ---
   const openGiftBtn = document.getElementById('openGiftBtn');
+  const galaxyStage = document.getElementById('galaxyStage');
+  const backToPassBtn = document.getElementById('backToPassBtn');
+
   if (openGiftBtn) {
-    openGiftBtn.addEventListener('click', function () {
-      // Save current song playback position so gift.html continues seamlessly!
-      if (bgAudio) {
-        sessionStorage.setItem('songTime', bgAudio.currentTime);
-      }
+    openGiftBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      playSparkleChime();
+
+      const rect = openGiftBtn.getBoundingClientRect();
+      triggerBurst(90, rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+      // Transition smoothly into Galaxy Mode without leaving the page or stopping the audio!
+      if (celebrationCard) celebrationCard.classList.remove('active');
+      document.body.classList.add('galaxy-active');
+
+      setTimeout(function () {
+        if (galaxyStage) {
+          galaxyStage.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        isGalaxyActive = true;
+      }, 300);
     });
   }
 
-  // --- 6. Floating Hearts on Every Tap (Non-blocking) ---
-  const heartEmojis = ['💖', '💕', '🌸', '✨', '🧁', '⭐'];
+  if (backToPassBtn) {
+    backToPassBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      playSparkleChime();
+
+      if (galaxyStage) galaxyStage.classList.remove('active');
+      document.body.classList.remove('galaxy-active');
+      isGalaxyActive = false;
+
+      setTimeout(function () {
+        if (celebrationCard) {
+          celebrationCard.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 250);
+    });
+  }
+
+  // --- 6. Floating Hearts & Celestial Stardust on Every Tap (Non-blocking) ---
+  const heartEmojis = ['💖', '💕', '🌸', '✨', '⭐', '🧁', '💫'];
   window.addEventListener('click', function (e) {
     const target = e.target;
     if (target.closest('button') || target.closest('a') || target.closest('.love-note')) return;
 
     playSparkleChime();
+
+    if (isGalaxyActive) {
+      // Golden celestial stardust burst in galaxy mode
+      triggerBurst(18, e.clientX, e.clientY);
+    }
+
     const heart = document.createElement('div');
     heart.className = 'floating-heart';
     heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
@@ -429,8 +630,12 @@
     replayBtn.addEventListener('click', function (e) {
       e.stopPropagation();
       isCelebration = false;
+      isGalaxyActive = false;
       isYesHovered = false;
       dodgeCount = 0;
+
+      document.body.classList.remove('galaxy-active');
+      if (galaxyStage) galaxyStage.classList.remove('active');
 
       if (noBtn) noBtn.style.transform = '';
       if (yesBtn) yesBtn.style.transform = '';

@@ -7,48 +7,41 @@
 
 ## 🌟 Highlights & Features
 
-- **🌸 Living Eternal Garden & Twin Celestial Stars**:
-  - Twin celestial stars dance in an infinite orbital constellation in the sky.
-  - An enchanted botanical garden at the bottom with vines and blossoms rooted side by side, symbolizing *"living together till the end"*.
-  - Hovering on **Yes** causes the garden to bloom in real time with fluttering cherry blossoms, soft roses, and golden starlight.
+- **🎵 Continuous, Seamless Background Music (`song.m4a`)**:
+  - Direct, bulletproof HTML5 audio playback of the romantic melody ("Likhe Jo Khat Tujhe") at a comfortable medium volume (45%).
+  - **Single-Page Architecture**: Transitions seamlessly from proposal to celebration and into the secret gift galaxy **without the song ever stopping or restarting from the beginning**.
+  - **Phone Screen Off / Lock Protection**: Automatically pauses the music when the phone screen is turned off or locked (`visibilitychange` API), and resumes playback when unlocked!
 
-- **🙈 The Hovering Evasive "No" Button**:
-  - The "No" button constantly floats and bobs gently like a little balloon.
-  - When the cursor or finger gets close, it smoothly glides out of reach within the card area and playfully teases her (*"Hovering away~ 🌸"*, *"Almost got me! 🙈"*, *"Nuh-uh, can't touch this! 🐰"*).
-  - Every time she chases "No", the **"Yes" button dynamically grows larger and glows warmer**, making it impossible to resist!
+- **🙈 Playful Evasive "No" Button**:
+  - The "No" button playfully dodges away whenever the cursor or finger gets close, teasing her with adorable messages (*"Oops, too slow! 🙈"*, *"Try the pink one! 👉💖"*, *"Destiny says click Yes! 🌸✨"*).
+  - Each dodge makes the **"Yes" button grow larger and glow warmer**, making it impossible to resist.
 
-- **🎵 Integrated YouTube Music Player**:
-  - Floating aesthetic pastel music widget with an animated spinning vinyl record and flower center.
-  - Seamlessly streams and loops your chosen romantic melody ([YouTube Track](https://www.youtube.com/watch?v=6DJxr_GOiHc)) on first interaction or tap.
-  - Graceful Web Audio chime fallback if YouTube is unavailable.
+- **💖 Official Cutest Couple Keepsake Pass & Interactive Flip Notes**:
+  - A beautifully designed couple pass with cute bunny art and non-refundable lifetime validity.
+  - Interactive flip-cards revealing sweet surprises (Sweet Craving Pass, Comfort Pass, Our Songs).
 
-- **🎉 Heartwarming Acceptance Climax**:
-  - Accepting "Yes" triggers a full-screen explosion of 180+ pastel flower petals, chamomile, and sparkling stars.
-  - Reveals an adorable celebratory dancing bunny mascot holding a bouquet.
-  - Aesthetic tilted Polaroid keepsake with sweet promises (*Sweet Treats, Good Playlists, 100% Comfort, Unlimited Smiles*).
+- **🎁 Adorable Bouncing Gift Emoji Button**:
+  - An irresistible, cute bouncing gift emoji button (`🎁`) with a glowing halo and sparkling stars.
+  - No clunky blue text or underlines—just an inviting, pulsing gift box waiting to be tapped!
 
-- **📱 Fully Responsive**:
-  - Looks breathtaking on desktop, tablets, and smartphones (iOS Safari & Android Chrome supported).
+- **🌌 Living Botanical Bloom & Milky Way Galaxy**:
+  - When she taps `🎁`, the screen smoothly dims into deep space, then slowly illuminates with glowing starlight, shifting nebulae, and cosmic dust.
+  - **Botanical Growth from Seed**: A radiant celestial seed descends and touches the cosmic plane with a golden ripple, sprouting organic emerald vines and leaves.
+  - **Three Breathtaking Flowers**:
+    - **Velvet Rose**: Unfurls layer-by-layer from a spiraling bud into full lush crimson/pink petals.
+    - **Luminous Celestial Lotus**: Opens majestically with crystalline pearlescent petals and a glowing golden stamen.
+    - **Silk Wild Poppy**: Graceful, fluttering coral/scarlet petals dancing in the cosmic breeze.
+  - **Living Animations That Never Stop**: The flowers continuously breathe and sway, releasing floating stardust spores while shooting stars streak across the Milky Way sky!
+
+- **📱 100% Responsive**:
+  - Tested and rock-solid on both laptops (no top-clipping) and mobile smartphones (iOS Safari & Android Chrome).
 
 ---
 
-## 🚀 Live Demo & 1-Click Hosting
+## 🚀 Live Demo
 
-You can host this website completely **FREE** in under 1 minute:
-
-### Option A: GitHub Pages (Recommended)
-1. Go to your repository **Settings** on GitHub.
-2. Under the **Code and automation** section, click **Pages**.
-3. Under **Branch**, select `main` (or `master`) and folder `/(root)`, then click **Save**.
-4. Within seconds, your live link will be ready at:
-   ```text
-   https://<your-username>.github.io/<repository-name>/
-   ```
-
-### Option B: Netlify Drop
-1. Visit [Netlify Drop](https://app.netlify.com/drop).
-2. Drag and drop this folder directly into the browser window.
-3. You get an instant HTTPS URL to share!
+The website is hosted on GitHub Pages:  
+👉 **[https://bhuwan077.github.io/propose-your-crush/](https://bhuwan077.github.io/propose-your-crush/)**
 
 ---
 

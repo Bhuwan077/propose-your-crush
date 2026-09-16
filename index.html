@@ -19,6 +19,14 @@
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
 
+  <!-- Cosmic Milky Way Galaxy Overlays (Activates seamlessly when gift is opened) -->
+  <div class="milkyway-overlay">
+    <div class="cosmic-nebula nebula-1"></div>
+    <div class="cosmic-nebula nebula-2"></div>
+    <div class="cosmic-nebula nebula-3"></div>
+    <div class="cosmic-stardust-band"></div>
+  </div>
+
   <!-- Direct HTML5 Background Audio (Local song.m4a, 100% reliable, medium volume 45%) -->
   <audio id="bgAudio" loop preload="auto">
     <source src="song.m4a" type="audio/mp4" />
@@ -220,21 +228,229 @@
         </div>
       </div>
 
-      <!-- MAGICAL FEATURE 3: Button Leading to Dedicated Gift Page! -->
-      <div class="special-gift-wrap">
-        <a href="gift.html" id="openGiftBtn" class="gift-button">
-          <span class="gift-icon">🎁</span>
-          <div class="gift-info">
-            <span class="gift-title">A Special Secret Gift For You ✨</span>
-            <span class="gift-subtext">Tap to open your magical surprise page 🌸➔</span>
-          </div>
-        </a>
+      <!-- MAGICAL FEATURE 3: Cute Bouncing Gift Emoji Button (No clunky text link!) -->
+      <div class="gift-box-area">
+        <button id="openGiftBtn" class="gift-emoji-btn" type="button" aria-label="Open Special Gift">
+          <span class="gift-emoji-icon">🎁</span>
+          <span class="gift-glow-halo"></span>
+          <span class="gift-sparkle-star s1">✨</span>
+          <span class="gift-sparkle-star s2">🌸</span>
+        </button>
+        <span class="gift-tap-hint">Tap me ✨</span>
       </div>
 
       <!-- Simple & Sweet Action -->
       <div class="action-wrap">
         <button id="replayBtn" class="btn-replay">
           <span>Play again 🙈</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- =========================================================================
+         STAGE 3: THE LIVING MILKY WAY GALAXY & BOTANICAL BLOOM
+         - Screen begins in deep black, gently glows with lights
+         - Seed drops & plants itself in cosmic soil
+         - Graceful botanical stems sprout and unfurl
+         - Velvet Rose, Luminous Celestial Lotus, and Silk Wild Poppy bloom with layered artistry
+         - Living animation: flowers continuously breathe, sway, and radiate light
+         - Audio continues seamlessly with ZERO interruption!
+         ========================================================================= -->
+    <div id="galaxyStage" class="galaxy-stage">
+      
+      <!-- Cosmic Badge & Headline -->
+      <div class="galaxy-header">
+        <div class="constellation-pill">✨ Across Millions of Stars ✨</div>
+        <h1 class="galaxy-headline">My Whole Universe Blooms For You</h1>
+      </div>
+
+      <!-- Living Botanical Art SVG (Rose, Poppy & Lotus blooming from seed) -->
+      <div class="botanical-theater">
+        <svg class="botanical-canvas-svg" viewBox="0 0 520 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Rose Rich Gradient (Multi-stop velvety crimson/blush) -->
+            <radialGradient id="rosePetalGrad" cx="45%" cy="40%" r="65%">
+              <stop offset="0%" stop-color="#FF6584" />
+              <stop offset="45%" stop-color="#E91E63" />
+              <stop offset="85%" stop-color="#9C0836" />
+              <stop offset="100%" stop-color="#56001B" />
+            </radialGradient>
+            <radialGradient id="roseInnerGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFA8BD" />
+              <stop offset="70%" stop-color="#E91E63" />
+              <stop offset="100%" stop-color="#880E34" />
+            </radialGradient>
+
+            <!-- Poppy Gradient (Vivid scarlet & golden coral) -->
+            <radialGradient id="poppyPetalGrad" cx="50%" cy="45%" r="60%">
+              <stop offset="0%" stop-color="#FF9E80" />
+              <stop offset="45%" stop-color="#FF3D3D" />
+              <stop offset="85%" stop-color="#C62828" />
+              <stop offset="100%" stop-color="#7F0000" />
+            </radialGradient>
+
+            <!-- Lotus Gradient (Translucent pearlescent white into soft rose & magenta) -->
+            <linearGradient id="lotusPetalGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#FFFFFF" />
+              <stop offset="35%" stop-color="#FFF0F6" />
+              <stop offset="75%" stop-color="#F48FB1" />
+              <stop offset="100%" stop-color="#AD1457" />
+            </linearGradient>
+            <radialGradient id="lotusCenterGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFF9C4" />
+              <stop offset="50%" stop-color="#FFD54F" />
+              <stop offset="100%" stop-color="#FF8F00" />
+            </radialGradient>
+
+            <!-- Stem & Leaf Bioluminescent Gradient -->
+            <linearGradient id="stemGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="#2E7D32" />
+              <stop offset="60%" stop-color="#4CAF50" />
+              <stop offset="100%" stop-color="#81C784" />
+            </linearGradient>
+
+            <!-- Atmospheric Bloom & Glow Filters -->
+            <filter id="celestialGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+              <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.8 0" result="boost" />
+              <feMerge>
+                <feMergeNode in="boost" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            
+            <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <!-- Cosmic Ground Light Bed -->
+          <ellipse cx="260" cy="385" rx="190" ry="12" fill="rgba(255, 230, 245, 0.12)" filter="url(#celestialGlow)" />
+
+          <!-- Falling Celestial Seed (Phase 1) -->
+          <g id="celestialSeed" class="falling-seed">
+            <ellipse cx="260" cy="380" rx="8" ry="11" fill="#FFE082" filter="url(#celestialGlow)" />
+            <circle cx="260" cy="380" r="4" fill="#FFFFFF" />
+          </g>
+
+          <!-- Sprouting Roots Ground Pulse -->
+          <g class="ground-pulse-ring">
+            <ellipse cx="260" cy="384" rx="28" ry="6" stroke="#FFE082" stroke-width="2" fill="none" class="ripple-ring" />
+          </g>
+
+          <!-- Organic Stems (Phase 2) -->
+          <g class="botanical-stems">
+            <!-- Center Lotus Stem (Tall, Regal, Flowing) -->
+            <path id="stemLotus" class="living-stem stem-lotus" d="M260 382 Q260 270 260 170" stroke="url(#stemGrad)" stroke-width="4.5" stroke-linecap="round" />
+            
+            <!-- Left Velvet Rose Stem (Graceful curving branch) -->
+            <path id="stemRose" class="living-stem stem-rose" d="M260 382 Q225 285 140 180" stroke="url(#stemGrad)" stroke-width="4" stroke-linecap="round" />
+            
+            <!-- Right Silk Poppy Stem (Organic winding curve) -->
+            <path id="stemPoppy" class="living-stem stem-poppy" d="M260 382 Q295 285 380 180" stroke="url(#stemGrad)" stroke-width="4" stroke-linecap="round" />
+          </g>
+
+          <!-- Bioluminescent Leaves Unfurling along Stems -->
+          <g class="botanical-leaves">
+            <g class="living-leaf leaf-rose-1" transform="translate(185, 260) rotate(-35)">
+              <path d="M0 0 C-15 -6 -24 -2 -28 6 C-24 14 -15 12 0 0 Z" fill="#43A047" stroke="#A5D6A7" stroke-width="1" />
+            </g>
+            <g class="living-leaf leaf-rose-2" transform="translate(210, 220) rotate(-20)">
+              <path d="M0 0 C-12 -6 -20 -3 -24 4 C-20 10 -12 8 0 0 Z" fill="#4CAF50" />
+            </g>
+            <g class="living-leaf leaf-lotus-1" transform="translate(245, 290) rotate(-15)">
+              <path d="M0 0 C-18 -10 -26 -4 -28 8 C-24 16 -12 12 0 0 Z" fill="#388E3C" />
+            </g>
+            <g class="living-leaf leaf-lotus-2" transform="translate(275, 275) rotate(20)">
+              <path d="M0 0 C18 -10 26 -4 28 8 C24 16 12 12 0 0 Z" fill="#43A047" />
+            </g>
+            <g class="living-leaf leaf-poppy-1" transform="translate(330, 260) rotate(35)">
+              <path d="M0 0 C15 -6 24 -2 28 6 C24 14 15 12 0 0 Z" fill="#4CAF50" stroke="#A5D6A7" stroke-width="1" />
+            </g>
+          </g>
+
+          <!-- ===============================================================
+               FLOWER 1: VELVET ROSE (Artistic, Romantic, Multi-Petal Bloom)
+               =============================================================== -->
+          <g id="flowerRose" class="living-flower flower-rose-group" transform="translate(140, 175)">
+            <!-- Outer Petals Layer 1 -->
+            <path class="rose-petal rp-1" d="M-42 0 C-50 -25 -25 -48 0 -45 C25 -48 50 -25 42 0 C30 30 -30 30 -42 0 Z" fill="url(#rosePetalGrad)" filter="url(#softGlow)" />
+            <!-- Outer Petals Layer 2 -->
+            <path class="rose-petal rp-2" d="M-36 -12 C-45 15 -10 40 20 32 C45 20 40 -15 15 -35 C-10 -40 -30 -30 -36 -12 Z" fill="url(#rosePetalGrad)" />
+            <!-- Mid Petals Layer 3 -->
+            <path class="rose-petal rp-3" d="M25 -10 C35 15 0 35 -20 25 C-35 10 -25 -15 -5 -25 C15 -25 22 -18 25 -10 Z" fill="url(#roseInnerGrad)" />
+            <!-- Inner Spiraling Core -->
+            <path class="rose-petal rp-4" d="M-16 -8 C-20 8 2 18 16 8 C20 -4 5 -16 -6 -14 Z" fill="#FF4081" />
+            <path class="rose-petal rp-5" d="M-8 -5 C-10 4 2 10 9 4 C11 -2 3 -9 -4 -8 Z" fill="#FF80AB" />
+            <circle cx="0" cy="0" r="4.5" fill="#FFE082" filter="url(#celestialGlow)" />
+          </g>
+
+          <!-- ===============================================================
+               FLOWER 2: LUMINOUS CELESTIAL LOTUS (The Crown Sacred Blossom)
+               =============================================================== -->
+          <g id="flowerLotus" class="living-flower flower-lotus-group" transform="translate(260, 165)">
+            <!-- Radiant Aura Background -->
+            <circle cx="0" cy="-10" r="55" fill="rgba(255, 230, 245, 0.18)" filter="url(#celestialGlow)" class="lotus-ambient-halo" />
+            
+            <!-- Tier 1: Wide Outer Petals -->
+            <path class="lotus-petal lp-1" d="M-65 5 C-60 -35 -20 -60 0 -60 C20 -60 60 -35 65 5 C45 25 -45 25 -65 5 Z" fill="url(#lotusPetalGrad)" filter="url(#softGlow)" />
+            
+            <!-- Tier 2: Flanking Curved Petals -->
+            <path class="lotus-petal lp-2" d="M-72 0 C-68 -45 -30 -58 -10 -25 C-30 5 -55 15 -72 0 Z" fill="url(#lotusPetalGrad)" />
+            <path class="lotus-petal lp-3" d="M72 0 C68 -45 30 -58 10 -25 C30 5 55 15 72 0 Z" fill="url(#lotusPetalGrad)" />
+            
+            <!-- Tier 3: Inner Standing Petals -->
+            <path class="lotus-petal lp-4" d="M-40 -5 C-32 -50 0 -68 0 -68 C0 -68 32 -50 40 -5 C25 20 -25 20 -40 -5 Z" fill="#FFFFFF" />
+            <path class="lotus-petal lp-5" d="M-22 -12 C-15 -46 0 -58 0 -58 C0 -58 15 -46 22 -12 C14 10 -14 10 -22 -12 Z" fill="#FFF5F8" />
+            
+            <!-- Golden Stamen Core Releasing Light -->
+            <ellipse cx="0" cy="-6" rx="14" ry="10" fill="url(#lotusCenterGlow)" filter="url(#celestialGlow)" class="lotus-core-light" />
+            <circle cx="0" cy="-6" r="6" fill="#FFFFFF" />
+            
+            <!-- Stardust Spores Floating from Lotus -->
+            <circle cx="-5" cy="-24" r="2" fill="#FFE082" class="lotus-spore sp-1" />
+            <circle cx="6" cy="-30" r="2.5" fill="#FFE082" class="lotus-spore sp-2" />
+            <circle cx="0" cy="-40" r="1.8" fill="#FFFFFF" class="lotus-spore sp-3" />
+          </g>
+
+          <!-- ===============================================================
+               FLOWER 3: SILK WILD POPPY (Vibrant, Papery, Coral Fluttering)
+               =============================================================== -->
+          <g id="flowerPoppy" class="living-flower flower-poppy-group" transform="translate(380, 175)">
+            <!-- 4 Flowing Papery Petals with Flutter Edges -->
+            <ellipse class="poppy-petal pp-1" cx="-20" cy="0" rx="30" ry="24" fill="url(#poppyPetalGrad)" transform="rotate(-25 -20 0)" filter="url(#softGlow)" />
+            <ellipse class="poppy-petal pp-2" cx="20" cy="0" rx="30" ry="24" fill="url(#poppyPetalGrad)" transform="rotate(25 20 0)" filter="url(#softGlow)" />
+            <ellipse class="poppy-petal pp-3" cx="0" cy="-20" rx="26" ry="30" fill="url(#poppyPetalGrad)" />
+            <ellipse class="poppy-petal pp-4" cx="0" cy="18" rx="26" ry="30" fill="url(#poppyPetalGrad)" />
+            
+            <!-- Dark Velvet Poppy Pod & Radiant Gold Stamens -->
+            <circle cx="0" cy="0" r="14" fill="#260C1A" />
+            <circle cx="0" cy="0" r="9" fill="#4E2338" />
+            <circle cx="0" cy="0" r="4.5" fill="#FFE082" filter="url(#celestialGlow)" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- Soul-stirring Romantic Dedication (Illuminates in golden starlight) -->
+      <div class="galaxy-dedication">
+        <p class="dedication-quote">
+          "Across millions of stars and endless galaxies...<br />
+          my heart will always choose you. 🌸✨"
+        </p>
+        <div class="dedication-sub">
+          Thank you for saying Yes. To infinity and beyond, together. 💫
+        </div>
+      </div>
+
+      <!-- Graceful Return Button (Returns to Keepsake Pass without stopping song!) -->
+      <div class="galaxy-actions">
+        <button id="backToPassBtn" class="btn-galaxy-back" type="button">
+          <span>← View our keepsake pass 💌</span>
         </button>
       </div>
 

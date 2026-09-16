@@ -46,9 +46,10 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Galaxy Mode Background: Deep Celestial Midnight */
-body.galaxy-mode {
-  background: radial-gradient(ellipse at 50% 60%, #150D24 0%, #080312 60%, #030107 100%) !important;
+/* Galaxy Mode Background: Deep Celestial Midnight (Starts glowing black, slowly lights up) */
+body.galaxy-mode,
+body.galaxy-active {
+  background: radial-gradient(ellipse at 50% 65%, #180C28 0%, #080312 60%, #020005 100%) !important;
   color: #FFFFFF !important;
 }
 
@@ -74,7 +75,8 @@ body.galaxy-mode {
   transition: opacity 1s ease;
 }
 
-body.galaxy-mode .bg-orb {
+body.galaxy-mode .bg-orb,
+body.galaxy-active .bg-orb {
   opacity: 0 !important;
 }
 
@@ -661,9 +663,149 @@ body.galaxy-mode .milkyway-overlay {
 }
 
 /* ==========================================================================
-   STAGE 3: THE MILKY WAY GALAXY & BLOOMING BOTANICAL GARDEN
+   FEATURE 3: ADORABLE BOUNCING GIFT EMOJI BUTTON (No clunky blue text!)
    ========================================================================== */
-.galaxy-container {
+.gift-box-area {
+  margin: 20px auto 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gift-emoji-btn {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FFF0F4 0%, #FFD6E3 45%, #FFAEC0 100%);
+  border: 2.5px solid #FF8FA3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(255, 94, 133, 0.38), 0 0 20px rgba(255, 174, 192, 0.6);
+  animation: giftBounce 2.4s cubic-bezier(0.28, 0.84, 0.42, 1) infinite;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.gift-emoji-btn:hover {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 14px 34px rgba(255, 94, 133, 0.55), 0 0 35px rgba(255, 174, 192, 0.9);
+}
+
+.gift-emoji-btn:active {
+  transform: scale(0.92);
+}
+
+.gift-emoji-icon {
+  font-size: 2.8rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 6px rgba(220, 50, 90, 0.25));
+  animation: giftWiggle 3.2s ease-in-out infinite;
+  display: block;
+}
+
+.gift-glow-halo {
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  right: -7px;
+  bottom: -7px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 120, 160, 0.6);
+  animation: spinHalo 10s linear infinite;
+  pointer-events: none;
+}
+
+.gift-sparkle-star {
+  position: absolute;
+  pointer-events: none;
+  font-size: 0.95rem;
+}
+
+.gift-sparkle-star.s1 {
+  top: -6px;
+  right: -6px;
+  animation: sparkleTwinkle 1.8s ease-in-out infinite alternate;
+}
+
+.gift-sparkle-star.s2 {
+  bottom: -4px;
+  left: -8px;
+  animation: sparkleTwinkle 2.2s ease-in-out 0.4s infinite alternate;
+}
+
+.gift-tap-hint {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #FF5E85;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px rgba(255, 174, 192, 0.5);
+  animation: hintBreathe 2s ease-in-out infinite alternate;
+}
+
+@keyframes giftBounce {
+  0%, 100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  30% {
+    transform: translateY(-16px) scale(0.96, 1.05);
+  }
+  50% {
+    transform: translateY(0) scale(1.05, 0.95);
+  }
+  65% {
+    transform: translateY(-7px) scale(0.98, 1.02);
+  }
+  80% {
+    transform: translateY(0) scale(1.02, 0.98);
+  }
+}
+
+@keyframes giftWiggle {
+  0%, 80%, 100% { transform: rotate(0deg); }
+  85% { transform: rotate(-8deg); }
+  90% { transform: rotate(8deg); }
+  95% { transform: rotate(-5deg); }
+}
+
+@keyframes spinHalo {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sparkleTwinkle {
+  0% { transform: scale(0.7) rotate(0deg); opacity: 0.4; }
+  100% { transform: scale(1.3) rotate(25deg); opacity: 1; filter: drop-shadow(0 0 6px #FFE082); }
+}
+
+@keyframes hintBreathe {
+  0% { opacity: 0.75; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1.02); }
+}
+
+/* ==========================================================================
+   STAGE 3: THE LIVING MILKY WAY GALAXY & BOTANICAL BLOOM
+   ========================================================================== */
+.cosmic-stardust-band {
+  position: absolute;
+  top: 25%;
+  left: -20%;
+  width: 140%;
+  height: 280px;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 230, 245, 0.08) 50%, transparent 100%);
+  transform: rotate(-18deg);
+  filter: blur(45px);
+  pointer-events: none;
+}
+
+.galaxy-stage {
   display: none;
   width: 100%;
   max-width: 620px;
@@ -671,109 +813,190 @@ body.galaxy-mode .milkyway-overlay {
   position: relative;
   z-index: 20;
   margin: auto;
-  padding: 20px 16px;
+  padding: 16px 14px;
 }
 
-.galaxy-container.active {
-  display: block;
-  animation: galaxyFadeIn 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+.galaxy-stage.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: cosmicAwakenFade 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-@keyframes galaxyFadeIn {
-  0% { opacity: 0; transform: scale(0.92); }
+@keyframes cosmicAwakenFade {
+  0% { opacity: 0; transform: scale(0.94); }
   100% { opacity: 1; transform: scale(1); }
 }
 
-.galaxy-badge {
+.galaxy-header {
+  opacity: 0;
+  animation: headerGlowIn 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.8s forwards;
+  margin-bottom: 8px;
+}
+
+@keyframes headerGlowIn {
+  0% { opacity: 0; transform: translateY(-16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.constellation-pill {
   display: inline-block;
   font-family: var(--font-heading);
   font-size: 0.88rem;
   font-weight: 600;
   color: #FFE082;
-  background: rgba(255, 224, 130, 0.15);
-  border: 1px solid rgba(255, 224, 130, 0.4);
-  padding: 5px 20px;
+  background: rgba(255, 224, 130, 0.14);
+  border: 1.5px solid rgba(255, 224, 130, 0.45);
+  padding: 5px 22px;
   border-radius: var(--radius-pill);
-  margin-bottom: 12px;
-  box-shadow: 0 0 15px rgba(255, 224, 130, 0.3);
+  margin-bottom: 10px;
+  box-shadow: 0 0 18px rgba(255, 224, 130, 0.3);
 }
 
-.galaxy-title {
+.galaxy-headline {
   font-family: var(--font-heading);
-  font-size: 2.6rem;
+  font-size: 2.3rem;
   font-weight: 700;
   color: #FFFFFF;
-  text-shadow: 0 0 25px rgba(255, 140, 190, 0.8), 0 0 50px rgba(180, 100, 255, 0.5);
-  margin-bottom: 14px;
+  line-height: 1.25;
+  text-shadow: 0 0 25px rgba(255, 120, 180, 0.75), 0 0 55px rgba(180, 100, 255, 0.5);
 }
 
-/* The Animated Blooming Botanical SVG */
-.cosmic-garden-box {
+/* Botanical Theater Container */
+.botanical-theater {
   width: 100%;
-  max-width: 500px;
-  height: 340px;
-  margin: 0 auto 18px;
+  max-width: 520px;
+  height: 380px;
+  margin: 0 auto;
   position: relative;
 }
 
-.blooming-flowers-svg {
+.botanical-canvas-svg {
   width: 100%;
   height: 100%;
   overflow: visible;
+  animation: gardenGentleSway 8s ease-in-out infinite alternate;
+  transform-origin: 260px 385px;
 }
 
-/* Stems Growing Animation */
-.growing-stem {
-  stroke-dasharray: 300;
-  stroke-dashoffset: 300;
-  animation: growStem 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+@keyframes gardenGentleSway {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(0.8deg); }
+  100% { transform: rotate(-0.8deg); }
 }
 
-@keyframes growStem {
-  0% { stroke-dashoffset: 300; }
+/* Phase 1: Falling Celestial Seed */
+.falling-seed {
+  animation: seedFallAndPlant 2.4s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards;
+  transform-origin: 260px 380px;
+  opacity: 0;
+}
+
+@keyframes seedFallAndPlant {
+  0% {
+    opacity: 0;
+    transform: translateY(-280px) scale(1.6);
+  }
+  20% {
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(0px) scale(1.2);
+  }
+  85% {
+    transform: translateY(3px) scale(1.3, 0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1, 1);
+  }
+}
+
+/* Ground Ripple on seed landing */
+.ripple-ring {
+  transform-origin: 260px 384px;
+  animation: ringPulse 2s ease-out 2.2s forwards;
+}
+
+@keyframes ringPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+/* Phase 2: Living Stems Sprouting Upward */
+.living-stem {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: sproutStem 2.6s cubic-bezier(0.4, 0, 0.2, 1) 2.2s forwards;
+}
+
+@keyframes sproutStem {
+  0% { stroke-dashoffset: 320; }
   100% { stroke-dashoffset: 0; }
 }
 
-/* Leaves Unfurling */
-.blooming-leaf {
+/* Botanical Leaves Unfurling */
+.living-leaf {
   transform-origin: center center;
   opacity: 0;
-  animation: unfurlLeaf 1.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  animation-delay: 1.2s;
+  animation: unfurlBotanicalLeaf 1.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-@keyframes unfurlLeaf {
-  0% { opacity: 0; transform: scale(0.1); }
-  100% { opacity: 1; transform: scale(1); }
-}
+.leaf-rose-1 { animation-delay: 2.8s; }
+.leaf-rose-2 { animation-delay: 3.2s; }
+.leaf-lotus-1 { animation-delay: 3.0s; }
+.leaf-lotus-2 { animation-delay: 3.3s; }
+.leaf-poppy-1 { animation-delay: 3.1s; }
 
-/* Flowers Blooming from Seed */
-.flower-bloom {
-  opacity: 0;
-  transform-origin: center center;
-  animation: bloomFlower 2.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.flower-rose {
-  animation-delay: 1.6s;
-}
-
-.flower-poppy {
-  animation-delay: 1.9s;
-}
-
-.flower-lotus {
-  animation-delay: 2.2s;
-}
-
-@keyframes bloomFlower {
+@keyframes unfurlBotanicalLeaf {
   0% {
     opacity: 0;
-    transform: scale(0.05) rotate(-30deg);
+    transform: scale(0.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Phase 3 & Living Motion: The Flowers */
+.living-flower {
+  opacity: 0;
+  transform-origin: center center;
+}
+
+.flower-rose-group {
+  animation: bloomBotanicalFlower 2.8s cubic-bezier(0.34, 1.56, 0.64, 1) 3.0s forwards,
+             flowerBreatheRose 5s ease-in-out 5.8s infinite alternate;
+}
+
+.flower-lotus-group {
+  animation: bloomBotanicalFlower 2.8s cubic-bezier(0.34, 1.56, 0.64, 1) 3.8s forwards,
+             flowerBreatheLotus 6s ease-in-out 6.6s infinite alternate;
+}
+
+.flower-poppy-group {
+  animation: bloomBotanicalFlower 2.8s cubic-bezier(0.34, 1.56, 0.64, 1) 3.4s forwards,
+             flowerBreathePoppy 4.8s ease-in-out 6.2s infinite alternate;
+}
+
+@keyframes bloomBotanicalFlower {
+  0% {
+    opacity: 0;
+    transform: scale(0.04) rotate(-35deg);
   }
   60% {
     opacity: 1;
-    transform: scale(1.15) rotate(5deg);
+    transform: scale(1.15) rotate(4deg);
   }
   100% {
     opacity: 1;
@@ -781,55 +1004,133 @@ body.galaxy-mode .milkyway-overlay {
   }
 }
 
-.petal-layer {
-  filter: drop-shadow(0 0 10px rgba(255, 160, 200, 0.7));
-  animation: petalBreathing 3s ease-in-out infinite alternate;
+@keyframes flowerBreatheRose {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.04) rotate(-2deg); }
 }
 
-@keyframes petalBreathing {
-  0% { filter: drop-shadow(0 0 8px rgba(255, 140, 190, 0.6)); }
-  100% { filter: drop-shadow(0 0 20px rgba(255, 180, 220, 0.95)); }
+@keyframes flowerBreatheLotus {
+  0% { transform: scale(1) translateY(0); }
+  100% { transform: scale(1.05) translateY(-4px); }
 }
 
-/* Cosmic Poetry */
-.galaxy-poetry {
-  margin-bottom: 24px;
+@keyframes flowerBreathePoppy {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.03) rotate(2.5deg); }
 }
 
-.poetry-line {
+/* Continuous Living Breathing & Glow (Never Stops!) */
+.rose-petal, .poppy-petal, .lotus-petal {
+  animation: livingPetalPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes livingPetalPulse {
+  0% {
+    filter: drop-shadow(0 0 6px rgba(255, 140, 190, 0.5));
+  }
+  100% {
+    filter: drop-shadow(0 0 20px rgba(255, 190, 225, 0.95));
+  }
+}
+
+/* Lotus Ambient Halo & Spores Floating Continually */
+.lotus-ambient-halo {
+  animation: haloBreathe 4s ease-in-out infinite alternate;
+}
+
+@keyframes haloBreathe {
+  0% { opacity: 0.15; transform: scale(0.9); }
+  100% { opacity: 0.35; transform: scale(1.15); }
+}
+
+.lotus-spore {
+  opacity: 0;
+  animation: floatCosmicSpore 3.5s ease-in-out infinite;
+}
+
+.lotus-spore.sp-1 { animation-delay: 4.5s; }
+.lotus-spore.sp-2 { animation-delay: 5.2s; }
+.lotus-spore.sp-3 { animation-delay: 5.8s; }
+
+@keyframes floatCosmicSpore {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.5);
+  }
+  30% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-55px) translateX(8px) scale(1.2);
+  }
+}
+
+/* Poetic Dedication */
+.galaxy-dedication {
+  opacity: 0;
+  animation: dedicationGlowIn 2s ease-out 4.2s forwards;
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
+
+@keyframes dedicationGlowIn {
+  0% { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.dedication-quote {
   font-family: var(--font-body);
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   line-height: 1.7;
   color: #F8E9FC;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-  margin-bottom: 12px;
+  font-weight: 500;
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
+  margin-bottom: 8px;
 }
 
-.poetry-signature {
+.dedication-sub {
   font-family: var(--font-heading);
-  font-size: 0.98rem;
+  font-size: 0.96rem;
+  font-weight: 600;
   color: #FFD54F;
-  text-shadow: 0 0 12px rgba(255, 213, 79, 0.6);
+  text-shadow: 0 0 14px rgba(255, 213, 79, 0.6);
+}
+
+/* Galaxy Actions (Back Button) */
+.galaxy-actions {
+  opacity: 0;
+  animation: dedicationGlowIn 1.8s ease-out 4.8s forwards;
 }
 
 .btn-galaxy-back {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1.5px solid rgba(255, 224, 130, 0.5);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 224, 130, 0.55);
   color: #FFE082;
   font-family: var(--font-heading);
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 600;
   padding: 12px 28px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   box-shadow: 0 0 20px rgba(255, 224, 130, 0.25);
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 .btn-galaxy-back:hover {
-  background: rgba(255, 224, 130, 0.3);
-  box-shadow: 0 0 30px rgba(255, 224, 130, 0.5);
+  background: rgba(255, 224, 130, 0.28);
+  box-shadow: 0 0 32px rgba(255, 224, 130, 0.55);
   transform: translateY(-2px);
+}
+
+.btn-galaxy-back:active {
+  transform: scale(0.96);
 }
 
 /* Floating Hearts Tap Effect */
