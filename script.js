@@ -557,7 +557,395 @@
     });
   }
 
-  // --- 5. Seamless In-Page Living Galaxy & Botanical Transition (ZERO audio interruption!) ---
+  // --- 5. Three.js 3D WebGL Living Crystal Lotus & Spiral Galaxy ---
+  // (Seamlessly translates user's Three.js Crystal Petals, Python 6-Petal flower layout, and 3,000-Point Galaxy math)
+  const threeContainer = document.getElementById('threeGardenContainer');
+  const threeCanvas = document.getElementById('threeCanvas');
+
+  let threeRenderer = null;
+  let threeScene = null;
+  let threeCamera = null;
+  let threeClock = null;
+  let flowerGroup = null;
+  let galaxyPoints = null;
+  let sporePoints = null;
+  let sporePositions = null;
+  let sporeVelocities = [];
+  const sporeCount = 65;
+  const petals = [];
+
+  let bloomProgress = 0;
+  let isBlooming = false;
+  let hasThreeInit = false;
+
+  // Interactive Touch & Mouse Orbit Drag
+  let isDragging = false;
+  let prevPointerX = 0;
+  let prevPointerY = 0;
+  let targetRotY = 0;
+  let targetRotX = 0.22;
+  let currentRotY = 0;
+  let currentRotX = 0.22;
+
+  function initThreeGarden() {
+    if (!window.THREE || !threeCanvas || !threeContainer || hasThreeInit) return;
+    hasThreeInit = true;
+
+    threeScene = new THREE.Scene();
+    threeScene.fog = new THREE.FogExp2(0x03000b, 0.022);
+
+    threeCamera = new THREE.PerspectiveCamera(55, 1, 0.1, 1000);
+    threeCamera.position.set(0, 2.0, 7.2);
+    threeCamera.lookAt(0, 0.45, 0);
+
+    threeRenderer = new THREE.WebGLRenderer({
+      canvas: threeCanvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance'
+    });
+    threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+    threeRenderer.toneMappingExposure = 1.15;
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffb6c1, 0.75);
+    threeScene.add(ambientLight);
+
+    const centerLight = new THREE.PointLight(0xff69b4, 3.8, 22);
+    centerLight.position.set(0, 1.2, 0);
+    threeScene.add(centerLight);
+
+    const topWarmLight = new THREE.DirectionalLight(0xfff0e6, 0.95);
+    topWarmLight.position.set(2, 6, 4);
+    threeScene.add(topWarmLight);
+
+    const goldenCoreLight = new THREE.PointLight(0xffd54f, 2.2, 10);
+    goldenCoreLight.position.set(0, 0.4, 0);
+    threeScene.add(goldenCoreLight);
+
+    // 1. Star Texture
+    function createStarTexture() {
+      const c = document.createElement('canvas');
+      c.width = 64;
+      c.height = 64;
+      const ctx = c.getContext('2d');
+      const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      grad.addColorStop(0.2, 'rgba(255, 220, 245, 0.9)');
+      grad.addColorStop(0.55, 'rgba(128, 216, 255, 0.3)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 64, 64);
+      return new THREE.CanvasTexture(c);
+    }
+    const starTexture = createStarTexture();
+
+    // 2. 3,500-Star Mathematical Spiral Galaxy (Python Galaxy Formula Translated)
+    // User's formula:
+    // theta = np.random.uniform(0, 4 * np.pi, n)
+    // r = np.sqrt(np.random.uniform(0, 1, n)) * 5
+    // x = r * np.cos(theta) + normal
+    // y = r * np.sin(theta) + normal
+    const galaxyCount = 3500;
+    const galaxyGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(galaxyCount * 3);
+    const colors = new Float32Array(galaxyCount * 3);
+
+    const colorCore = new THREE.Color(0xffe082); // Warm Gold (Python center)
+    const colorMid = new THREE.Color(0xff6584);  // Romantic Hotpink (Python petals)
+    const colorCyan = new THREE.Color(0x00e5ff); // Cyan (Python galaxy color='cyan')
+
+    for (let i = 0; i < galaxyCount; i++) {
+      const arm = (i % 3) * ((2 * Math.PI) / 3);
+      const r = Math.pow(Math.random(), 1.35) * 22 + 1.2;
+      const theta = arm + r * 0.42 + (Math.random() - 0.5) * 0.52;
+
+      const x = Math.cos(theta) * r + (Math.random() - 0.5) * 0.4;
+      const z = Math.sin(theta) * r + (Math.random() - 0.5) * 0.4;
+      const y = (Math.random() - 0.5) * (7 / (r * 0.6 + 1)) - 0.4;
+
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+
+      const mixedColor = new THREE.Color();
+      if (r < 5.0) {
+        mixedColor.lerpColors(colorCore, colorMid, r / 5.0);
+      } else {
+        mixedColor.lerpColors(colorMid, colorCyan, Math.min(1, (r - 5.0) / 14.0));
+      }
+
+      colors[i * 3] = mixedColor.r;
+      colors[i * 3 + 1] = mixedColor.g;
+      colors[i * 3 + 2] = mixedColor.b;
+    }
+
+    galaxyGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    galaxyGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const galaxyMat = new THREE.PointsMaterial({
+      size: 0.18,
+      vertexColors: true,
+      map: starTexture,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+
+    galaxyPoints = new THREE.Points(galaxyGeo, galaxyMat);
+    galaxyPoints.rotation.x = 0.32;
+    threeScene.add(galaxyPoints);
+
+    // 3. 3D Blooming Crystal Lotus & 6-Petal Mandala
+    const petalMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xffb6c1,
+      emissive: 0xff1493,
+      emissiveIntensity: 0.36,
+      roughness: 0.12,
+      transmission: 0.65,
+      thickness: 1.2,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.9
+    });
+
+    // Deep hotpink material for the Python-inspired 6-petal foundation layer
+    const mandalaMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xff4081,
+      emissive: 0xd81b60,
+      emissiveIntensity: 0.42,
+      roughness: 0.14,
+      transmission: 0.58,
+      thickness: 1.1,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.92
+    });
+
+    function createPetalShape() {
+      const shape = new THREE.Shape();
+      shape.moveTo(0, 0);
+      shape.bezierCurveTo(0.8, 1.0, 1.25, 2.4, 0, 3.8);
+      shape.bezierCurveTo(-1.25, 2.4, -0.8, 1.0, 0, 0);
+      const extrudeSettings = { depth: 0.05, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.02 };
+      return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    }
+    const petalGeometry = createPetalShape();
+
+    flowerGroup = new THREE.Group();
+
+    // Multi-tier layered petal arrangement:
+    // Layer 0: Python-inspired 6-petal radial foundation (for theta in linspace(0, 2*pi, 6))
+    // Layer 1: Outer Lotus Petals (14 petals)
+    // Layer 2: Mid Lotus Petals (10 petals)
+    // Layer 3: Inner Lotus Petals (6 petals)
+    const layers = [
+      { count: 6, scale: 1.16, angleOffset: 1.55, y: -0.12, mat: mandalaMaterial },
+      { count: 14, scale: 1.05, angleOffset: 1.38, y: -0.05, mat: petalMaterial },
+      { count: 10, scale: 0.80, angleOffset: 1.05, y: 0.06, mat: petalMaterial },
+      { count: 6, scale: 0.56, angleOffset: 0.75, y: 0.16, mat: petalMaterial }
+    ];
+
+    layers.forEach(layer => {
+      for (let i = 0; i < layer.count; i++) {
+        const angle = (i / layer.count) * Math.PI * 2;
+        const petalMesh = new THREE.Mesh(petalGeometry, layer.mat);
+        petalMesh.scale.set(layer.scale, layer.scale, layer.scale);
+        petalMesh.position.y = 0;
+        petalMesh.rotation.x = 0.08; // closed bud initially
+
+        const pivotGroup = new THREE.Group();
+        pivotGroup.position.y = layer.y;
+        pivotGroup.rotation.y = angle;
+        pivotGroup.add(petalMesh);
+
+        flowerGroup.add(pivotGroup);
+        petals.push({ mesh: petalMesh, maxRotation: layer.angleOffset });
+      }
+    });
+
+    // Core Glowing Sphere
+    const coreGeo = new THREE.SphereGeometry(0.38, 32, 32);
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const core = new THREE.Mesh(coreGeo, coreMat);
+    core.position.y = 0.32;
+    flowerGroup.add(core);
+
+    // Golden Halo (from Python code: center = plt.Circle((0, 0), 0.5, color='gold'))
+    const haloGeo = new THREE.SphereGeometry(0.56, 32, 32);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0xffd54f,
+      transparent: true,
+      opacity: 0.28,
+      blending: THREE.AdditiveBlending
+    });
+    const halo = new THREE.Mesh(haloGeo, haloMat);
+    halo.position.y = 0.32;
+    flowerGroup.add(halo);
+
+    // 4. Stardust Spores floating upward from core
+    const sporeGeo = new THREE.BufferGeometry();
+    sporePositions = new Float32Array(sporeCount * 3);
+    for (let i = 0; i < sporeCount; i++) {
+      const spR = Math.random() * 1.5;
+      const spAng = Math.random() * Math.PI * 2;
+      sporePositions[i * 3] = Math.cos(spAng) * spR;
+      sporePositions[i * 3 + 1] = Math.random() * 2.5;
+      sporePositions[i * 3 + 2] = Math.sin(spAng) * spR;
+      sporeVelocities.push({
+        speed: 0.006 + Math.random() * 0.008,
+        wobbleSpeed: 1 + Math.random() * 2,
+        wobbleAmp: 0.004 + Math.random() * 0.004,
+        seed: Math.random() * 10
+      });
+    }
+    sporeGeo.setAttribute('position', new THREE.BufferAttribute(sporePositions, 3));
+    const sporeMat = new THREE.PointsMaterial({
+      size: 0.12,
+      color: 0xffe082,
+      map: starTexture,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    sporePoints = new THREE.Points(sporeGeo, sporeMat);
+    flowerGroup.add(sporePoints);
+
+    flowerGroup.position.set(0, -0.2, 0);
+    threeScene.add(flowerGroup);
+
+    // 5. Interactive Touch / Mouse Drag Orbit
+    threeContainer.addEventListener('pointerdown', function (e) {
+      isDragging = true;
+      prevPointerX = e.clientX;
+      prevPointerY = e.clientY;
+      try { threeContainer.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+
+    window.addEventListener('pointermove', function (e) {
+      if (!isDragging) return;
+      const deltaX = e.clientX - prevPointerX;
+      const deltaY = e.clientY - prevPointerY;
+      targetRotY += deltaX * 0.0075;
+      targetRotX += deltaY * 0.0075;
+      targetRotX = Math.max(-0.4, Math.min(0.95, targetRotX));
+      prevPointerX = e.clientX;
+      prevPointerY = e.clientY;
+    });
+
+    function endPointerDrag(e) {
+      if (isDragging) {
+        isDragging = false;
+        try { threeContainer.releasePointerCapture(e.pointerId); } catch (err) {}
+      }
+    }
+    window.addEventListener('pointerup', endPointerDrag);
+    window.addEventListener('pointercancel', endPointerDrag);
+
+    // 6. Resize Handling
+    resizeThreeGarden();
+    window.addEventListener('resize', resizeThreeGarden);
+
+    // 7. Animation Loop
+    threeClock = new THREE.Clock();
+    requestAnimationFrame(animateThreeGarden);
+  }
+
+  function resizeThreeGarden() {
+    if (!threeRenderer || !threeCamera || !threeContainer) return;
+    const w = threeContainer.clientWidth || 540;
+    const h = threeContainer.clientHeight || 440;
+    threeCamera.aspect = w / h;
+    threeCamera.updateProjectionMatrix();
+    threeRenderer.setSize(w, h);
+  }
+
+  function animateThreeGarden() {
+    requestAnimationFrame(animateThreeGarden);
+    if (!threeRenderer || !threeScene || !threeCamera) return;
+
+    const delta = threeClock ? threeClock.getDelta() : 0.016;
+    const time = threeClock ? threeClock.getElapsedTime() : Date.now() * 0.001;
+
+    // Rotate spiral galaxy slowly
+    if (galaxyPoints) {
+      galaxyPoints.rotation.y += 0.0012;
+    }
+
+    // Interactive damping & idle auto-rotation
+    if (!isDragging) {
+      targetRotY += 0.004;
+    }
+    currentRotY += (targetRotY - currentRotY) * 0.07;
+    currentRotX += (targetRotX - currentRotX) * 0.07;
+
+    if (flowerGroup) {
+      flowerGroup.rotation.y = currentRotY;
+      flowerGroup.rotation.x = currentRotX;
+      // Gentle floating breath
+      flowerGroup.position.y = -0.2 + Math.sin(time * 1.6) * 0.08;
+    }
+
+    // Upward drifting stardust spores
+    if (sporePoints && sporePositions) {
+      const p = sporePoints.geometry.attributes.position.array;
+      for (let i = 0; i < sporeCount; i++) {
+        p[i * 3 + 1] += sporeVelocities[i].speed;
+        p[i * 3] += Math.sin(time * sporeVelocities[i].wobbleSpeed + sporeVelocities[i].seed) * sporeVelocities[i].wobbleAmp;
+        if (p[i * 3 + 1] > 2.8) {
+          p[i * 3 + 1] = 0.25;
+          const spR = Math.random() * 1.3;
+          const spAng = Math.random() * Math.PI * 2;
+          p[i * 3] = Math.cos(spAng) * spR;
+          p[i * 3 + 2] = Math.sin(spAng) * spR;
+        }
+      }
+      sporePoints.geometry.attributes.position.needsUpdate = true;
+    }
+
+    // Real-time Blooming Animation (smooth easeOutCubic)
+    if (isBlooming && bloomProgress < 1) {
+      bloomProgress += delta * 0.38; // blooms over ~2.6 seconds
+      if (bloomProgress > 1) bloomProgress = 1;
+
+      const p = 1 - Math.pow(1 - bloomProgress, 3);
+      petals.forEach(item => {
+        item.mesh.rotation.x = 0.08 + p * (item.maxRotation - 0.08);
+      });
+    }
+
+    threeRenderer.render(threeScene, threeCamera);
+  }
+
+  function triggerFlowerBloom() {
+    bloomProgress = 0;
+    isBlooming = true;
+    petals.forEach(item => {
+      item.mesh.rotation.x = 0.08;
+    });
+  }
+
+  function resetFlowerBud() {
+    bloomProgress = 0;
+    isBlooming = false;
+    petals.forEach(item => {
+      item.mesh.rotation.x = 0.08;
+    });
+  }
+
+  // Pre-initialize Three.js scene so it's loaded and ready instantaneously
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThreeGarden);
+  } else {
+    initThreeGarden();
+  }
+
+  // --- 6. Seamless Gift Open & Galaxy Transition (ZERO audio interruption!) ---
   const openGiftBtn = document.getElementById('openGiftBtn');
   const galaxyStage = document.getElementById('galaxyStage');
   const backToPassBtn = document.getElementById('backToPassBtn');
@@ -580,6 +968,8 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         isGalaxyActive = true;
+        resizeThreeGarden();
+        triggerFlowerBloom();
       }, 300);
     });
   }
@@ -602,7 +992,7 @@
     });
   }
 
-  // --- 6. Floating Hearts & Celestial Stardust on Every Tap (Non-blocking) ---
+  // --- 7. Floating Hearts & Celestial Stardust on Every Tap (Non-blocking) ---
   const heartEmojis = ['💖', '💕', '🌸', '✨', '⭐', '🧁', '💫'];
   window.addEventListener('click', function (e) {
     const target = e.target;
@@ -611,7 +1001,6 @@
     playSparkleChime();
 
     if (isGalaxyActive) {
-      // Golden celestial stardust burst in galaxy mode
       triggerBurst(18, e.clientX, e.clientY);
     }
 
@@ -624,7 +1013,7 @@
     setTimeout(() => heart.remove(), 1200);
   });
 
-  // --- 7. Replay Button ---
+  // --- 8. Replay Button ---
   const replayBtn = document.getElementById('replayBtn');
   if (replayBtn) {
     replayBtn.addEventListener('click', function (e) {
@@ -636,6 +1025,8 @@
 
       document.body.classList.remove('galaxy-active');
       if (galaxyStage) galaxyStage.classList.remove('active');
+
+      resetFlowerBud();
 
       if (noBtn) noBtn.style.transform = '';
       if (yesBtn) yesBtn.style.transform = '';
