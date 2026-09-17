@@ -557,8 +557,8 @@
     });
   }
 
-  // --- 5. Three.js 3D WebGL Living Crystal Lotus & Spiral Galaxy ---
-  // (Seamlessly translates user's Three.js Crystal Petals, Python 6-Petal flower layout, and 3,000-Point Galaxy math)
+  // --- 5. Three.js 3D WebGL Living Crystal Lotus & Spiral Galaxy (High-Craft Edition) ---
+  // (Curved 3D parametric petals, golden stamen core, emerald stem, 6,000-star galaxy, shooting stars, and orbit/zoom)
   const threeContainer = document.getElementById('threeGardenContainer');
   const threeCanvas = document.getElementById('threeCanvas');
 
@@ -568,17 +568,30 @@
   let threeClock = null;
   let flowerGroup = null;
   let galaxyPoints = null;
+  let galaxySpeeds = null;
   let sporePoints = null;
   let sporePositions = null;
   let sporeVelocities = [];
-  const sporeCount = 65;
+  const sporeCount = 75;
   const petals = [];
+
+  // Loose floating petals in space
+  let floatingPetalsGroup = null;
+  const floatingPetalsData = [];
+
+  // Shooting star system
+  let shootingStarLine = null;
+  let shootActive = false;
+  let shootProgress = 0;
+  let shootStart = null;
+  let shootDir = null;
+  let nextShootTime = 2.5;
 
   let bloomProgress = 0;
   let isBlooming = false;
   let hasThreeInit = false;
 
-  // Interactive Touch & Mouse Orbit Drag
+  // Interactive Touch & Mouse Orbit Drag + Pinch/Wheel Zoom
   let isDragging = false;
   let prevPointerX = 0;
   let prevPointerY = 0;
@@ -587,16 +600,125 @@
   let currentRotY = 0;
   let currentRotX = 0.22;
 
+  let targetCameraDist = 7.4;
+  let currentCameraDist = 7.4;
+  const lookTarget = { x: 0, y: 0.42, z: 0 };
+  let initialPinchDist = null;
+
+  // Parametric Double-Curved 3D Petal Geometry Builder
+  function createCurvedPetalGeometry(width, length, cupDepth, tipCurl, colorBaseHex, colorMidHex, colorRimHex, uSegs = 16, vSegs = 22) {
+    const positions = [];
+    const uvs = [];
+    const colors = [];
+    const indices = [];
+
+    const colorBase = new THREE.Color(colorBaseHex);
+    const colorMid = new THREE.Color(colorMidHex);
+    const colorRim = new THREE.Color(colorRimHex);
+    const colorGold = new THREE.Color(0xffd54f);
+
+    for (let j = 0; j <= vSegs; j++) {
+      const v = j / vSegs; // 0 at base to 1 at tip
+      const contour = Math.sin(Math.PI * Math.pow(v, 0.65));
+      const w = contour * (width * 0.5);
+      const y = v * length;
+      const zCurl = Math.pow(v, 2.2) * tipCurl;
+
+      for (let i = 0; i <= uSegs; i++) {
+        const uNorm = (i / uSegs) * 2 - 1; // -1 to +1
+        const x = uNorm * w;
+        // Spoon-like concave curvature along width
+        const zCup = -(1 - uNorm * uNorm) * cupDepth * Math.sin(Math.PI * v * 0.85);
+        const z = zCup + zCurl;
+
+        positions.push(x, y, z);
+        uvs.push(i / uSegs, v);
+
+        // Botanical vertex color gradient: Gold base -> Velvet Rose -> Crystal Blush -> Frosted Rim
+        const edgeDist = Math.abs(uNorm);
+        const vertexColor = new THREE.Color();
+        if (v < 0.22) {
+          vertexColor.lerpColors(colorGold, colorBase, v / 0.22);
+        } else if (v < 0.72) {
+          vertexColor.lerpColors(colorBase, colorMid, (v - 0.22) / 0.5);
+        } else {
+          vertexColor.lerpColors(colorMid, colorRim, (v - 0.72) / 0.28);
+        }
+        if (edgeDist > 0.72) {
+          vertexColor.lerp(colorRim, (edgeDist - 0.72) / 0.28 * 0.45);
+        }
+
+        colors.push(vertexColor.r, vertexColor.g, vertexColor.b);
+      }
+    }
+
+    for (let j = 0; j < vSegs; j++) {
+      for (let i = 0; i < uSegs; i++) {
+        const a = j * (uSegs + 1) + i;
+        const b = (j + 1) * (uSegs + 1) + i;
+        const c = (j + 1) * (uSegs + 1) + (i + 1);
+        const d = j * (uSegs + 1) + (i + 1);
+        indices.push(a, b, d);
+        indices.push(b, c, d);
+      }
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setIndex(indices);
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    geo.computeVertexNormals();
+    return geo;
+  }
+
+  // Radiating Golden Stamens Filaments & Pollen Tips Builder
+  function createStamenSystem(count = 48) {
+    const linePositions = [];
+    const lineColors = [];
+    const headPositions = [];
+    const colGold = new THREE.Color(0xffd54f);
+    const colTip = new THREE.Color(0xfff9c4);
+
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.12;
+      const rBase = 0.12 + Math.random() * 0.14;
+      const rTip = rBase + 0.25 + Math.random() * 0.15;
+      const height = 0.32 + Math.random() * 0.22;
+
+      const x0 = Math.cos(angle) * rBase;
+      const z0 = Math.sin(angle) * rBase;
+      const y0 = 0.28;
+
+      const x1 = Math.cos(angle) * rTip;
+      const z1 = Math.sin(angle) * rTip;
+      const y1 = y0 + height;
+
+      linePositions.push(x0, y0, z0, x1, y1, z1);
+      lineColors.push(colGold.r, colGold.g, colGold.b, colTip.r, colTip.g, colTip.b);
+      headPositions.push(x1, y1, z1);
+    }
+
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+    lineGeo.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
+
+    const headGeo = new THREE.BufferGeometry();
+    headGeo.setAttribute('position', new THREE.Float32BufferAttribute(headPositions, 3));
+
+    return { lineGeo, headGeo };
+  }
+
   function initThreeGarden() {
     if (!window.THREE || !threeCanvas || !threeContainer || hasThreeInit) return;
     hasThreeInit = true;
 
     threeScene = new THREE.Scene();
-    threeScene.fog = new THREE.FogExp2(0x03000b, 0.022);
+    threeScene.fog = new THREE.FogExp2(0x02000a, 0.018);
 
-    threeCamera = new THREE.PerspectiveCamera(55, 1, 0.1, 1000);
-    threeCamera.position.set(0, 2.0, 7.2);
-    threeCamera.lookAt(0, 0.45, 0);
+    threeCamera = new THREE.PerspectiveCamera(52, 1, 0.1, 1000);
+    threeCamera.position.set(0, 2.1, currentCameraDist);
+    threeCamera.lookAt(lookTarget.x, lookTarget.y, lookTarget.z);
 
     threeRenderer = new THREE.WebGLRenderer({
       canvas: threeCanvas,
@@ -606,25 +728,29 @@
     });
     threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-    threeRenderer.toneMappingExposure = 1.15;
+    threeRenderer.toneMappingExposure = 1.18;
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffb6c1, 0.75);
+    // --- Cinematic Lights ---
+    const ambientLight = new THREE.AmbientLight(0xffc2d1, 0.85);
     threeScene.add(ambientLight);
 
-    const centerLight = new THREE.PointLight(0xff69b4, 3.8, 22);
-    centerLight.position.set(0, 1.2, 0);
-    threeScene.add(centerLight);
+    const centerPointLight = new THREE.PointLight(0xff1493, 4.2, 24);
+    centerPointLight.position.set(0, 1.4, 0);
+    threeScene.add(centerPointLight);
 
-    const topWarmLight = new THREE.DirectionalLight(0xfff0e6, 0.95);
-    topWarmLight.position.set(2, 6, 4);
+    const goldenStamenLight = new THREE.PointLight(0xffe082, 3.8, 10);
+    goldenStamenLight.position.set(0, 0.55, 0);
+    threeScene.add(goldenStamenLight);
+
+    const topWarmLight = new THREE.DirectionalLight(0xfff0f5, 1.1);
+    topWarmLight.position.set(3, 7, 5);
     threeScene.add(topWarmLight);
 
-    const goldenCoreLight = new THREE.PointLight(0xffd54f, 2.2, 10);
-    goldenCoreLight.position.set(0, 0.4, 0);
-    threeScene.add(goldenCoreLight);
+    const rimLight = new THREE.DirectionalLight(0x00e5ff, 0.65);
+    rimLight.position.set(-4, -2, -4);
+    threeScene.add(rimLight);
 
-    // 1. Star Texture
+    // --- Star Texture ---
     function createStarTexture() {
       const c = document.createElement('canvas');
       c.width = 64;
@@ -632,8 +758,8 @@
       const ctx = c.getContext('2d');
       const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
       grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-      grad.addColorStop(0.2, 'rgba(255, 220, 245, 0.9)');
-      grad.addColorStop(0.55, 'rgba(128, 216, 255, 0.3)');
+      grad.addColorStop(0.25, 'rgba(255, 224, 130, 0.9)');
+      grad.addColorStop(0.55, 'rgba(0, 229, 255, 0.35)');
       grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 64, 64);
@@ -641,51 +767,53 @@
     }
     const starTexture = createStarTexture();
 
-    // 2. 3,500-Star Mathematical Spiral Galaxy (Python Galaxy Formula Translated)
-    // User's formula:
-    // theta = np.random.uniform(0, 4 * np.pi, n)
-    // r = np.sqrt(np.random.uniform(0, 1, n)) * 5
-    // x = r * np.cos(theta) + normal
-    // y = r * np.sin(theta) + normal
-    const galaxyCount = 3500;
+    // --- 1. 6,000-Star Python Logarithmic Spiral Galaxy with Differential Swirl ---
+    // User's formula: theta ~ uniform(0, 4*pi), r = sqrt(uniform)*5, x = r*cos(theta), y = r*sin(theta)
+    const galaxyCount = 6000;
     const galaxyGeo = new THREE.BufferGeometry();
-    const positions = new Float32Array(galaxyCount * 3);
-    const colors = new Float32Array(galaxyCount * 3);
+    const galaxyPositions = new Float32Array(galaxyCount * 3);
+    const galaxyColors = new Float32Array(galaxyCount * 3);
+    galaxySpeeds = new Float32Array(galaxyCount);
 
     const colorCore = new THREE.Color(0xffe082); // Warm Gold (Python center)
     const colorMid = new THREE.Color(0xff6584);  // Romantic Hotpink (Python petals)
-    const colorCyan = new THREE.Color(0x00e5ff); // Cyan (Python galaxy color='cyan')
+    const colorCyan = new THREE.Color(0x00e5ff); // Luminous Cyan (Python color='cyan')
+    const colorWhite = new THREE.Color(0xffffff);
 
     for (let i = 0; i < galaxyCount; i++) {
       const arm = (i % 3) * ((2 * Math.PI) / 3);
-      const r = Math.pow(Math.random(), 1.35) * 22 + 1.2;
-      const theta = arm + r * 0.42 + (Math.random() - 0.5) * 0.52;
+      const r = Math.pow(Math.random(), 1.3) * 26 + 1.2;
+      const theta = arm + r * 0.38 + (Math.random() - 0.5) * 0.48;
 
-      const x = Math.cos(theta) * r + (Math.random() - 0.5) * 0.4;
-      const z = Math.sin(theta) * r + (Math.random() - 0.5) * 0.4;
-      const y = (Math.random() - 0.5) * (7 / (r * 0.6 + 1)) - 0.4;
+      const x = Math.cos(theta) * r + (Math.random() - 0.5) * 0.42;
+      const z = Math.sin(theta) * r + (Math.random() - 0.5) * 0.42;
+      const y = (Math.random() - 0.5) * (7 / (r * 0.55 + 1)) - 0.35;
 
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
+      galaxyPositions[i * 3] = x;
+      galaxyPositions[i * 3 + 1] = y;
+      galaxyPositions[i * 3 + 2] = z;
 
-      const mixedColor = new THREE.Color();
-      if (r < 5.0) {
-        mixedColor.lerpColors(colorCore, colorMid, r / 5.0);
+      galaxySpeeds[i] = 0.0024 / Math.sqrt(r * 0.4 + 1);
+
+      const col = new THREE.Color();
+      if (r < 4.8) {
+        col.lerpColors(colorCore, colorMid, r / 4.8);
+      } else if (r < 15) {
+        col.lerpColors(colorMid, colorCyan, (r - 4.8) / 10.2);
       } else {
-        mixedColor.lerpColors(colorMid, colorCyan, Math.min(1, (r - 5.0) / 14.0));
+        col.lerpColors(colorCyan, colorWhite, Math.min(1, (r - 15) / 11));
       }
 
-      colors[i * 3] = mixedColor.r;
-      colors[i * 3 + 1] = mixedColor.g;
-      colors[i * 3 + 2] = mixedColor.b;
+      galaxyColors[i * 3] = col.r;
+      galaxyColors[i * 3 + 1] = col.g;
+      galaxyColors[i * 3 + 2] = col.b;
     }
 
-    galaxyGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    galaxyGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    galaxyGeo.setAttribute('position', new THREE.BufferAttribute(galaxyPositions, 3));
+    galaxyGeo.setAttribute('color', new THREE.BufferAttribute(galaxyColors, 3));
 
     const galaxyMat = new THREE.PointsMaterial({
-      size: 0.18,
+      size: 0.19,
       vertexColors: true,
       map: starTexture,
       transparent: true,
@@ -697,105 +825,205 @@
     galaxyPoints.rotation.x = 0.32;
     threeScene.add(galaxyPoints);
 
-    // 3. 3D Blooming Crystal Lotus & 6-Petal Mandala
-    const petalMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xffb6c1,
-      emissive: 0xff1493,
-      emissiveIntensity: 0.36,
-      roughness: 0.12,
-      transmission: 0.65,
-      thickness: 1.2,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
-      side: THREE.DoubleSide,
+    // --- 2. Dynamic 3D Shooting Star System ---
+    const shootGeo = new THREE.BufferGeometry();
+    const shootPos = new Float32Array(6);
+    shootGeo.setAttribute('position', new THREE.BufferAttribute(shootPos, 3));
+    const shootMat = new THREE.LineBasicMaterial({
+      color: 0xffffff,
       transparent: true,
-      opacity: 0.9
+      opacity: 0,
+      blending: THREE.AdditiveBlending
     });
+    shootingStarLine = new THREE.Line(shootGeo, shootMat);
+    threeScene.add(shootingStarLine);
 
-    // Deep hotpink material for the Python-inspired 6-petal foundation layer
-    const mandalaMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xff4081,
-      emissive: 0xd81b60,
-      emissiveIntensity: 0.42,
-      roughness: 0.14,
-      transmission: 0.58,
-      thickness: 1.1,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.92
-    });
+    shootStart = new THREE.Vector3();
+    shootDir = new THREE.Vector3();
 
-    function createPetalShape() {
-      const shape = new THREE.Shape();
-      shape.moveTo(0, 0);
-      shape.bezierCurveTo(0.8, 1.0, 1.25, 2.4, 0, 3.8);
-      shape.bezierCurveTo(-1.25, 2.4, -0.8, 1.0, 0, 0);
-      const extrudeSettings = { depth: 0.05, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.02 };
-      return new THREE.ExtrudeGeometry(shape, extrudeSettings);
-    }
-    const petalGeometry = createPetalShape();
-
+    // --- 3. Master 3D Botanical Flower Group ---
     flowerGroup = new THREE.Group();
 
-    // Multi-tier layered petal arrangement:
-    // Layer 0: Python-inspired 6-petal radial foundation (for theta in linspace(0, 2*pi, 6))
-    // Layer 1: Outer Lotus Petals (14 petals)
-    // Layer 2: Mid Lotus Petals (10 petals)
-    // Layer 3: Inner Lotus Petals (6 petals)
-    const layers = [
-      { count: 6, scale: 1.16, angleOffset: 1.55, y: -0.12, mat: mandalaMaterial },
-      { count: 14, scale: 1.05, angleOffset: 1.38, y: -0.05, mat: petalMaterial },
-      { count: 10, scale: 0.80, angleOffset: 1.05, y: 0.06, mat: petalMaterial },
-      { count: 6, scale: 0.56, angleOffset: 0.75, y: 0.16, mat: petalMaterial }
+    // Crystal Glass Physical Petal Material with Vertex Colors
+    const crystalPetalMat = new THREE.MeshPhysicalMaterial({
+      vertexColors: true,
+      transmission: 0.65,
+      roughness: 0.14,
+      metalness: 0.02,
+      thickness: 1.1,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.08,
+      emissive: 0xff1493,
+      emissiveIntensity: 0.3,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.94
+    });
+
+    // 4 Distinct Curved Petal Geometries (Tuned for organic cupping & tip curls)
+    const geoWhorl0 = createCurvedPetalGeometry(1.65, 3.4, 0.36, -0.75, 0x880e4f, 0xe91e63, 0xff80ab); // Python 6-Petal Foundation
+    const geoWhorl1 = createCurvedPetalGeometry(1.38, 3.1, 0.48, -0.55, 0xad1457, 0xff4081, 0xfff0f5); // Outer Lotus Whorl
+    const geoWhorl2 = createCurvedPetalGeometry(1.18, 2.7, 0.54, -0.38, 0xc2185b, 0xff6584, 0xfff5f8); // Mid Lotus Whorl
+    const geoWhorl3 = createCurvedPetalGeometry(0.92, 2.2, 0.60, -0.18, 0xd81b60, 0xff8da1, 0xffffff); // Inner Bud Whorl
+
+    const whorlConfigs = [
+      { count: 6, geo: geoWhorl0, scale: 1.15, angleOffset: 1.58, y: -0.14, startStage: 0.0, endStage: 0.75 },
+      { count: 14, geo: geoWhorl1, scale: 1.05, angleOffset: 1.35, y: -0.05, startStage: 0.12, endStage: 0.85 },
+      { count: 10, geo: geoWhorl2, scale: 0.82, angleOffset: 1.05, y: 0.06, startStage: 0.28, endStage: 0.95 },
+      { count: 7, geo: geoWhorl3, scale: 0.58, angleOffset: 0.72, y: 0.16, startStage: 0.45, endStage: 1.0 }
     ];
 
-    layers.forEach(layer => {
-      for (let i = 0; i < layer.count; i++) {
-        const angle = (i / layer.count) * Math.PI * 2;
-        const petalMesh = new THREE.Mesh(petalGeometry, layer.mat);
-        petalMesh.scale.set(layer.scale, layer.scale, layer.scale);
+    whorlConfigs.forEach(whorl => {
+      for (let i = 0; i < whorl.count; i++) {
+        const angle = (i / whorl.count) * Math.PI * 2;
+        const petalMesh = new THREE.Mesh(whorl.geo, crystalPetalMat);
+        petalMesh.scale.set(whorl.scale, whorl.scale, whorl.scale);
         petalMesh.position.y = 0;
         petalMesh.rotation.x = 0.08; // closed bud initially
 
         const pivotGroup = new THREE.Group();
-        pivotGroup.position.y = layer.y;
+        pivotGroup.position.y = whorl.y;
         pivotGroup.rotation.y = angle;
         pivotGroup.add(petalMesh);
 
         flowerGroup.add(pivotGroup);
-        petals.push({ mesh: petalMesh, maxRotation: layer.angleOffset });
+        petals.push({
+          mesh: petalMesh,
+          maxRotation: whorl.angleOffset,
+          startStage: whorl.startStage,
+          endStage: whorl.endStage
+        });
       }
     });
 
-    // Core Glowing Sphere
-    const coreGeo = new THREE.SphereGeometry(0.38, 32, 32);
-    const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const core = new THREE.Mesh(coreGeo, coreMat);
-    core.position.y = 0.32;
-    flowerGroup.add(core);
+    // --- 4. Golden Honey Dome Receptacle & Glowing Stamens ---
+    const domeGeo = new THREE.SphereGeometry(0.38, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.5);
+    const domeMat = new THREE.MeshStandardMaterial({
+      color: 0xffd54f,
+      emissive: 0xffa000,
+      emissiveIntensity: 0.55,
+      roughness: 0.25,
+      metalness: 0.3
+    });
+    const domeMesh = new THREE.Mesh(domeGeo, domeMat);
+    domeMesh.position.y = 0.22;
+    flowerGroup.add(domeMesh);
 
-    // Golden Halo (from Python code: center = plt.Circle((0, 0), 0.5, color='gold'))
+    // 48 Golden Stamen Filaments
+    const stamenData = createStamenSystem(48);
+    const stamenLines = new THREE.LineSegments(stamenData.lineGeo, new THREE.LineBasicMaterial({
+      vertexColors: true,
+      linewidth: 1.5,
+      transparent: true,
+      opacity: 0.9
+    }));
+    flowerGroup.add(stamenLines);
+
+    // Golden Pollen Bead Heads
+    const pollenMat = new THREE.PointsMaterial({
+      size: 0.12,
+      color: 0xfff9c4,
+      map: starTexture,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const pollenPoints = new THREE.Points(stamenData.headGeo, pollenMat);
+    flowerGroup.add(pollenPoints);
+
+    // Glowing Core Halo
     const haloGeo = new THREE.SphereGeometry(0.56, 32, 32);
     const haloMat = new THREE.MeshBasicMaterial({
       color: 0xffd54f,
       transparent: true,
-      opacity: 0.28,
+      opacity: 0.26,
       blending: THREE.AdditiveBlending
     });
     const halo = new THREE.Mesh(haloGeo, haloMat);
-    halo.position.y = 0.32;
+    halo.position.y = 0.35;
     flowerGroup.add(halo);
 
-    // 4. Stardust Spores floating upward from core
+    // --- 5. Curved Crystal Emerald Stem & Dewdrop Leaves ---
+    const stemCurve = new THREE.CubicBezierCurve3(
+      new THREE.Vector3(0, -0.15, 0),
+      new THREE.Vector3(0.1, -0.8, -0.1),
+      new THREE.Vector3(-0.15, -1.6, 0.12),
+      new THREE.Vector3(-0.04, -2.4, 0)
+    );
+    const stemGeo = new THREE.TubeGeometry(stemCurve, 32, 0.075, 12, false);
+    const stemMat = new THREE.MeshPhysicalMaterial({
+      color: 0x2d6a4f,
+      emissive: 0x1b4332,
+      emissiveIntensity: 0.35,
+      roughness: 0.25,
+      transmission: 0.45,
+      thickness: 0.8,
+      clearcoat: 0.9,
+      clearcoatRoughness: 0.15
+    });
+    const stemMesh = new THREE.Mesh(stemGeo, stemMat);
+    flowerGroup.add(stemMesh);
+
+    function createLeafMesh(scale, angle, yPos, tilt) {
+      const leafShape = new THREE.Shape();
+      leafShape.moveTo(0, 0);
+      leafShape.bezierCurveTo(0.5, 0.3, 0.9, 1.0, 0, 2.2);
+      leafShape.bezierCurveTo(-0.9, 1.0, -0.5, 0.3, 0, 0);
+      const leafGeo = new THREE.ShapeGeometry(leafShape, 16);
+      const pos = leafGeo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const lx = pos.getX(i);
+        const ly = pos.getY(i);
+        pos.setZ(i, -0.22 * Math.sin((ly / 2.2) * Math.PI) * (1 - Math.abs(lx / 0.9)));
+      }
+      leafGeo.computeVertexNormals();
+
+      const leafMat = new THREE.MeshPhysicalMaterial({
+        color: 0x40916c,
+        emissive: 0x2d6a4f,
+        emissiveIntensity: 0.3,
+        roughness: 0.22,
+        transmission: 0.5,
+        thickness: 0.6,
+        clearcoat: 0.85,
+        side: THREE.DoubleSide
+      });
+      const leafMesh = new THREE.Mesh(leafGeo, leafMat);
+      leafMesh.scale.set(scale, scale, scale);
+
+      // Add a sparkling dewdrop
+      const dewGeo = new THREE.SphereGeometry(0.065, 16, 16);
+      const dewMat = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        transmission: 0.9,
+        roughness: 0.05,
+        clearcoat: 1.0
+      });
+      const dew = new THREE.Mesh(dewGeo, dewMat);
+      dew.position.set(0.12, 1.1, 0.05);
+      leafMesh.add(dew);
+
+      const leafPivot = new THREE.Group();
+      leafPivot.position.set(0, yPos, 0);
+      leafPivot.rotation.y = angle;
+      leafMesh.rotation.x = tilt;
+      leafPivot.add(leafMesh);
+      return leafPivot;
+    }
+
+    const leaf1 = createLeafMesh(0.85, 0.65, -0.85, 1.15);
+    const leaf2 = createLeafMesh(0.75, -2.35, -1.45, 1.05);
+    flowerGroup.add(leaf1);
+    flowerGroup.add(leaf2);
+
+    // --- 6. Floating Golden Stardust Spores ---
     const sporeGeo = new THREE.BufferGeometry();
     sporePositions = new Float32Array(sporeCount * 3);
     for (let i = 0; i < sporeCount; i++) {
-      const spR = Math.random() * 1.5;
+      const spR = Math.random() * 1.6;
       const spAng = Math.random() * Math.PI * 2;
       sporePositions[i * 3] = Math.cos(spAng) * spR;
-      sporePositions[i * 3 + 1] = Math.random() * 2.5;
+      sporePositions[i * 3 + 1] = Math.random() * 2.6;
       sporePositions[i * 3 + 2] = Math.sin(spAng) * spR;
       sporeVelocities.push({
         speed: 0.006 + Math.random() * 0.008,
@@ -806,7 +1034,7 @@
     }
     sporeGeo.setAttribute('position', new THREE.BufferAttribute(sporePositions, 3));
     const sporeMat = new THREE.PointsMaterial({
-      size: 0.12,
+      size: 0.13,
       color: 0xffe082,
       map: starTexture,
       transparent: true,
@@ -816,11 +1044,45 @@
     sporePoints = new THREE.Points(sporeGeo, sporeMat);
     flowerGroup.add(sporePoints);
 
-    flowerGroup.position.set(0, -0.2, 0);
+    // --- 7. Loose Floating Petals Drifting in Cosmic Gravity ---
+    floatingPetalsGroup = new THREE.Group();
+    const miniPetalGeo = createCurvedPetalGeometry(0.65, 1.4, 0.25, -0.25, 0xff6584, 0xff8da1, 0xffffff, 8, 10);
+    const miniPetalMat = new THREE.MeshPhysicalMaterial({
+      vertexColors: true,
+      transmission: 0.6,
+      roughness: 0.2,
+      clearcoat: 0.8,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.85
+    });
+
+    for (let i = 0; i < 6; i++) {
+      const pMesh = new THREE.Mesh(miniPetalGeo, miniPetalMat);
+      const angle = (i / 6) * Math.PI * 2;
+      const dist = 2.2 + Math.random() * 1.5;
+      pMesh.position.set(Math.cos(angle) * dist, (Math.random() - 0.5) * 2.0, Math.sin(angle) * dist);
+      pMesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      floatingPetalsGroup.add(pMesh);
+      floatingPetalsData.push({
+        mesh: pMesh,
+        angle: angle,
+        dist: dist,
+        orbitSpeed: 0.003 + Math.random() * 0.003,
+        rotSpeedX: (Math.random() - 0.5) * 0.015,
+        rotSpeedY: (Math.random() - 0.5) * 0.015,
+        yBase: pMesh.position.y,
+        ySpeed: 0.8 + Math.random() * 0.8
+      });
+    }
+    threeScene.add(floatingPetalsGroup);
+
+    flowerGroup.position.set(0, -0.22, 0);
     threeScene.add(flowerGroup);
 
-    // 5. Interactive Touch / Mouse Drag Orbit
+    // --- 8. Interactive Touch / Mouse Orbit Drag + Wheel / Pinch Zoom ---
     threeContainer.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch' && !e.isPrimary) return;
       isDragging = true;
       prevPointerX = e.clientX;
       prevPointerY = e.clientY;
@@ -833,7 +1095,7 @@
       const deltaY = e.clientY - prevPointerY;
       targetRotY += deltaX * 0.0075;
       targetRotX += deltaY * 0.0075;
-      targetRotX = Math.max(-0.4, Math.min(0.95, targetRotX));
+      targetRotX = Math.max(-0.45, Math.min(0.95, targetRotX));
       prevPointerX = e.clientX;
       prevPointerY = e.clientY;
     });
@@ -847,51 +1109,142 @@
     window.addEventListener('pointerup', endPointerDrag);
     window.addEventListener('pointercancel', endPointerDrag);
 
-    // 6. Resize Handling
+    // Mouse Wheel Zoom
+    threeContainer.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      targetCameraDist += e.deltaY * 0.005;
+      targetCameraDist = Math.max(4.2, Math.min(10.5, targetCameraDist));
+    }, { passive: false });
+
+    // Touch Pinch Zoom
+    threeContainer.addEventListener('touchmove', function (e) {
+      if (e.touches.length === 2) {
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        if (initialPinchDist !== null) {
+          const diff = initialPinchDist - dist;
+          targetCameraDist += diff * 0.012;
+          targetCameraDist = Math.max(4.2, Math.min(10.5, targetCameraDist));
+        }
+        initialPinchDist = dist;
+      }
+    }, { passive: true });
+
+    threeContainer.addEventListener('touchend', function () {
+      initialPinchDist = null;
+    }, { passive: true });
+
+    // --- 9. Resize Handling ---
     resizeThreeGarden();
     window.addEventListener('resize', resizeThreeGarden);
 
-    // 7. Animation Loop
+    // --- 10. Animation Loop ---
     threeClock = new THREE.Clock();
     requestAnimationFrame(animateThreeGarden);
   }
 
   function resizeThreeGarden() {
     if (!threeRenderer || !threeCamera || !threeContainer) return;
-    const w = threeContainer.clientWidth || 540;
-    const h = threeContainer.clientHeight || 440;
+    const w = threeContainer.clientWidth || 600;
+    const h = threeContainer.clientHeight || 500;
     threeCamera.aspect = w / h;
     threeCamera.updateProjectionMatrix();
     threeRenderer.setSize(w, h);
+  }
+
+  function triggerShootingStar(time) {
+    shootActive = true;
+    shootProgress = 0;
+    const side = Math.random() < 0.5 ? -1 : 1;
+    shootStart.set(side * (10 + Math.random() * 5), 6 + Math.random() * 5, -8 - Math.random() * 8);
+    shootDir.set(-side * (14 + Math.random() * 6), -(8 + Math.random() * 5), 4 + Math.random() * 4).normalize();
+    nextShootTime = time + 3.0 + Math.random() * 3.5;
   }
 
   function animateThreeGarden() {
     requestAnimationFrame(animateThreeGarden);
     if (!threeRenderer || !threeScene || !threeCamera) return;
 
-    const delta = threeClock ? threeClock.getDelta() : 0.016;
+    const delta = threeClock ? Math.min(threeClock.getDelta(), 0.1) : 0.016;
     const time = threeClock ? threeClock.getElapsedTime() : Date.now() * 0.001;
 
-    // Rotate spiral galaxy slowly
-    if (galaxyPoints) {
-      galaxyPoints.rotation.y += 0.0012;
+    // 1. Differential Spiral Galaxy Swirl
+    if (galaxyPoints && galaxySpeeds) {
+      const pos = galaxyPoints.geometry.attributes.position.array;
+      const count = pos.length / 3;
+      for (let i = 0; i < count; i++) {
+        const x = pos[i * 3];
+        const z = pos[i * 3 + 2];
+        const sp = galaxySpeeds[i];
+        const cosS = Math.cos(sp);
+        const sinS = Math.sin(sp);
+        pos[i * 3] = x * cosS - z * sinS;
+        pos[i * 3 + 2] = x * sinS + z * cosS;
+      }
+      galaxyPoints.geometry.attributes.position.needsUpdate = true;
     }
 
-    // Interactive damping & idle auto-rotation
-    if (!isDragging) {
-      targetRotY += 0.004;
+    // 2. Shooting Stars
+    if (time > nextShootTime && !shootActive) {
+      triggerShootingStar(time);
     }
-    currentRotY += (targetRotY - currentRotY) * 0.07;
-    currentRotX += (targetRotX - currentRotX) * 0.07;
+    if (shootActive && shootingStarLine) {
+      shootProgress += delta * 1.8;
+      const p = shootingStarLine.geometry.attributes.position.array;
+      const currentHead = shootStart.clone().addScaledVector(shootDir, shootProgress * 16.0);
+      const currentTail = shootStart.clone().addScaledVector(shootDir, Math.max(0, shootProgress * 16.0 - 3.8));
+
+      p[0] = currentHead.x; p[1] = currentHead.y; p[2] = currentHead.z;
+      p[3] = currentTail.x; p[4] = currentTail.y; p[5] = currentTail.z;
+      shootingStarLine.geometry.attributes.position.needsUpdate = true;
+
+      // Opacity fade in and fade out
+      const op = Math.sin(shootProgress * Math.PI);
+      shootingStarLine.material.opacity = Math.max(0, Math.min(1, op * 0.9));
+
+      if (shootProgress >= 1.0) {
+        shootActive = false;
+        shootingStarLine.material.opacity = 0;
+      }
+    }
+
+    // 3. Interactive Damping & Idle Auto-Rotation
+    if (!isDragging) {
+      targetRotY += 0.0035;
+    }
+    currentRotY += (targetRotY - currentRotY) * 0.075;
+    currentRotX += (targetRotX - currentRotX) * 0.075;
+
+    // Smooth Camera Zoom Lerp
+    currentCameraDist += (targetCameraDist - currentCameraDist) * 0.08;
+    const sinX = Math.sin(currentRotX * 0.5);
+    const cosX = Math.cos(currentRotX * 0.5);
+    threeCamera.position.y = lookTarget.y + sinX * currentCameraDist + 0.8;
+    threeCamera.position.z = cosX * currentCameraDist;
+    threeCamera.lookAt(lookTarget.x, lookTarget.y, lookTarget.z);
 
     if (flowerGroup) {
       flowerGroup.rotation.y = currentRotY;
-      flowerGroup.rotation.x = currentRotX;
+      flowerGroup.rotation.x = currentRotX * 0.45;
       // Gentle floating breath
-      flowerGroup.position.y = -0.2 + Math.sin(time * 1.6) * 0.08;
+      flowerGroup.position.y = -0.22 + Math.sin(time * 1.5) * 0.075;
     }
 
-    // Upward drifting stardust spores
+    // 4. Loose Drifting Petals in Space
+    if (floatingPetalsGroup) {
+      floatingPetalsData.forEach(d => {
+        d.angle += d.orbitSpeed;
+        d.mesh.position.x = Math.cos(d.angle) * d.dist;
+        d.mesh.position.z = Math.sin(d.angle) * d.dist;
+        d.mesh.position.y = d.yBase + Math.sin(time * d.ySpeed) * 0.25;
+        d.mesh.rotation.x += d.rotSpeedX;
+        d.mesh.rotation.y += d.rotSpeedY;
+      });
+    }
+
+    // 5. Upward Drifting Stardust Spores
     if (sporePoints && sporePositions) {
       const p = sporePoints.geometry.attributes.position.array;
       for (let i = 0; i < sporeCount; i++) {
@@ -899,7 +1252,7 @@
         p[i * 3] += Math.sin(time * sporeVelocities[i].wobbleSpeed + sporeVelocities[i].seed) * sporeVelocities[i].wobbleAmp;
         if (p[i * 3 + 1] > 2.8) {
           p[i * 3 + 1] = 0.25;
-          const spR = Math.random() * 1.3;
+          const spR = Math.random() * 1.4;
           const spAng = Math.random() * Math.PI * 2;
           p[i * 3] = Math.cos(spAng) * spR;
           p[i * 3 + 2] = Math.sin(spAng) * spR;
@@ -908,13 +1261,21 @@
       sporePoints.geometry.attributes.position.needsUpdate = true;
     }
 
-    // Real-time Blooming Animation (smooth easeOutCubic)
+    // 6. Staged Organic Real-Time Blooming Animation (easeOutCubic per whorl)
     if (isBlooming && bloomProgress < 1) {
-      bloomProgress += delta * 0.38; // blooms over ~2.6 seconds
+      bloomProgress += delta * 0.35; // smooth 2.8s bloom
       if (bloomProgress > 1) bloomProgress = 1;
 
-      const p = 1 - Math.pow(1 - bloomProgress, 3);
       petals.forEach(item => {
+        // Map bloomProgress to this specific whorl's timeline
+        const start = item.startStage;
+        const end = item.endStage;
+        let localProgress = 0;
+        if (bloomProgress > start) {
+          localProgress = Math.min(1, (bloomProgress - start) / (end - start));
+        }
+        // Cubic ease-out
+        const p = 1 - Math.pow(1 - localProgress, 3);
         item.mesh.rotation.x = 0.08 + p * (item.maxRotation - 0.08);
       });
     }
@@ -925,6 +1286,11 @@
   function triggerFlowerBloom() {
     bloomProgress = 0;
     isBlooming = true;
+    targetCameraDist = 5.6; // Start slightly closer for cinematic glide
+    setTimeout(() => {
+      targetCameraDist = 7.4; // Glide back smoothly as bloom peaks
+    }, 400);
+
     petals.forEach(item => {
       item.mesh.rotation.x = 0.08;
     });
@@ -933,6 +1299,7 @@
   function resetFlowerBud() {
     bloomProgress = 0;
     isBlooming = false;
+    targetCameraDist = 7.4;
     petals.forEach(item => {
       item.mesh.rotation.x = 0.08;
     });
