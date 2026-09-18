@@ -605,8 +605,70 @@
   const lookTarget = { x: 0, y: 0.42, z: 0 };
   let initialPinchDist = null;
 
-  // Parametric Double-Curved 3D Petal Geometry Builder
-  function createCurvedPetalGeometry(width, length, cupDepth, tipCurl, colorBaseHex, colorMidHex, colorRimHex, uSegs = 16, vSegs = 22) {
+  // 1. Procedural Botanical Petal Vein & Velvet Bump Texture
+  function createVeinBumpTexture() {
+    const c = document.createElement('canvas');
+    c.width = 512;
+    c.height = 512;
+    const ctx = c.getContext('2d');
+
+    // Base neutral 50% gray
+    ctx.fillStyle = '#808080';
+    ctx.fillRect(0, 0, 512, 512);
+
+    // Radiating longitudinal botanical veins from petal base to tip
+    for (let i = 0; i < 48; i++) {
+      const norm = (i / 47) * 2 - 1; // -1 to +1
+      const startX = 256 + norm * 18;
+      const endX = 256 + norm * 220 + Math.sin(i * 1.8) * 8;
+      const ctrlX = 256 + norm * 110 + (Math.random() - 0.5) * 12;
+
+      const veinGrad = ctx.createLinearGradient(startX, 512, endX, 0);
+      veinGrad.addColorStop(0, 'rgba(235, 235, 235, 0.65)');
+      veinGrad.addColorStop(0.6, 'rgba(215, 215, 215, 0.45)');
+      veinGrad.addColorStop(1, 'rgba(195, 195, 195, 0.25)');
+
+      ctx.strokeStyle = veinGrad;
+      ctx.lineWidth = Math.abs(norm) < 0.15 ? 2.4 : 1.3;
+      ctx.beginPath();
+      ctx.moveTo(startX, 512);
+      ctx.quadraticCurveTo(ctrlX, 256, endX, 0);
+      ctx.stroke();
+
+      // Delicate lateral secondary branchlets
+      if (i % 2 === 0) {
+        for (let y = 140; y < 460; y += 36) {
+          const branchSide = norm >= 0 ? 1 : -1;
+          ctx.strokeStyle = 'rgba(205, 205, 205, 0.22)';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          const bx = 256 + norm * (512 - y) * 0.42;
+          ctx.moveTo(bx, y);
+          ctx.quadraticCurveTo(bx + branchSide * 24, y - 10, bx + branchSide * 46, y - 20);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Micro-velvet noise stippling for authentic floral light scattering
+    const imgData = ctx.getImageData(0, 0, 512, 512);
+    const data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const noise = (Math.random() - 0.5) * 12;
+      data[i] = Math.min(255, Math.max(0, data[i] + noise));
+      data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
+      data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    const texture = new THREE.CanvasTexture(c);
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    return texture;
+  }
+
+  // 2. Parametric Organic Curved Petal Geometry Builder (With Ruffled Silk Margins)
+  function createCurvedPetalGeometry(width, length, cupDepth, tipCurl, colorBaseHex, colorMidHex, colorRimHex, uSegs = 18, vSegs = 24) {
     const positions = [];
     const uvs = [];
     const colors = [];
@@ -627,15 +689,21 @@
       for (let i = 0; i <= uSegs; i++) {
         const uNorm = (i / uSegs) * 2 - 1; // -1 to +1
         const x = uNorm * w;
+
         // Spoon-like concave curvature along width
         const zCup = -(1 - uNorm * uNorm) * cupDepth * Math.sin(Math.PI * v * 0.85);
-        const z = zCup + zCurl;
 
-        positions.push(x, y, z);
+        // Organic harmonic edge ruffling along the petal margin
+        const edgeDist = Math.abs(uNorm);
+        const ruffle = Math.sin(v * 16.0 + uNorm * 10.0) * 0.045 * Math.pow(v, 1.2) * edgeDist;
+        const z = zCup + zCurl + ruffle;
+
+        // Subtle lateral lip flaring at the widest part
+        const xFlare = x * (1.0 + Math.sin(v * Math.PI) * 0.08);
+        positions.push(xFlare, y, z);
         uvs.push(i / uSegs, v);
 
         // Botanical vertex color gradient: Gold base -> Velvet Rose -> Crystal Blush -> Frosted Rim
-        const edgeDist = Math.abs(uNorm);
         const vertexColor = new THREE.Color();
         if (v < 0.22) {
           vertexColor.lerpColors(colorGold, colorBase, v / 0.22);
@@ -672,31 +740,40 @@
     return geo;
   }
 
-  // Radiating Golden Stamens Filaments & Pollen Tips Builder
-  function createStamenSystem(count = 48) {
+  // 3. Dense 96-Stamen Golden Filament & Pollen Crown Builder
+  function createStamenSystem(count = 96) {
     const linePositions = [];
     const lineColors = [];
     const headPositions = [];
+    const headColors = [];
     const colGold = new THREE.Color(0xffd54f);
-    const colTip = new THREE.Color(0xfff9c4);
+    const colAmber = new THREE.Color(0xffb300);
+    const colPollen = new THREE.Color(0xfff59d);
 
     for (let i = 0; i < count; i++) {
-      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.12;
-      const rBase = 0.12 + Math.random() * 0.14;
-      const rTip = rBase + 0.25 + Math.random() * 0.15;
-      const height = 0.32 + Math.random() * 0.22;
+      // Two concentric rings: inner ring (r ~ 0.16) and outer ring (r ~ 0.27)
+      const isOuter = i % 2 === 0;
+      const ringRadius = isOuter ? 0.26 + Math.random() * 0.08 : 0.16 + Math.random() * 0.06;
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.08;
+      const flare = isOuter ? 0.38 + Math.random() * 0.12 : 0.22 + Math.random() * 0.1;
+      const height = isOuter ? 0.38 + Math.random() * 0.22 : 0.28 + Math.random() * 0.18;
 
-      const x0 = Math.cos(angle) * rBase;
-      const z0 = Math.sin(angle) * rBase;
-      const y0 = 0.28;
+      const x0 = Math.cos(angle) * ringRadius;
+      const z0 = Math.sin(angle) * ringRadius;
+      const y0 = 0.24;
 
-      const x1 = Math.cos(angle) * rTip;
-      const z1 = Math.sin(angle) * rTip;
+      const x1 = Math.cos(angle) * (ringRadius + flare);
+      const z1 = Math.sin(angle) * (ringRadius + flare);
       const y1 = y0 + height;
 
       linePositions.push(x0, y0, z0, x1, y1, z1);
-      lineColors.push(colGold.r, colGold.g, colGold.b, colTip.r, colTip.g, colTip.b);
+      lineColors.push(colAmber.r, colAmber.g, colAmber.b, colGold.r, colGold.g, colGold.b);
+
+      // Realistic double-lobed pollen anther head (two points per stamen)
       headPositions.push(x1, y1, z1);
+      headColors.push(colPollen.r, colPollen.g, colPollen.b);
+      headPositions.push(x1 + (Math.random() - 0.5) * 0.03, y1 + 0.02, z1 + (Math.random() - 0.5) * 0.03);
+      headColors.push(1.0, 0.98, 0.75);
     }
 
     const lineGeo = new THREE.BufferGeometry();
@@ -705,6 +782,7 @@
 
     const headGeo = new THREE.BufferGeometry();
     headGeo.setAttribute('position', new THREE.Float32BufferAttribute(headPositions, 3));
+    headGeo.setAttribute('color', new THREE.Float32BufferAttribute(headColors, 3));
 
     return { lineGeo, headGeo };
   }
@@ -714,9 +792,10 @@
     hasThreeInit = true;
 
     threeScene = new THREE.Scene();
-    threeScene.fog = new THREE.FogExp2(0x02000a, 0.018);
+    threeScene.fog = new THREE.FogExp2(0x02000a, 0.016);
 
-    threeCamera = new THREE.PerspectiveCamera(52, 1, 0.1, 1000);
+    // Camera near set to 0.05 for flawless super-macro close-up zooming without petal clipping
+    threeCamera = new THREE.PerspectiveCamera(50, 1, 0.05, 1000);
     threeCamera.position.set(0, 2.1, currentCameraDist);
     threeCamera.lookAt(lookTarget.x, lookTarget.y, lookTarget.z);
 
@@ -728,29 +807,30 @@
     });
     threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     threeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-    threeRenderer.toneMappingExposure = 1.18;
+    threeRenderer.toneMappingExposure = 1.2;
 
-    // --- Cinematic Lights ---
-    const ambientLight = new THREE.AmbientLight(0xffc2d1, 0.85);
+    // --- Cinematic Botanical Lighting ---
+    const ambientLight = new THREE.AmbientLight(0xffc2d1, 0.88);
     threeScene.add(ambientLight);
 
-    const centerPointLight = new THREE.PointLight(0xff1493, 4.2, 24);
+    const centerPointLight = new THREE.PointLight(0xff1493, 4.4, 25);
     centerPointLight.position.set(0, 1.4, 0);
     threeScene.add(centerPointLight);
 
-    const goldenStamenLight = new THREE.PointLight(0xffe082, 3.8, 10);
-    goldenStamenLight.position.set(0, 0.55, 0);
+    // Warm golden ember light inside flower core for authentic subsurface glow
+    const goldenStamenLight = new THREE.PointLight(0xffe082, 3.8, 9);
+    goldenStamenLight.position.set(0, 0.52, 0);
     threeScene.add(goldenStamenLight);
 
-    const topWarmLight = new THREE.DirectionalLight(0xfff0f5, 1.1);
+    const topWarmLight = new THREE.DirectionalLight(0xfff0f5, 1.15);
     topWarmLight.position.set(3, 7, 5);
     threeScene.add(topWarmLight);
 
-    const rimLight = new THREE.DirectionalLight(0x00e5ff, 0.65);
+    const rimLight = new THREE.DirectionalLight(0x00e5ff, 0.7);
     rimLight.position.set(-4, -2, -4);
     threeScene.add(rimLight);
 
-    // --- Star Texture ---
+    // --- Procedural Textures ---
     function createStarTexture() {
       const c = document.createElement('canvas');
       c.width = 64;
@@ -766,9 +846,9 @@
       return new THREE.CanvasTexture(c);
     }
     const starTexture = createStarTexture();
+    const veinBumpTexture = createVeinBumpTexture();
 
     // --- 1. 6,000-Star Python Logarithmic Spiral Galaxy with Differential Swirl ---
-    // User's formula: theta ~ uniform(0, 4*pi), r = sqrt(uniform)*5, x = r*cos(theta), y = r*sin(theta)
     const galaxyCount = 6000;
     const galaxyGeo = new THREE.BufferGeometry();
     const galaxyPositions = new Float32Array(galaxyCount * 3);
@@ -844,42 +924,52 @@
     // --- 3. Master 3D Botanical Flower Group ---
     flowerGroup = new THREE.Group();
 
-    // Crystal Glass Physical Petal Material with Vertex Colors
+    // Physical Glass Petal Material with Vein Bump Map
     const crystalPetalMat = new THREE.MeshPhysicalMaterial({
       vertexColors: true,
-      transmission: 0.65,
-      roughness: 0.14,
+      bumpMap: veinBumpTexture,
+      bumpScale: 0.026,
+      transmission: 0.62,
+      roughness: 0.18,
       metalness: 0.02,
       thickness: 1.1,
       clearcoat: 1.0,
       clearcoatRoughness: 0.08,
       emissive: 0xff1493,
-      emissiveIntensity: 0.3,
+      emissiveIntensity: 0.28,
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.94
     });
 
-    // 4 Distinct Curved Petal Geometries (Tuned for organic cupping & tip curls)
-    const geoWhorl0 = createCurvedPetalGeometry(1.65, 3.4, 0.36, -0.75, 0x880e4f, 0xe91e63, 0xff80ab); // Python 6-Petal Foundation
-    const geoWhorl1 = createCurvedPetalGeometry(1.38, 3.1, 0.48, -0.55, 0xad1457, 0xff4081, 0xfff0f5); // Outer Lotus Whorl
-    const geoWhorl2 = createCurvedPetalGeometry(1.18, 2.7, 0.54, -0.38, 0xc2185b, 0xff6584, 0xfff5f8); // Mid Lotus Whorl
-    const geoWhorl3 = createCurvedPetalGeometry(0.92, 2.2, 0.60, -0.18, 0xd81b60, 0xff8da1, 0xffffff); // Inner Bud Whorl
+    // 5 Organic Geometries across 5 Concentric Whorls (45 Total Petals with Natural Phyllotaxis)
+    const geoWhorl0 = createCurvedPetalGeometry(1.68, 3.4, 0.36, -0.76, 0x880e4f, 0xe91e63, 0xff80ab); // Python 6-Petal Foundation
+    const geoWhorl1 = createCurvedPetalGeometry(1.42, 3.15, 0.48, -0.56, 0xad1457, 0xff4081, 0xfff0f5); // Outer Guard Whorl
+    const geoWhorl2 = createCurvedPetalGeometry(1.22, 2.75, 0.54, -0.40, 0xc2185b, 0xff6584, 0xfff5f8); // Middle Chalice Whorl
+    const geoWhorl3 = createCurvedPetalGeometry(0.98, 2.35, 0.58, -0.25, 0xd81b60, 0xff8da1, 0xffffff); // Inner Standing Whorl
+    const geoWhorl4 = createCurvedPetalGeometry(0.78, 1.95, 0.62, -0.14, 0xe91e63, 0xffa4ba, 0xffffff); // Heart Bud Whorl
 
     const whorlConfigs = [
-      { count: 6, geo: geoWhorl0, scale: 1.15, angleOffset: 1.58, y: -0.14, startStage: 0.0, endStage: 0.75 },
-      { count: 14, geo: geoWhorl1, scale: 1.05, angleOffset: 1.35, y: -0.05, startStage: 0.12, endStage: 0.85 },
-      { count: 10, geo: geoWhorl2, scale: 0.82, angleOffset: 1.05, y: 0.06, startStage: 0.28, endStage: 0.95 },
-      { count: 7, geo: geoWhorl3, scale: 0.58, angleOffset: 0.72, y: 0.16, startStage: 0.45, endStage: 1.0 }
+      { count: 6, geo: geoWhorl0, scale: 1.18, angleOffset: 1.62, y: -0.15, startStage: 0.0, endStage: 0.75 },
+      { count: 14, geo: geoWhorl1, scale: 1.08, angleOffset: 1.38, y: -0.06, startStage: 0.10, endStage: 0.85 },
+      { count: 11, geo: geoWhorl2, scale: 0.88, angleOffset: 1.10, y: 0.04, startStage: 0.24, endStage: 0.92 },
+      { count: 8, geo: geoWhorl3, scale: 0.68, angleOffset: 0.80, y: 0.14, startStage: 0.38, endStage: 0.97 },
+      { count: 6, geo: geoWhorl4, scale: 0.48, angleOffset: 0.52, y: 0.22, startStage: 0.50, endStage: 1.0 }
     ];
 
     whorlConfigs.forEach(whorl => {
       for (let i = 0; i < whorl.count; i++) {
-        const angle = (i / whorl.count) * Math.PI * 2;
+        // Natural organic angle jitter and scale variation so petals nestle naturally like real flowers
+        const angleJitter = (Math.random() - 0.5) * 0.08;
+        const scaleJitter = 1.0 + (Math.random() - 0.5) * 0.06;
+        const tiltJitter = (Math.random() - 0.5) * 0.05;
+
+        const angle = (i / whorl.count) * Math.PI * 2 + angleJitter;
         const petalMesh = new THREE.Mesh(whorl.geo, crystalPetalMat);
-        petalMesh.scale.set(whorl.scale, whorl.scale, whorl.scale);
+        const finalScale = whorl.scale * scaleJitter;
+        petalMesh.scale.set(finalScale, finalScale, finalScale);
         petalMesh.position.y = 0;
-        petalMesh.rotation.x = 0.08; // closed bud initially
+        petalMesh.rotation.x = 0.08 + tiltJitter; // closed bud initially
 
         const pivotGroup = new THREE.Group();
         pivotGroup.position.y = whorl.y;
@@ -891,12 +981,13 @@
           mesh: petalMesh,
           maxRotation: whorl.angleOffset,
           startStage: whorl.startStage,
-          endStage: whorl.endStage
+          endStage: whorl.endStage,
+          initialRotX: 0.08 + tiltJitter
         });
       }
     });
 
-    // --- 4. Golden Honey Dome Receptacle & Glowing Stamens ---
+    // --- 4. Golden Honey Dome Receptacle & Dense 96-Stamen Crown ---
     const domeGeo = new THREE.SphereGeometry(0.38, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.5);
     const domeMat = new THREE.MeshStandardMaterial({
       color: 0xffd54f,
@@ -909,20 +1000,20 @@
     domeMesh.position.y = 0.22;
     flowerGroup.add(domeMesh);
 
-    // 48 Golden Stamen Filaments
-    const stamenData = createStamenSystem(48);
+    // 96 Golden Stamen Filaments in Two Tiers
+    const stamenData = createStamenSystem(96);
     const stamenLines = new THREE.LineSegments(stamenData.lineGeo, new THREE.LineBasicMaterial({
       vertexColors: true,
       linewidth: 1.5,
       transparent: true,
-      opacity: 0.9
+      opacity: 0.92
     }));
     flowerGroup.add(stamenLines);
 
-    // Golden Pollen Bead Heads
+    // Double-Lobed Sparkling Pollen Heads
     const pollenMat = new THREE.PointsMaterial({
-      size: 0.12,
-      color: 0xfff9c4,
+      size: 0.13,
+      vertexColors: true,
       map: starTexture,
       transparent: true,
       blending: THREE.AdditiveBlending,
@@ -943,7 +1034,38 @@
     halo.position.y = 0.35;
     flowerGroup.add(halo);
 
-    // --- 5. Curved Crystal Emerald Stem & Dewdrop Leaves ---
+    // --- 5. Glistening Optical Water Dewdrops Resting on Petals ---
+    const dewdropGroup = new THREE.Group();
+    const dewdropGeo = new THREE.SphereGeometry(0.048, 16, 16);
+    const dewdropMat = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      transmission: 0.96,
+      roughness: 0.02,
+      ior: 1.333,
+      thickness: 0.4,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04
+    });
+
+    const dewLocations = [
+      { x: 0.28, y: 0.45, z: 0.35, s: 1.0 },
+      { x: -0.32, y: 0.52, z: 0.22, s: 0.85 },
+      { x: 0.15, y: 0.38, z: -0.38, s: 1.1 },
+      { x: -0.22, y: 0.62, z: -0.28, s: 0.75 },
+      { x: 0.42, y: 0.48, z: -0.15, s: 0.9 },
+      { x: -0.38, y: 0.42, z: 0.40, s: 0.8 },
+      { x: 0.05, y: 0.28, z: 0.45, s: 1.2 }
+    ];
+
+    dewLocations.forEach(loc => {
+      const dew = new THREE.Mesh(dewdropGeo, dewdropMat);
+      dew.position.set(loc.x, loc.y, loc.z);
+      dew.scale.set(loc.s, loc.s * 0.75, loc.s);
+      dewdropGroup.add(dew);
+    });
+    flowerGroup.add(dewdropGroup);
+
+    // --- 6. Curved Crystal Emerald Stem & Dewdrop Leaves ---
     const stemCurve = new THREE.CubicBezierCurve3(
       new THREE.Vector3(0, -0.15, 0),
       new THREE.Vector3(0.1, -0.8, -0.1),
@@ -991,15 +1113,8 @@
       const leafMesh = new THREE.Mesh(leafGeo, leafMat);
       leafMesh.scale.set(scale, scale, scale);
 
-      // Add a sparkling dewdrop
-      const dewGeo = new THREE.SphereGeometry(0.065, 16, 16);
-      const dewMat = new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
-        transmission: 0.9,
-        roughness: 0.05,
-        clearcoat: 1.0
-      });
-      const dew = new THREE.Mesh(dewGeo, dewMat);
+      // Leaf dewdrop
+      const dew = new THREE.Mesh(dewdropGeo, dewdropMat);
       dew.position.set(0.12, 1.1, 0.05);
       leafMesh.add(dew);
 
@@ -1016,7 +1131,7 @@
     flowerGroup.add(leaf1);
     flowerGroup.add(leaf2);
 
-    // --- 6. Floating Golden Stardust Spores ---
+    // --- 7. Floating Golden Stardust Spores ---
     const sporeGeo = new THREE.BufferGeometry();
     sporePositions = new Float32Array(sporeCount * 3);
     for (let i = 0; i < sporeCount; i++) {
@@ -1044,7 +1159,7 @@
     sporePoints = new THREE.Points(sporeGeo, sporeMat);
     flowerGroup.add(sporePoints);
 
-    // --- 7. Loose Floating Petals Drifting in Cosmic Gravity ---
+    // --- 8. Loose Floating Petals Drifting in Cosmic Gravity ---
     floatingPetalsGroup = new THREE.Group();
     const miniPetalGeo = createCurvedPetalGeometry(0.65, 1.4, 0.25, -0.25, 0xff6584, 0xff8da1, 0xffffff, 8, 10);
     const miniPetalMat = new THREE.MeshPhysicalMaterial({
@@ -1080,7 +1195,7 @@
     flowerGroup.position.set(0, -0.22, 0);
     threeScene.add(flowerGroup);
 
-    // --- 8. Interactive Touch / Mouse Orbit Drag + Wheel / Pinch Zoom ---
+    // --- 9. Interactive Touch & Mouse Orbit Drag + Extended Macro Zoom ---
     threeContainer.addEventListener('pointerdown', function (e) {
       if (e.pointerType === 'touch' && !e.isPrimary) return;
       isDragging = true;
@@ -1109,14 +1224,14 @@
     window.addEventListener('pointerup', endPointerDrag);
     window.addEventListener('pointercancel', endPointerDrag);
 
-    // Mouse Wheel Zoom
+    // Mouse Wheel Macro Zoom (Down to 2.5 for close-up inspection!)
     threeContainer.addEventListener('wheel', function (e) {
       e.preventDefault();
       targetCameraDist += e.deltaY * 0.005;
-      targetCameraDist = Math.max(4.2, Math.min(10.5, targetCameraDist));
+      targetCameraDist = Math.max(2.5, Math.min(10.5, targetCameraDist));
     }, { passive: false });
 
-    // Touch Pinch Zoom
+    // Touch Pinch Macro Zoom
     threeContainer.addEventListener('touchmove', function (e) {
       if (e.touches.length === 2) {
         const dist = Math.hypot(
@@ -1126,7 +1241,7 @@
         if (initialPinchDist !== null) {
           const diff = initialPinchDist - dist;
           targetCameraDist += diff * 0.012;
-          targetCameraDist = Math.max(4.2, Math.min(10.5, targetCameraDist));
+          targetCameraDist = Math.max(2.5, Math.min(10.5, targetCameraDist));
         }
         initialPinchDist = dist;
       }
@@ -1136,11 +1251,21 @@
       initialPinchDist = null;
     }, { passive: true });
 
-    // --- 9. Resize Handling ---
+    // Double-click or double-tap to toggle macro zoom into the center
+    let lastTap = 0;
+    threeContainer.addEventListener('pointerup', function (e) {
+      const now = Date.now();
+      if (now - lastTap < 300) {
+        targetCameraDist = targetCameraDist > 4.5 ? 2.8 : 7.4;
+      }
+      lastTap = now;
+    });
+
+    // --- 10. Resize Handling ---
     resizeThreeGarden();
     window.addEventListener('resize', resizeThreeGarden);
 
-    // --- 10. Animation Loop ---
+    // --- 11. Animation Loop ---
     threeClock = new THREE.Clock();
     requestAnimationFrame(animateThreeGarden);
   }
@@ -1200,7 +1325,6 @@
       p[3] = currentTail.x; p[4] = currentTail.y; p[5] = currentTail.z;
       shootingStarLine.geometry.attributes.position.needsUpdate = true;
 
-      // Opacity fade in and fade out
       const op = Math.sin(shootProgress * Math.PI);
       shootingStarLine.material.opacity = Math.max(0, Math.min(1, op * 0.9));
 
@@ -1217,13 +1341,18 @@
     currentRotY += (targetRotY - currentRotY) * 0.075;
     currentRotX += (targetRotX - currentRotX) * 0.075;
 
-    // Smooth Camera Zoom Lerp
+    // Smooth Camera Zoom Lerp with Adaptive Macro Centering
     currentCameraDist += (targetCameraDist - currentCameraDist) * 0.08;
     const sinX = Math.sin(currentRotX * 0.5);
     const cosX = Math.cos(currentRotX * 0.5);
-    threeCamera.position.y = lookTarget.y + sinX * currentCameraDist + 0.8;
+
+    // As camera zooms closer, center directly on the golden stamen crown and dewdrops
+    const zoomRatio = Math.max(0, Math.min(1, (7.4 - currentCameraDist) / (7.4 - 2.5)));
+    const targetY = lookTarget.y + zoomRatio * 0.12;
+
+    threeCamera.position.y = targetY + sinX * currentCameraDist + 0.8 * (1 - zoomRatio * 0.35);
     threeCamera.position.z = cosX * currentCameraDist;
-    threeCamera.lookAt(lookTarget.x, lookTarget.y, lookTarget.z);
+    threeCamera.lookAt(lookTarget.x, targetY, lookTarget.z);
 
     if (flowerGroup) {
       flowerGroup.rotation.y = currentRotY;
@@ -1267,16 +1396,15 @@
       if (bloomProgress > 1) bloomProgress = 1;
 
       petals.forEach(item => {
-        // Map bloomProgress to this specific whorl's timeline
         const start = item.startStage;
         const end = item.endStage;
         let localProgress = 0;
         if (bloomProgress > start) {
           localProgress = Math.min(1, (bloomProgress - start) / (end - start));
         }
-        // Cubic ease-out
         const p = 1 - Math.pow(1 - localProgress, 3);
-        item.mesh.rotation.x = 0.08 + p * (item.maxRotation - 0.08);
+        const initRot = item.initialRotX || 0.08;
+        item.mesh.rotation.x = initRot + p * (item.maxRotation - initRot);
       });
     }
 
@@ -1292,7 +1420,7 @@
     }, 400);
 
     petals.forEach(item => {
-      item.mesh.rotation.x = 0.08;
+      item.mesh.rotation.x = item.initialRotX || 0.08;
     });
   }
 
@@ -1301,7 +1429,7 @@
     isBlooming = false;
     targetCameraDist = 7.4;
     petals.forEach(item => {
-      item.mesh.rotation.x = 0.08;
+      item.mesh.rotation.x = item.initialRotX || 0.08;
     });
   }
 
