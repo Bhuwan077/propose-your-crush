@@ -49,7 +49,7 @@ html, body {
 /* Galaxy Mode Background: Deep Celestial Midnight (Starts glowing black, slowly lights up) */
 body.galaxy-mode,
 body.galaxy-active {
-  background: radial-gradient(ellipse at 50% 65%, #180C28 0%, #080312 60%, #020005 100%) !important;
+  background: radial-gradient(ellipse at 50% 65%, #1e2933 0%, #131b21 55%, #0c1217 100%) !important;
   color: #FFFFFF !important;
 }
 
@@ -1070,4 +1070,13 @@ body.galaxy-mode .milkyway-overlay {
   .dedication-sub {
     font-size: 0.88rem;
   }
+}
+
+.galaxy-subheadline {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  color: #FFCCD7;
+  margin-top: 6px;
+  font-weight: 500;
+  text-shadow: 0 0 14px rgba(255, 105, 180, 0.6);
 }

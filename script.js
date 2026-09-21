@@ -817,10 +817,14 @@
     centerPointLight.position.set(0, 1.4, 0);
     threeScene.add(centerPointLight);
 
-    // Warm golden ember light inside flower core for authentic subsurface glow
-    const goldenStamenLight = new THREE.PointLight(0xffe082, 3.8, 9);
+    // Radiant incandescent core light for Programmer's Lotus Glow
+    const goldenStamenLight = new THREE.PointLight(0xffe885, 6.5, 15);
     goldenStamenLight.position.set(0, 0.52, 0);
     threeScene.add(goldenStamenLight);
+
+    const innerHeartLight = new THREE.PointLight(0xff2a6d, 5.2, 12);
+    innerHeartLight.position.set(0, 0.35, 0);
+    threeScene.add(innerHeartLight);
 
     const topWarmLight = new THREE.DirectionalLight(0xfff0f5, 1.15);
     topWarmLight.position.set(3, 7, 5);
@@ -924,22 +928,23 @@
     // --- 3. Master 3D Botanical Flower Group ---
     flowerGroup = new THREE.Group();
 
-    // Physical Glass Petal Material with Vein Bump Map
+    // Programmer's Glowing Translucent Crystal Glass Petal Material
     const crystalPetalMat = new THREE.MeshPhysicalMaterial({
       vertexColors: true,
       bumpMap: veinBumpTexture,
-      bumpScale: 0.026,
-      transmission: 0.62,
-      roughness: 0.18,
-      metalness: 0.02,
-      thickness: 1.1,
+      bumpScale: 0.022,
+      transmission: 0.78, // High glass translucency
+      roughness: 0.12,
+      metalness: 0.04,
+      thickness: 1.6,
+      ior: 1.48,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.08,
-      emissive: 0xff1493,
-      emissiveIntensity: 0.28,
+      clearcoatRoughness: 0.06,
+      emissive: new THREE.Color(0xff2a6d),
+      emissiveIntensity: 0.44, // Glowing inner illumination
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.94
+      opacity: 0.92
     });
 
     // 5 Organic Geometries across 5 Concentric Whorls (45 Total Petals with Natural Phyllotaxis)
@@ -949,12 +954,23 @@
     const geoWhorl3 = createCurvedPetalGeometry(0.98, 2.35, 0.58, -0.25, 0xd81b60, 0xff8da1, 0xffffff); // Inner Standing Whorl
     const geoWhorl4 = createCurvedPetalGeometry(0.78, 1.95, 0.62, -0.14, 0xe91e63, 0xffa4ba, 0xffffff); // Heart Bud Whorl
 
+    // Sparkling diamond starlight tips material
+    const tipStarMat = new THREE.SpriteMaterial({
+      map: starTexture,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.92,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const petalTipSprites = [];
+
     const whorlConfigs = [
-      { count: 6, geo: geoWhorl0, scale: 1.18, angleOffset: 1.62, y: -0.15, startStage: 0.0, endStage: 0.75 },
-      { count: 14, geo: geoWhorl1, scale: 1.08, angleOffset: 1.38, y: -0.06, startStage: 0.10, endStage: 0.85 },
-      { count: 11, geo: geoWhorl2, scale: 0.88, angleOffset: 1.10, y: 0.04, startStage: 0.24, endStage: 0.92 },
-      { count: 8, geo: geoWhorl3, scale: 0.68, angleOffset: 0.80, y: 0.14, startStage: 0.38, endStage: 0.97 },
-      { count: 6, geo: geoWhorl4, scale: 0.48, angleOffset: 0.52, y: 0.22, startStage: 0.50, endStage: 1.0 }
+      { count: 6, geo: geoWhorl0, length: 3.4, curl: -0.76, scale: 1.18, angleOffset: 1.62, y: -0.15, startStage: 0.0, endStage: 0.75 },
+      { count: 14, geo: geoWhorl1, length: 3.15, curl: -0.56, scale: 1.08, angleOffset: 1.38, y: -0.06, startStage: 0.10, endStage: 0.85 },
+      { count: 11, geo: geoWhorl2, length: 2.75, curl: -0.40, scale: 0.88, angleOffset: 1.10, y: 0.04, startStage: 0.24, endStage: 0.92 },
+      { count: 8, geo: geoWhorl3, length: 2.35, curl: -0.25, scale: 0.68, angleOffset: 0.80, y: 0.14, startStage: 0.38, endStage: 0.97 },
+      { count: 6, geo: geoWhorl4, length: 1.95, curl: -0.14, scale: 0.48, angleOffset: 0.52, y: 0.22, startStage: 0.50, endStage: 1.0 }
     ];
 
     whorlConfigs.forEach(whorl => {
@@ -970,6 +986,13 @@
         petalMesh.scale.set(finalScale, finalScale, finalScale);
         petalMesh.position.y = 0;
         petalMesh.rotation.x = 0.08 + tiltJitter; // closed bud initially
+
+        // Luminous Pinpoint Diamond Star at each petal tip (Programmer's Flower aesthetic)
+        const tipStar = new THREE.Sprite(tipStarMat);
+        tipStar.position.set(0, whorl.length * 0.98, whorl.curl * 0.95);
+        tipStar.scale.set(0.24, 0.24, 1);
+        petalMesh.add(tipStar);
+        petalTipSprites.push({ sprite: tipStar, baseScale: 0.24, phase: Math.random() * Math.PI * 2 });
 
         const pivotGroup = new THREE.Group();
         pivotGroup.position.y = whorl.y;
@@ -1022,17 +1045,85 @@
     const pollenPoints = new THREE.Points(stamenData.headGeo, pollenMat);
     flowerGroup.add(pollenPoints);
 
+    // Volumetric Radiant Sunburst Core Billboard
+    const coreSunburstMat = new THREE.SpriteMaterial({
+      map: starTexture,
+      color: 0xfff0b3,
+      transparent: true,
+      opacity: 0.88,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const coreSunburst = new THREE.Sprite(coreSunburstMat);
+    coreSunburst.position.set(0, 0.42, 0);
+    coreSunburst.scale.set(1.9, 1.9, 1);
+    flowerGroup.add(coreSunburst);
+
     // Glowing Core Halo
     const haloGeo = new THREE.SphereGeometry(0.56, 32, 32);
     const haloMat = new THREE.MeshBasicMaterial({
-      color: 0xffd54f,
+      color: 0xffe082,
       transparent: true,
-      opacity: 0.26,
+      opacity: 0.32,
       blending: THREE.AdditiveBlending
     });
     const halo = new THREE.Mesh(haloGeo, haloMat);
     halo.position.y = 0.35;
     flowerGroup.add(halo);
+
+    // --- Elegant 3D Golden Filigree Flourish Curves (Programmer's FlourishGroup) ---
+    const flourishGroup = new THREE.Group();
+    const flourishMat = new THREE.LineBasicMaterial({
+      color: 0xffd54f,
+      transparent: true,
+      opacity: 0.72,
+      blending: THREE.AdditiveBlending
+    });
+
+    const flourishCurves = [
+      // Left graceful arch
+      new THREE.CubicBezierCurve3(
+        new THREE.Vector3(0, -0.1, 0),
+        new THREE.Vector3(-1.2, 0.4, 0.6),
+        new THREE.Vector3(-2.2, 1.2, -0.4),
+        new THREE.Vector3(-1.8, 1.9, 0.2)
+      ),
+      // Right graceful arch
+      new THREE.CubicBezierCurve3(
+        new THREE.Vector3(0, -0.1, 0),
+        new THREE.Vector3(1.2, 0.4, -0.6),
+        new THREE.Vector3(2.2, 1.2, 0.4),
+        new THREE.Vector3(1.8, 1.9, -0.2)
+      ),
+      // Back subtle wings
+      new THREE.CubicBezierCurve3(
+        new THREE.Vector3(0, -0.1, 0),
+        new THREE.Vector3(0.6, 0.5, -1.4),
+        new THREE.Vector3(-0.6, 1.4, -2.0),
+        new THREE.Vector3(-1.4, 1.8, -1.2)
+      ),
+      new THREE.CubicBezierCurve3(
+        new THREE.Vector3(0, -0.1, 0),
+        new THREE.Vector3(-0.6, 0.5, -1.4),
+        new THREE.Vector3(0.6, 1.4, -2.0),
+        new THREE.Vector3(1.4, 1.8, -1.2)
+      )
+    ];
+
+    flourishCurves.forEach(curve => {
+      const pts = curve.getPoints(36);
+      const fGeo = new THREE.BufferGeometry().setFromPoints(pts);
+      const fLine = new THREE.Line(fGeo, flourishMat);
+      flourishGroup.add(fLine);
+
+      // Tip sparkle for each flourish curve
+      const endPt = pts[pts.length - 1];
+      const fStar = new THREE.Sprite(tipStarMat);
+      fStar.position.copy(endPt);
+      fStar.scale.set(0.22, 0.22, 1);
+      flourishGroup.add(fStar);
+    });
+    flowerGroup.add(flourishGroup);
 
     // --- 5. Glistening Optical Water Dewdrops Resting on Petals ---
     const dewdropGroup = new THREE.Group();
@@ -1359,6 +1450,19 @@
       flowerGroup.rotation.x = currentRotX * 0.45;
       // Gentle floating breath
       flowerGroup.position.y = -0.22 + Math.sin(time * 1.5) * 0.075;
+
+      // Pulse luminous petal tip stars & core sunburst
+      if (typeof petalTipSprites !== 'undefined') {
+        petalTipSprites.forEach(item => {
+          const shimmer = 1.0 + Math.sin(time * 3.0 + item.phase) * 0.25;
+          const s = item.baseScale * shimmer;
+          item.sprite.scale.set(s, s, 1);
+        });
+      }
+      if (typeof coreSunburst !== 'undefined') {
+        const corePulse = 1.85 + Math.sin(time * 2.2) * 0.22;
+        coreSunburst.scale.set(corePulse, corePulse, 1);
+      }
     }
 
     // 4. Loose Drifting Petals in Space
